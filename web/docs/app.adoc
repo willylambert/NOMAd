@@ -1,0 +1,22 @@
+= Durée acceptable de transport
+
+La formule suivante est utilisée :
+`maximum ride time = 900*ceil( (temps trajet direct+900)/900)`
+Où les durées sont exprimées en secondes.
+
+Une nouvelle formule a été proposée :
+
+pour un trajet de 1 à 10 minutes :
+`maximum ride time = 900 + temps trajet direct`
+
+pour un trajet de 11 à 30 minutes :
+`maximum ride time = 1200 + temps trajet direct`
+
+pour un trajet de 31 à 45 minutes :
+`maximum ride time = 1800 + temps trajet direct`
+
+pour un trajet de 46 à 90 minutes :
+`maximum ride time = 1.5*temps trajet direct`
+
+pour un trajet à partir de 91 minutes :
+`maximum ride time = 1.3*temps trajet direct`

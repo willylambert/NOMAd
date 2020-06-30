@@ -1,0 +1,167 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="container-fluid">
+  <!-- Filter -->
+  <div class="row align-items-center h-80 row-filter">
+    <div class="col-md-3">
+      <span class="h5">Tournées</span>
+      <span class="h6" *ngIf="filters.scenarioMain.id!=undefined && !bScenarioOverview">&nbsp;Scénario {{filters.scenarioMain.label}}</span>
+      <span class="h6" *ngIf="bScenarioOverview">&nbsp;Synthèse des scénarios</span>
+    </div>
+    <div class="col-md-3">
+      <ng-select id="institutions" name="institutions" class="mx-auto"
+        [items]="institutions"
+        bindLabel="label" placeholder="Etablissement"
+        [(ngModel)]="filters.institutions"
+        (change)="onInstitutionChange()"
+        [multiple]="true"></ng-select>
+    </div>
+    <div class="col-md-2">
+      <ng-select id="days" name="days" class="mx-auto"
+        [items]="[{id:0,label:'Lundi',code:'MONDAY'},
+                  {id:1,label:'Mardi',code:'TUESDAY'},
+                  {id:2,label:'Mercredi',code:'WEDNESDAY'},
+                  {id:3,label:'Jeudi',code:'THURSDAY'},
+                  {id:4,label:'Vendredi',code:'FRIDAY'}]"
+        [(ngModel)]="filters.timeSlotDay"
+        (change)="onTimeSlotChange()"
+        bindLabel="label" placeholder="Jour">
+      </ng-select>
+    </div>
+    <div class="col-md-2">
+      <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="filters.timeSlotAMPM"
+           (change)="onTimeSlotChange()">
+        <label ngbButtonLabel class="btn-primary">
+          <input ngbButton type="radio" value="AM"> Aller
+        </label>
+        <label ngbButtonLabel class="btn-primary">
+          <input ngbButton type="radio" value="PM"> Retour
+        </label>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <label for="demand-toggle">Usagers avec demandes</label>
+      <button name="demand-toggle" class="btn btn-sm"
+              [ngClass]="{'btn-primary':!filters.demands,'btn-success':filters.demands}"
+              (click)="onDemandsToggle()">
+        <span *ngIf="filters.demands"><fa-icon [icon]="faCheck"></fa-icon></span>
+        <span *ngIf="!filters.demands"><fa-icon [icon]="faTimes"></fa-icon></span>
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <scenario-quick-list
+      class="scenario-quick-list"
+      [scenarioMainId]="filters.scenarioMain.id"
+      [routes]="routes"
+      [bOverview]="bScenarioOverview"
+      (scenarioChangeEvent)="changeScenario($event)"
+      (overviewRequestEvent)="computeScenarioOverview()" >
+    </scenario-quick-list>
+    <scenario-overview
+      *ngIf="bScenarioOverview"
+      [filters]="filters">
+    </scenario-overview>
+    <div class="col sidebar" *ngIf="!bScenarioOverview">
+      <alert-component></alert-component>
+      <scenario-minimap
+        [scenarioId]="filters.scenarioMain.id"
+        [scenarioLabel]="filters.scenarioMain.label"
+        [changeInRoutes]="changeInRoutes"
+        (minimapClickEvent)="onMinimapClickEvent($event)">
+      </scenario-minimap>
+      <div class="alert alert-info" role="alert" *ngIf="!filters.scenarioMain || !filters.scenarioMain.id || !filters.timeSlotId || filters.institutions.length==0">
+        Veuiller sélectionner au moins un scénario, un établissement et un créneau.
+      </div>
+
+      <em *ngIf="POIs.list.length==0 && filters.institutions.length>0" id="no-poi-alert">
+        Aucun usager n'est rattaché aux établissements sélectionnés.
+      </em>
+
+      <div *ngIf="filters.scenarioMain && filters.scenarioMain.id && filters.timeSlotId && filters.institutions.length>0" id="routes">
+        <!-- Routes accordion formular -->
+        <div class="text-right" *ngIf="POIs.list.length>0 && filters.scenarioMain && filters.scenarioMain.id">
+          <button id="new-route-btn" class="btn btn-link " (click)="newRoute()" [aclShow]="'/aclrole/save'"
+                  [disabled]='routes.availableColors.length==0 || routes.bLoading'>
+            <fa-icon [icon]="faPlus"></fa-icon>&nbsp;Nouvelle tournée
+          </button>
+        </div>
+        <route-list
+          [filters]="filters"
+          [bOptimized]="false"
+          [routes]="routes"
+          [bSandbox]="true"
+          [involvedInstitutions]="involvedInstitutions"
+          (routeChange)="updateMap()"
+          (routeDisplayToggle)="displayRoutes()"
+          (routeDelete)="onRouteDelete()"
+          (routeSave)="onRouteSave()"
+          (routeEdit)="editRouteModal($event.value,false)"
+          (routePOIsChange)="updateMap()"
+        ></route-list>
+        <optim-player
+          [enabled]="!routes.hasChanged(true)"
+          [optimResultId]="optimResultId"
+          [filters]="filters"
+          [routes]="routes"
+          (optimizedRoutesAvailable)="onRoutesAvailable($event.routes,true)"
+          *ngIf="routes.list.length>0 && filters.demands"
+        ></optim-player>
+
+        <h5 *ngIf="routes.countOptimizedRoutes()>0" class="optim-result-title">Tournées optimisées</h5>
+        <route-list
+          [filters]="filters"
+          [bOptimized]="true"
+          [routes]="routes"
+          [bSandbox]="true"
+          [involvedInstitutions]="involvedInstitutions"
+          (routeChange)="updateMap()"
+          (routeDisplayToggle)="displayRoutes()"
+          (routeDelete)="onRouteDelete()"
+          (routeSave)="onRouteSave()"
+          (routeEdit)="editRouteModal($event.value,false)"
+          (routePOIsChange)="updateMap()"
+        ></route-list>
+      </div>
+
+    </div>
+
+    <!-- Open a Leaflet map and provided it with the list of POIs -->
+    <div class="col p-0">
+      <route-map
+        [timeSlotId]="filters.timeSlotId"
+        [institutions]="involvedInstitutions"
+        [transporters]="transporters"
+        [routes]="routes"
+        [POIs]="POIs"
+        [POISelectionEnabled]="filters.scenarioMain && filters.scenarioMain.id && filters.timeSlotId && filters.institutions.length>0"
+        [updateMapCount]="updateMapCount"
+        [updateMapWithRecenteringCount]="updateMapWithRecenteringCount"
+        [routesDisplayCount]="routesDisplayCount"
+        [toolbarEnabled]="filters.scenarioMain && filters.scenarioMain.id && filters.timeSlotId && filters.institutions.length>0"
+      ></route-map>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,120 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" [routerLink]="['/']" *ngIf="user.id && bNavigationAllowed">
+    <img src="assets/img/nomad.png"/>
+  </a>
+  <a class="navbar-brand" *ngIf="!user.id || !bNavigationAllowed"><img src="assets/img/nomad.png"/></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto" >
+      <li class="nav-item" [aclShow]="'/menu/data'" [aclShowMode]="'display'" *ngIf="user.id && bNavigationAllowed">
+        <div ngbDropdown class="d-inline-block">
+          <a class="nav-link btn" id="data-navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false" ngbDropdownToggle>
+            Data
+          </a>
+          <div ngbDropdownMenu aria-labelledby="data">
+            <button class="dropdown-item" id="data-institutions" [aclShow]="'/menu/data/institutions'" [aclShowMode]="'display'"
+                    [routerLink]="['data/institution/list']">Etablissements</button>
+            <button class="dropdown-item" id="data-transporters" [aclShow]="'/menu/data/transporters'" [aclShowMode]="'display'"
+                    [routerLink]="['data/transporter/list']">Transporteurs</button>
+            <button class="dropdown-item" id="data-hr-drivers" [aclShow]="'/menu/data/hr-drivers'" [aclShowMode]="'display'"
+                    [routerLink]="['data/hr-driver/list']">Conducteurs</button>
+                    <button class="dropdown-item" id="data-hrs" [aclShow]="'/menu/data/hrs'" [aclShowMode]="'display'"
+                    [routerLink]="['data/hr/list']">Usagers</button>
+            <button class="dropdown-item" id="data-vehicle-categories" [aclShow]="'/menu/data/vehicle-categories'" [aclShowMode]="'display'"
+                    [routerLink]="['data/vehicle-category/list']">Catégories de véhicules</button>
+            <button class="dropdown-item" id="data-users" [aclShow]="'/menu/data/users'" [aclShowMode]="'display'"
+                    [aclShow]="'/user/list'" [routerLink]="['data/user/list']">Utilisateurs</button>
+            <button class="dropdown-item" id="data-acl" [aclShow]="'/menu/data/acl'" [aclShowMode]="'display'"
+                    [routerLink]="['data/acl']">Droits d'accès</button>
+            <button class="dropdown-item" id="data-import" [aclShow]="'/menu/data/import'" [aclShowMode]="'display'"
+                    [routerLink]="['data/import']">Import</button>
+            <button class="dropdown-item" id="data-checkers" [aclShow]="'/menu/data/checker'" [aclShowMode]="'display'"
+                    [routerLink]="['data/checker/list']">Contrôles de cohérence</button>
+
+          </div>
+        </div>
+      </li>
+      <li class="nav-item" [aclShow]="'/menu/logistics'" [aclShowMode]="'display'" *ngIf="user.id && bNavigationAllowed">
+        <div ngbDropdown class="d-inline-block">
+          <a class="nav-link btn" id="logistics-navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false" ngbDropdownToggle>
+            Logistics
+          </a>
+          <div ngbDropdownMenu aria-labelledby="logistics">
+            <button class="dropdown-item" id="logistics-scenario" [aclShow]="'/menu/logistics/scenario'" [aclShowMode]="'display'"
+                    [routerLink]="['logistics/scenario/list']">Scénarios</button>
+            <!--
+                    <button class="dropdown-item" id="logistics-trip" [aclShow]="'/menu/logistics/trip'" [aclShowMode]="'display'"
+                    [routerLink]="['logistics/route/crud-sandbox']">Tournées</button>
+            -->
+            <button class="dropdown-item" id="logistics-demands" [aclShow]="'/menu/logistics/demands'" [aclShowMode]="'display'"
+                    [routerLink]="['logistics/demand/list']">Demandes de transport</button>
+            <button class="dropdown-item" id="logistics-groups" [aclShow]="'/menu/logistics/groups'" [aclShowMode]="'display'"
+                    [routerLink]="['logistics/group/list']">Groupes de demandes</button>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item" [aclShow]="'/menu/optim'" [aclShowMode]="'display'" *ngIf="user.id && bNavigationAllowed">
+        <div ngbDropdown class="d-inline-block">
+          <a class="nav-link btn" id="optim-navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+             aria-expanded="false" ngbDropdownToggle>
+            Optim
+          </a>
+          <div ngbDropdownMenu aria-labelledby="optim">
+            <button class="dropdown-item" id="optim-list" [aclShow]="'/menu/optim/list'" [aclShowMode]="'display'"
+                    [routerLink]="['optim/list']">Optimisation</button>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item" [aclShow]="'/menu/dashboard'" [aclShowMode]="'display'" *ngIf="user.id && bNavigationAllowed">
+        <div ngbDropdown class="d-inline-block">
+          <a class="nav-link btn" id="dashboard-navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+             aria-expanded="false" ngbDropdownToggle>
+            Tableaux de bord
+          </a>
+          <div ngbDropdownMenu aria-labelledby="dashboard">
+            <button class="dropdown-item" id="dashboard-scenario" [aclShow]="'/menu/dashboard'" [aclShowMode]="'display'"
+                    [routerLink]="['dashboard/scenarios']">Scénarios</button>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div class="my-2 my-md-0" >
+      <button type="button" class="btn btn-link" disabled="true" *ngIf="user.id && bNavigationAllowed">Version {{appVersion}} </button> 
+      <button type="button" class="btn btn-link" role="button" *ngIf="user.id && bNavigationAllowed" [routerLink]="['data/user/crud/'+user.id]">{{user.firstname}} {{user.lastname}}</button>
+      <button type="button" class="btn" role="button" *ngIf="user.id && !bNavigationAllowed" >{{user.firstname}} {{user.lastname}}</button>
+      <button  class="btn btn-outline-secondary btn-sm my-2 my-sm-0"
+              (click)="authenticationService.logout()">
+        <fa-icon [icon]="faPowerOff"></fa-icon>
+      </button>
+    </div>
+  </div>
+</nav>

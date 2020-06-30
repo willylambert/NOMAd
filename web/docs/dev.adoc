@@ -1,0 +1,559 @@
+= Principes de développement
+
+Chaque objet (enregistrement dans une table) est identifié par un UUID. Il possède à minima les propriétés suivantes :
+
+* id : UUID de l'objet, aussi la clé primaire
+* code : code
+* label : libellé
+* rec_st : statut de l'enregistrement ('C', 'U' ou 'D') (Created, Updated, Deleted)
+
+= Audit Trail
+
+Chaque opération manuelle sur la base de données est tracée dans une table d'audit.
+
+* table_name : nom de la table
+* field_name : nom du champ
+* record_id
+* event_code : ('C', 'U' ou 'D') (Created, Updated, Deleted)
+* dt : timestamp de l'opération
+* user_id
+* value : nouvelle valeur
+
+Les enregistrements qui ne seront jamais modifiés sont exclus (par exemple : remonté de positions géographiques).
+
+= Ergonomie
+
+L'usage des boutons doit être réservé aux actions entrainant une modification des données en base.
+Les autres actions sont présentées sous la forme de liens.
+Les boutons d'actions d'ajout et de mise à jour des données sont de couleur verte (classe btn-success).
+Les boutons d'actions de suppression sont de couleur rouge (classe btn-danger).
+
+= Editeur de texte
+
+Les fichier doivent utiliser des tabulations equivalentes à 2 espaces.
+
+= Base de données
+
+Le schéma de la base est versionné.
+Nom de la base : oss.
+
+Les dates sont stockées sous la forme de timestamp exprimé en secondes depuis l'epoch.
+
+= Gestion des mots de passe
+
+Les mots de passe sont hashés & salés en base de données.
+Les fonctions `crypt` et `gen_salt` de l'extension pgcrypto sont utilisées.
+
+Pour générer la version cryptée du mot de passe on éxécute la requête SQL suivante :
+....
+crypt('mon_mot_de_passe',gen_salt('bf')::text)
+....
+
+Le 'Sel' généré par la fonction `gen_salt` n'est pas stocké.
+pour savoir si le mot de passe est le bon, on utilise la requête suivante :
+....
+SELECT crypt('mon_mot_de_passe', (SELECT passwd FROM user_main where id='id_de_mon_utilisateur') ) = (SELECT passwd FROM user_main where id='id_de_mon_utilisateur');
+....
+Cette requête retourne un booléen.
+
+= Session
+
+Les sessions sont stockées en base de données.
+Un UUID de session est créé, il est stocké dans le localStorage du navigateur, et passé à chaque requête rest.
+Cet UUID permet de récuperer dans la base les données de la session.
+
+= Logging
+
+Nous utilisons notre propre classe de Log `\OSS\LogWriter`.
+
+Les niveaux de log suivant doivent être utilisés :
+
+Notice:
+Log les requêtes qui modifient les données.
+Log les évenements qui modifient les données présentes dans la base de données.
+
+Info:
+Log toutes les requêtes REST.
+
+Debug:
+Log les appels aux fonctions.
+
+Par exemple, à chaque appel de fonction :
+
+....
+function my_func($param1,$param2){
+  $this->log()->debug(["method"=>__METHOD__,"data"=>[$param1,$param2]]);
+}
+....
+
+Par exemple, lors de l'ajout d'un véhicule :
+....
+  $this->log()->notice(["message"=>"Adding a new vehicle",method"=>__METHOD__,"data"=>$vehicle]);
+....
+
+Le paramètre "data" peut être de n'import quel type accepté par la fonction `json_encode`.
+Il est cependant préférable d'utiliser un tableau.
+
+= Gestion des dates
+
+Les dates sont exprimées en millisecondes (1 seconde = 1000 millisecondes) ecoulées depuis le 1er janvier 1970 à minuit GMT.
+Cependant, les dates sont stockées en secondes dans la base de données.
+Les opérations de conversion secondes <=> millisecondes sont à réaliser dans les classes DAO, de préférence directement dans les requêtes SQL.
+En base de données, les champs sont préfixées \_dt.
+
+= Gestion des heures
+
+Les heures sont exprimés en millisecondes depuis minuit.
+En base de données, les champs sont préfixées \_hr.
+
+= Requêtes REST
+
+== Token de session
+
+Les sessions sont créées et stockées en base.
+L'identifiant de session est retournée au client, qui le stocke dans son localStorage.
+Ensuite, lors de chaque appel REST, un hash est envoyé :
+....
+digest = base64encode(hmacsha256(user_session_id,"GET+/rest/vehicle/list+1536915650000"))
+....
+
+le hash est envoyé dans le header `Authentication` de chaque requête :
+....
+GET /rest/vehicle/list HTTP/1.1
+Host: demo.odo-via.com
+Authentication: hmac demo_user:[digest]
+Date: 1536915650000
+....
+Le serveur connait l'utilisateur et la valeur `Date` il peut récuperer en base son id de session, et vérifier qu'il obtient le même digest que celui envoyé.
+La date permet de générer un digest qui n'est valable que pendant un court laps de temps.
+
+== Valeurs retournée
+
+Toutes les requetes retournent le même objet json qui a la structure suivante :
+....
+{
+ "result" : <RESULTAT>,
+ "data" : {"id":<Identifiant de l'enregistrement ajouté ou mis à jour>}
+}
+....
+
+Toutes les valeurs retournées doivent être decodées (pas de valeur json envoyée sous forme de "string")
+
+== Opérations CRUD
+
+Chaque objet (Véhicule, Utilisateur, Site, ...) dispose à minima des services REST suivants:
+
+* GET  /<objet>/list
+* GET  /<objet>/get/<id de l'objet>
+* POST /<objet>/save avec en données POST l'objet à inserer ou à mettre à jour
+
+=== Requête `save`
+
+Toutes les requêtes `save` retourne le même objet :
+....
+{
+ "result" : <RESULTAT>,
+ "data" : {"id":<Identifiant de l'enregistrement ajouté ou mis à jour>}
+}
+....
+
+result prend la valeur `1` en cas de succès, ou `2` si un doublon a été trouvé (violation de la clé d'unicité).
+
+= Tests
+
+== Démarrer un environnement de développement
+
+Se placer dans le répertoire racine
+
+....
+./build.bat
+docker-compose up -d webapp
+....
+
+Et à partir du répertoire `/src/webapp` :
+
+....
+ng-serve
+....
+
+== Démarrer un environnement de développement pour la partie optimisation
+
+Se référer à la documentation sur le serveur d'optimisation.
+
+=== Configuration pour contacter le serveur d'optimisation
+
+Afin de pouvoir contacter le serveur d'optimisation depuis le serveur web, il faut éditer le fichier `config.inc.php` et redéfinir les variables suivantes
+
+....
+$gTblConfig['OPTIM']['HOST_URL'] = '<adresse IP de la machine hôte>';
+$gTblConfig['OPTIM']['PORT'] = '<numéro de port défini pour le container nomadrun>';
+....
+
+
+== Tests d'intégration
+
+Cypress est utilisé pour les tests d'intégration.
+Pour exécuter l'ensemble des tests, il faut :
+
+* Démarrer l'application soit par le container webapp_prod soit par la commande `ng-serve`
+* Lancer cypress : `npm run cypress:open`
+
+== Tests d'intégration (alternative)
+
+Pour plus d'info sur Cypress, voir https://docs.cypress.io/guides/getting-started.
+On peut également lancer cypress avec la commande suivante :
+....
+./node_modules/.bin/cypress open
+....
+depuis le répertoire src/webapp contenant le fichier cypress.json
+
+= Mise en production / préproduction
+
+Pré-requis : installer aws cli et configurer les clés d'accès utilisateurs.
+
+== Génération d'une image pour le serveur web
+
+L'image contient le code source prêt à l'emploi pour démarrer les containers web et optim, en prod ou en preprod
+
+=== Compilation du code
+
+En local, se placer dans le répertoire racine (contenant le fichier build.bat).
+
+Sous windows :
+
+....
+./build.bat
+....
+
+Ou sous Unix :
+
+....
+./build.sh
+....
+
+Ce script va générer des fichiers dans le répertoire containers/webapp_prod/build (le code situé dans ce répertoire n'est pas versionné, donc pas besoin de commit).
+
+=== Remarque (sous Windows)
+
+Il semble que le script `build.bat` ne s'exécute pas complétement : si c'est le cas on peut le jouer ligne par ligne.
+
+=== Génération d'une image basée sur le code compilé
+
+Ensuite, on va générer une image et l'envoyer sur AWS.
+A la première connexion à AWS :
+
+....
+aws configure
+....
+
+Executer le retour de la ligne de commande suivante :
+
+....
+aws ecr get-login --no-include-email --region eu-west-3
+....
+
+Le message `Login Succeeded` doit apparaitre. Puis on prépare l'image depuis dans le répertoire containers/webapp_prod avec les commandes suivantes :
+
+....
+cd containers/webapp_prod
+docker build -t nomad .
+docker tag nomad:latest 359385410439.dkr.ecr.eu-west-3.amazonaws.com/nomad:latest
+docker push 359385410439.dkr.ecr.eu-west-3.amazonaws.com/nomad:latest
+....
+
+== Génération d'une image pour le serveur d'optimisation
+
+Se référer à la documentation du serveur d'optimisation
+
+== Démarrage des serveurs (web et optimisation)
+
+Pour le premier démarrage, s'assurer de la présence d'un répertoire `/opt/nomad/config` contenant les fichiers de configuration.
+
+Sur le serveur web de production :
+
+....
+$(aws ecr get-login --no-include-email --region eu-west-3)
+docker pull 359385410439.dkr.ecr.eu-west-3.amazonaws.com/nomad:latest
+docker ps
+....
+
+Sur le serveur d'optimisation de production :
+
+....
+$(aws ecr get-login --no-include-email --region eu-west-3)
+docker pull 359385410439.dkr.ecr.eu-west-3.amazonaws.com/nomad-optim:latest
+docker ps
+....
+
+Sur le serveur de pré-production, il faut rajouter des sudo devant chaque commande :
+
+....
+sudo $(aws ecr get-login --no-include-email --region eu-west-3)
+sudo docker pull 359385410439.dkr.ecr.eu-west-3.amazonaws.com/nomad:latest
+sudo docker pull 359385410439.dkr.ecr.eu-west-3.amazonaws.com/nomad-optim:latest
+sudo docker ps
+....
+
+Récupérer les IDs des containers
+
+* En production, serveur web :
+....
+docker stop <ID INSTANCE NOMAD WEB>
+....
+
+* En production, serveur d'optimisation :
+....
+docker stop <ID INSTANCE NOMAD OPTIM>
+....
+
+* En pré-production c'est presque la même commande, mais avec les sudo :
+....
+sudo docker stop <ID INSTANCE NOMAD WEB>
+sudo docker stop <ID INSTANCE NOMAD OPTIM>
+....
+
+dans le répertoire /opt/nomad :
+
+* En production :
+
+....
+./start.sh
+....
+
+* En pré-production c'est presque la même commande, sans les certificats :
+
+....
+sudo docker run -d --rm        -p 5014:80   --name oss-nomad-optim_1 359385410439.dkr.ecr.eu-west-3.amazonaws.com/nomad-optim
+sudo docker run -d --rm        -p 80:80        -p 443:443        -v=/opt/nomad/config:/var/www/config         --link oss-nomad-optim_1:optim      359385410439.dkr.ecr.eu-west-3.amazonaws.com/nomad
+....
+
+= Accès à la base de données de production
+
+Il faut tout d'abord ouvrir un tunnel ssh :
+Dans Putty, dans les paramètres SSH->Tunnels ajouter une redirection avec les paramètres suivants :
+Add new forwarded port :
+Source port : 5432
+Destination : oss-nomad.cp4ili0kifc2.eu-west-3.rds.amazonaws.com:5432
+
+Ensuite avec PGADMIN se connecter au serveur de production en utilisant les paramètres suivants :
+* Serveur : localhost
+* Port : 5432
+* Utilisateur : <NOM_UTILSATEUR>
+* Mot de passe : <MOT DE PASSE>
+
+
+= Gestion d'accès aux menus
+
+* On garde la même structure de menus quelque soit le profil de l'utilisateur
+* Certains sous-menus seront masqués si l'utilisateur n'a pas les droits d'accès à ces sous-menus
+* Un menu dont tous les sous-menus sont masqués sera également masqué
+* On crée un droit d'accès par menu et par sous-menu
+* Les boutons de raccourcis présents sur la page d'accueil sont également soumis à des droits d'accès
+
+= Gestion d'accès aux données
+
+== Principe général
+
+Chaque utilisateur de l'application a accès à un sous-ensemble des données et par conséquent ne doit pas avoir accès au sous-ensemble restant des données. Voici des règles qui permettent de déterminer quelles sont les données auxquelles un utilisateur a accès :
+
+*  Dans la base de données, un utilisateur est représenté par une ligne de la table user_main
+*  Dans la base de données, un site est représenté par une ligne dans la table site_main
+*  Un utilisateur a accès à un site quand il existe dans la table user_mainsite une ligne correspondante avec rec_st différent de 'D'
+*  On définit un type pour l'utilisateur via la colonne type_th de la table user_main ('client' pour les patients et leur famille, 'établissement' pour les salariés d'IME, 'administrateur' pour les utilisateurs ayant accès aux données sans restriction)
+*  Si un utilisateur a le droit d'accès à un site, il peut effectuer des actions sur ce site et les objets liés à ce site dans la limite des droits dont il dispose. Par exemple si l'utilisateur a accès à un site et dispose du droit 'poi/update' alors cet utilisateur peut modifier tous les POIs rattachés au site
+
+== Détails
+
+Si un utilisateur a accès à un site (table site_main), il a accès à :
+
+*  tous les POIs et AOIs (tables site_poi et site_aoi)
+*  toutes les demandes de transport dont il a accès aux POIs de départ et d'arrivée (table transport_demand)
+*  toutes les routes dont il a accès à tous les POIs (table transport_route)
+
+== Cas de l'utilisateur de type 'client'
+
+* L'accès à un site de type 'domicile' (HOME) donne accès à l'usager (table hr_main) lié à ce site
+* L'accès à un site de type 'établissement' (INSTITUTION) ne donne pas accès aux usagers lié à ce site
+
+== Cas de l'utilisateur de type 'établissement'
+
+* L'accès à un site de type 'domicile' (HOME) donne accès à l'usager (table hr_main) lié à ce site
+* L'accès à un site de type 'établissement' (INSTITUTION) donne l'accès à tous les usagers liés à ce site et à tous les sites de type 'domicile' (table site_main) liés à ces usagers
+
+== Autres données
+
+L'accès aux données concernant les véhicules et catégories de véhicules n'est pas soumis à un contrôle.
+
+= API mobile
+
+Voici la description de l'API REST pour la communication entre l'interface mobile Nomad et le serveur web Nomad.
+
+== Récupérer une liste de tournées
+
+* Service : /rest/hr/routes?params
+* Méthode : GET
+* Description : Récupère la liste des tournées affectées à un chauffeur pour une journée donnée
+* Entrée :
+** hr_main_id (string) : identifiant du chauffeur (relatif à la table hr_main)
+** year (integer) année sur 4 caractères
+** month (integer) mois sur 1 ou 2 caractères, de 1 à 12
+** day (integer) jour sur 1 ou 2 caractères, de 1 à 31
+* Sortie : tableau de tournées, chaque tournée avec les champs suivants : 
+** id (string) : identifiant de la tournée
+** label (string) : libellé de la tournée
+** date_dt (integer) : date de la tournée (exprimé en ms à minuit server time)
+** timeslot_th (string) : id du créenau de la tournée dans la semaine
+** timeslot_code (string) : code du créenau de la tournée dans la semaine
+** vehicle_category_id (string) : id du type de véhicule affecté à la tournée
+** vehicle_category_code (string) : code du type de véhicule affecté à la tournée
+** vehicle_category_label (string) : libellé du type de véhicule affecté à la tournée
+** vehicle_category_daily_cost (float) : coût par jour du type de véhicule affecté à la tournée
+** vehicle_category_hourly_cost (float) : coût par heure du type de véhicule affecté à la tournée
+** vehicle_category_kilometric_cost (float) : coût par kilomètre du type de véhicule affecté à la tournée
+** vehicle_category_co2_quantity (float) : émissions CO2 en g par kilomètre du type de véhicule affecté à la tournée
+** start_hr (integer) heure planifiée pour le début de la tournée en ms
+** end_hr (integer) heure planifiée pour la fin de la tournée en ms
+** distance (integer) distance planifiée pour la tournée en m
+** duration (integer) durée planifiée pour la tournée en s
+** site_poi_id_start (string) id du point de départ de la tournée
+** site_poi_id_end (string) id du point d'arrivée de la tournée
+** rec_st (string) record state de la tournée
+** scenario_main_id (string) id du scenario auquel la tournée est affectée
+** optim_main_id (string) id de l'instance d'optimisation dont est issue la tournée
+** driver (array) informations sur le chauffeur affecté à la tournée
+*** id (string) identifiant du chauffeur (fait référence à la table hr_main
+*** firstname (string) prénom du chauffeur
+*** lastname (string) nom du chauffeur
+** start_driver_dt (integer) timestamp de départ déclaré par le chauffeur en ms
+** end_driver_dt (integer) timestamp d'arrivée déclaré par le chauffeur en ms
+** POIs (array) liste des points de la tournée (classée par orderroute)
+*** id (string) identifiant du point dans la tournée (référence à la table transport_routesitepoi)
+*** transport_demand_id (string) identifiant de la demande associée au point
+*** transport_demand_institution_id (string) identifiant de l'établissement associé à la demande
+*** transport_demand_institution_label (string) libellé de l'établissement associé à la demande
+*** transport_demand_institution_poi_id (string) libellé du point de l'établissement associé à la demande
+*** home_to_institution_acceptable_duration (integer) durée de parcours prévue jusqu'à l'établissement en ms
+*** institution_to_home_acceptable_duration (integer) durée de parcours prévue depuis l'établissement en ms
+*** site_main_id (string) identifiant du site rattaché au POI
+*** hr_id (string) identifiant de l'usager rattaché au POI
+*** hr_lastname (string) nom de l'usager rattaché au POI
+*** hr_firstname (string) prénom de l'usager rattaché au POI
+*** hr_gender_label (string) genre de l'usager rattaché au POI
+*** hr_birthday_dt (integer) date de naissance de l'usager rattaché au POI
+*** hr_crisis_risk (string) risque de crise de l'usager rattaché au POI
+*** hr_specific_arrangement (string) aménagements spécifiques pour l'usager rattaché au POI
+*** hr_pickup_duration (integer) durée de montée pour l'usager rattaché au POI en ms
+*** hr_delivery_duration (integer) durée de descente pour l'usager rattaché au POI en ms
+*** site_type_code (string) type du site associé au POI (HOME ou INSTITUTION)
+*** service_duration (integer) durée de service associée au POI en ms
+*** waiting_duration (integer) durée d'attente planifiée avant le service du POI en ms
+*** transport_mode_code (string) code du mode de transport de l'usager rattaché au POI (FAUTEUIL ou MARCHANT)
+*** label (string) libellé du site lié au POI
+*** addr1 (string) adresse du POI
+*** addr2 (string) complément d'adresse du POI
+*** postcode (string) code postal du POI
+*** city (string) ville du POI
+*** geom (JSON) géometrie de type point associée au POI (format géométrie standard OGC)
+*** institutions (array) liste des établissements auquel l'usager rattaché à la tournée est inscrit
+*** opening_hours (array) horaires d'ouverture de l'établissement si le POI est de type INSTITUTION
+*** arrival_dt (integer) timestamp d'arrivée prévue sur le POI en ms
+*** notified_yn (string) Y ou N : l'usager a t-il été notifiée de l'arrivée prochaine du véhicule ?
+*** visited_yn (string) Y ou N : l'usager a t-il été pris en charge ?
+*** visited_dt (integer) timestamp (ms) auquel l'usager a été pris en charge (heure définie sur le terminal mobile)
+*** visit_missing_yn (string) Y ou N : l'usager était-il absent lors du passage du véhicule sur le POI ?
+*** visit_comments (string) : commentaires libres sur le POI
+
+
+== Insérer une position du véhicule effectuant une tournée
+
+* Service : /rest/route/insert-location
+* Méthode : POST
+* Description : Insère une position d'un véhicule effectuant une tournée
+* Entrée :
+** transport_route_id (string) identifiant de la tournée
+** user_main_id (string) id de l'utilisateur lié au chauffeur (relatif à la table user_main)
+** next_pois (array) : liste des prochains points à visiter pendant la tournée avec les champs suivants :
+*** site_poi_id (string) id du POI à visiter (relatif à la table site_poi)
+*** duration_to_poi (integer) durée estimée en ms avant d'atteindre le POI
+*** orderroute (integer) ordre du POI au sein de la tournée
+** dt (integer) date courant sur l'appareil mobile en ms
+** lng (float) longitude en degrés
+** lat (float) latitude en degrés
+** h (integer) heading en degrés
+** s (integer) vitesse en m/s
+** e (json) évènements liés au GPS
+** a (integer) indice d'exactitude du GPS
+* Sortie : objet avec les champs suivants :
+** location_inserted (boolean) : la position GPS a t-elle été insérée en base de données ?
+** arrival_dt_updated (boolean) : les dates estimées d'arrivée sur les prochains POIs ont-elles été insérées en BD ?
+** next_pois (array) : reprise du tableau d'entrée, avec les nouveaux champs suivants :
+***	arrival_dt (integer) : heure d'arrivée estimée sur le POI en ms
+***	hr_main_id (string) : id de l'usager concerné (relatif à la table hr_main, null si le POI est un établissement)
+***	id (string) : id du point concerné (relatif à la table transport_routesitepoi)
+***	notice_delay (integer) :durée en ms entre la notification sms et l'arrivée estimée du véhicule (possiblement null)
+***	notification_should_be_sent (boolean) : une notification par SMS est-elle censée être envoyée ?
+***	notification_succeeded (boolean) : une notification par SMS est-elle partie vers l'usager ?
+***	notified_yn (string) : Y ou N, l'usager a t-il déjà été notifié par SMS ?
+***	notify_yn (string) : Y ou N, l'usager a t-il demandé à être notifié par SMS ?
+***	phonenumber (string) : the numéro de téléphone de l'usager
+***	visited_yn (string) : Y ou N, l'usager a t-il déjà été pris en charge ?
+*** visited_dt (integer) timestamp (ms) auquel l'usager a été pris en charge
+
+=== Remarques
+
+* Si le paramètre de sortie location_inserted vaut false, les autres paramètres de sortie son absents
+* Pour un POI donné, si me paramètre de sortie notification_should_be_sent vaut false, le paramètre notification_succeeded est absent
+* L'appel à cette fonction peut déclencher l'envoi de notifications par SMS vers les usagers.
+
+=== Evolutions possibles
+
+* le paramètre d'entrée user_main_id est inutilisé actuellement : à supprimer
+* Dans le paramètrse d'entrée, pour chaque POI, on pourrait remplacer les paramètres d'entrée site_poi_id et orderroute par un paramètre id faisant référence à la table transport_routesitepoi, auquel cas le paramètre d'entrée transport_route_id deviendrait inutilisé
+
+== Notifier le début d'une tournée
+
+* Service : /rest/route/start
+* Méthode : POST
+* Description : Notifier le début d'une tournée
+* Entrée : transport_route_id (string) identifiant de tournée
+* Sortie : boolean : la notification a t-elle réussi ?
+
+=== Remarque
+
+L'appel à ce service réinitialise toutes les données concernant la progression de la tournée.
+
+== Notifier la fin d'une tournée
+
+* Service : /rest/route/end
+* Méthode : POST
+* Description : Notifier la fin d'une tournée
+* Entrée : transport_route_id (string) identifiant de tournée
+* Sortie : boolean : la notification a t-elle réussi ?
+
+== Notifier la visite d'un point d'une tournée
+
+* Service : /rest/route/visit
+* Méthode : POST
+* Description : Notifier la visite d'un point d'une tournée
+* Entrée :
+** id (string) : id du point (fait référence à la table transport_routesitepoi)
+** missing (boolean) : l'usager à prendre en charge est-il absent (champ optionnel)
+** comments (comments) : commentaires libres (champ optionnel)
+* Sortie : boolean : la notification a t-elle réussi ?
+
+== Calculer un itinéraire
+
+* Service : /rest/route/directions/{coordinates}?params
+* Méthode : GET
+* Description : Appel au routeur pour calculer un itinéraire
+* Entrée :
+** coordinates : liste de coordonnées au format lon,lat;...;lon,lat
+** departureLocalTime (integer) heure de départ locale en millisecondes (champ optionnel)
+** arrivalLocalTime (integer) heure d'arrivée locale en millisecondes (champ optionnel)
+** timeslotId (string) id de la demi-journée concernée (champ optionnel)
+* Sortie : objet : route au format OSRM
+
+=== Remarques
+
+* Si les deux paramètres departureLocalTime et arrivalLocalTime sont omis, le routeur OSRM est appelé, sinon c'est le routeur Tomtom qui est appelé
+* Si les deux paramètres departureLocalTime et arrivalLocalTime sont présents, le paramètre arrivalLocalTime est ignoré

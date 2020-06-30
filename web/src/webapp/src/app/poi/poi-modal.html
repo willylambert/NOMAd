@@ -1,0 +1,162 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<!-- New Role Modal -->
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title" *ngIf="!currentRecord.id">Nouveau POI</h4>
+  <h4 class="modal-title" id="modal-basic-title" *ngIf="currentRecord.id">POI {{currentRecord.label}}</h4>
+  <span class='pull-right' *ngIf="editMode!='view'">
+    <button type="button" class="btn btn-success btn-sm" (click)="saveModal()" [disabled]="!poiForm.form.valid">Valider</button>
+    <button *ngIf="currentRecord.id" type="button" class="btn btn-danger btn-sm" (click)="deletePOI()">Supprimer</button>
+    <button *ngIf="!currentRecord.id" type="button" class="btn btn-default btn-sm" (click)="deletePOI()">
+      <span *ngIf="currentRecord.selected">Supprimer</span>
+      <span *ngIf="!currentRecord.selected">Annuler</span>
+    </button>
+  </span>
+</div>
+<div class="modal-body">
+  <form #poiForm="ngForm">
+    <div class="form-group row">
+      <label for="label" class="col-lg-4 col-form-label">Description </label>
+      <div class="col-lg-8">
+        <input type="text"
+               [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+               name="label" [readonly]="editMode=='view'"
+               [(ngModel)]="currentRecord.label" [required]="editMode!='view'"/>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="addr1" class="col-lg-4 col-form-label">Adresse </label>
+      <div class="col-lg-8">
+        <input type="text"
+               [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+               name="addr1" [readonly]="editMode=='view'"
+               [(ngModel)]="currentRecord.addr1" [required]="editMode!='view'"/>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="addr2" class="col-lg-4 col-form-label">Complément</label>
+      <div class="col-lg-8">
+        <input type="text"
+               [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+               name="addr2" [readonly]="editMode=='view'"
+               [(ngModel)]="currentRecord.addr2"/>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="postcode" class="col-lg-4 col-form-label">Code Postal </label>
+      <div class="col-lg-8">
+        <input type="text"
+               [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+               name="postcode" [readonly]="editMode=='view'"
+               [(ngModel)]="currentRecord.postcode" [required]="editMode!='view'" pattern="[0-9]{4,5}"/>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="city" class="col-lg-4 col-form-label">Ville </label>
+      <div class="col-lg-8">
+        <input type="text"
+               [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+               name="city" [readonly]="editMode=='view'"
+               [(ngModel)]="currentRecord.city" [required]="editMode!='view'"/>
+      </div>
+    </div>
+    <!-- Service duration -->
+    <div class="form-group row">
+      <label for="serviceDuration" class="col-lg-4 col-form-label">Temps de service </label>
+      <div class="col-lg-8">
+        <div class="input-group" *ngIf="editMode!='view'">
+          <input type="text"
+                 class='form-control'
+                 name="serviceDuration" [(ngModel)]="serviceDuration"
+                 pattern="(0|[1-9]+[0-9]*)"
+                 [required]="true"/>
+          <div class="input-group-append">
+            <span class="input-group-text">minutes</span>
+          </div>
+        </div>
+        <div class="form-control-plaintext" *ngIf="editMode=='view' && serviceDuration!=undefined">
+          {{serviceDuration}} minute<span *ngIf="serviceDuration!=1">s</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acceptable travel duration -->
+    <div class="card" *ngIf="institutions && acceptableDurationsInMin">
+      <div class="card-body">
+        <h5 class="card-title">Durées de trajet acceptables</h5>
+      <table id="acceptable-durations-table" class="table table-sm table-striped table-hover" *ngIf="acceptableDurationsInMin.length>0">
+        <thead>
+          <tr>
+            <th>Site</th>
+            <th>POI</th>
+            <th>Aller</th>
+            <th>Retour</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let duration of acceptableDurationsInMin; let i = index" [attr.data-index]="i">
+            <td >
+              {{duration.institutionLabel}}
+            </td>
+            <td >
+              {{duration.institutionPOILabel}}
+            </td>
+            <td >
+              <div class="input-group" *ngIf="editMode!='view'">
+                <input type="text"
+                       class='form-control acceptable-duration-to-institution'
+                       name="to_{{i}}" [(ngModel)]="duration.acceptableDurationToInstitution"
+                       pattern="(0|[1-9]+[0-9]*)"
+                       [required]="true"/>
+                <div class="input-group-append">
+                  <span class="input-group-text">min.</span>
+                </div>
+              </div>
+              <div class="form-control-plaintext"
+                   *ngIf="editMode=='view' && duration.acceptableDurationToInstitution!=undefined">
+                {{duration.acceptableDurationToInstitution}} min.
+              </div>
+            </td>
+            <td >
+              <div class="input-group" *ngIf="editMode!='view'">
+                <input type="text"
+                       class='form-control acceptable-duration-from-institution'
+                       name="from_{{i}}" [(ngModel)]="duration.acceptableDurationFromInstitution"
+                       pattern="(0|[1-9]+[0-9]*)"
+                       [required]="true"/>
+                <div class="input-group-append">
+                  <span class="input-group-text">min.</span>
+                </div>
+              </div>
+              <div class="form-control-plaintext"
+                   *ngIf="editMode=='view' && duration.acceptableDurationFromInstitution!=undefined">
+                {{duration.acceptableDurationFromInstitution}} min.
+              </div>
+            </td>
+           </tr>
+        </tbody>
+      </table>
+    </div></div>
+  </form>
+</div>

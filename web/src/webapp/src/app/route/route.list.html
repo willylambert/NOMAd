@@ -1,0 +1,389 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="card" *ngFor="let route of routes.list ; let i = index "
+              [attr.data-index]="i"
+              [ngStyle]="{'border-color':(route.routeId==routes.currentRouteId?route.color:'')}"
+              (click)="changeRoute(route)" [hidden]="!shouldBeDisplayed(route)">
+
+  <!-- Route Header-->
+  <div class='card-header'>
+    <!-- Route Header first row-->
+    <div class='row align-items-center'>
+      <div class='col-6'>
+        <button class="btn btn-light">
+          <fa-icon [icon]="faRoute" class="fa-fw" [ngStyle]="{'color':route.color}"
+                   size="2x" (click)="toggleRouteDisplay($event,route,false)" *ngIf="route.bDisplay"></fa-icon>
+          <fa-icon [icon]="faRoute" class="fa-fw" [ngStyle]="{'color':'lightgrey'}"
+                   size="2x" (click)="toggleRouteDisplay($event,route,true)" *ngIf="!route.bDisplay"></fa-icon>
+        </button>
+        <span *ngIf="!route.label">Tournée {{i+1}}</span>
+        <span *ngIf="route.label">{{route.label}}</span>
+        <!-- For each category and each level, display an icon if necessary (limited to one icon per level/category-->
+        <ng-container *ngIf="route.simplifiedErrors">
+          <ng-container *ngFor="let level_code of ['ERROR','WARNING','INFO']">
+            <ng-container *ngFor="let scope_code of ['VEHICLE_CAT','HR','TIME']">
+              <span *ngFor="let error of route.simplifiedErrors | search:'scope_code':scope_code | search:'level_code':level_code ; let j = index">
+                <button class='btn btn-link' *ngIf="j==0" (click)="datacheckerDetails($event,route.errors,error.scope_th,error.level_th)">
+                  <fa-layers >
+                    <fa-icon [icon]="error.scope_code=='VEHICLE_CAT'?faShuttleVan:error.scope_code=='TIME'?faClock:faWheelchair"
+                             class="fa-fw"
+                             [ngStyle]="{'color':error.level_code=='ERROR'?'red':error.level_code=='WARNING'?'orange':'lightblue'}">
+                    </fa-icon>
+                  </fa-layers>
+                </button>
+              </span>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </div>
+      <!-- Route crud buttons, visible only when route is selected -->
+      <div class='col' [hidden]="route.routeId!=routes.currentRouteId || !route.duration || !route.distance">
+        <div class='float-right'>
+          <button class="btn btn-sm" [aclShow]="'/route/save'" [aclShowMode]="'display'"
+                  [aclShowDisplay]="'inline'"
+                  (click)="saveRoute($event,route)" [disabled]="!route.bChanged">
+            <fa-icon [icon]="faSave"></fa-icon>
+          </button>
+          <button class="btn btn-sm" [aclShow]="'/route/save'" [aclShowMode]="'display'"
+                  [aclShowDisplay]="'inline'"
+                  (click)="editRoute($event,route)">
+            <fa-icon [icon]="faPen"></fa-icon>
+          </button>
+          <button class="btn btn-sm" [aclShow]="'/route/mark-as-removed'" 
+                  [aclShowMode]="'display'" [aclShowDisplay]="'inline'"
+                  (click)="deleteRoute($event,route)">
+            <fa-icon [icon]="faTimes"></fa-icon>
+          </button>
+        </div>
+      </div>
+      <!-- When route closed -->
+      <div class='col-6' [hidden]="route.routeId==routes.currentRouteId">
+        <div class="row">
+          <div class="col">
+            <div class='float-right'>
+              <span *ngIf="route.duration && route.distance">
+                <fa-icon [icon]="faRoad"></fa-icon>
+                <span>{{route.duration*1000 | duration}}</span>
+                <span>&#160;</span>
+                <em>{{route.distance | distancePrecise}}</em>
+                <fa-icon [icon]="faClock" ></fa-icon>
+                <span>{{(route.duration*1000 + route.waitingDuration)| duration}}</span>
+              </span>
+              <fa-layers>
+                <fa-icon [icon]="faWheelchair" class="fa-fw"></fa-icon>
+                <fa-layers-counter
+                  content="{{route.POIs | count:'transport_mode_code':'FAUTEUIL'}}"> </fa-layers-counter>
+              </fa-layers>
+              <fa-layers>
+                <fa-icon [icon]="faChild" class="fa-fw"></fa-icon>
+                <fa-layers-counter
+                  content="{{route.POIs | count:'transport_mode_code':'MARCHANT'}}"> </fa-layers-counter>
+              </fa-layers>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class='float-right'>
+              <span *ngIf="route.cost!=undefined">
+                <fa-icon [icon]="faEuroSign" ></fa-icon> 
+                <em >{{route.cost | cost}}</em>
+              </span>
+              <span *ngIf="route.co2!=undefined">
+                <fa-icon [icon]="faLeaf" ></fa-icon> 
+                <em >{{route.co2/1000 | cost}}kg</em>
+              </span>
+              <span *ngIf="route.vehicleCategory && route.vehicleCategory.label">
+                <fa-icon [icon]="faShuttleVan"></fa-icon>
+                <span>{{route.vehicleCategory.label}}</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Route Header second row (visible only when route is selected) -->
+    <div class='row' [hidden]="route.routeId!=routes.currentRouteId">
+      <div class='col'>
+        <div class="float-right">
+          <span *ngIf="route.duration && route.distance">
+            <fa-icon [icon]="faRoad"></fa-icon>
+            {{route.duration*1000 | duration}}
+            &#160;
+            <em>{{route.distance | distancePrecise}}</em>
+            &#160;
+            <fa-icon [icon]="faClock" ></fa-icon>
+            {{(route.duration*1000 + route.waitingDuration)| duration}}
+            <span *ngIf="route.cost!=undefined">
+              &#160;
+              <fa-icon [icon]="faEuroSign" ></fa-icon> 
+              <em >{{route.cost | cost}}&#8364;</em>
+            </span>
+            <span *ngIf="route.co2!=undefined">
+              &#160;
+              <fa-icon [icon]="faLeaf" ></fa-icon> 
+              <em >{{route.co2/1000 | cost}}kg</em>
+            </span>   
+          </span>
+          <span *ngIf="route.vehicleCategory && route.vehicleCategory.label">
+            &#160;
+            <fa-icon [icon]="faShuttleVan"></fa-icon>
+            {{route.vehicleCategory.label}}
+          </span>
+          &#160;
+          <fa-layers>
+            <fa-icon [icon]="faWheelchair" class="fa-fw"></fa-icon>
+            <fa-layers-counter
+              content="{{route.POIs | count:'transport_mode_code':'FAUTEUIL'}}"> </fa-layers-counter>
+          </fa-layers>
+          &#160;
+          <fa-layers>
+            <fa-icon [icon]="faChild" class="fa-fw"></fa-icon>
+            <fa-layers-counter
+              content="{{route.POIs | count:'transport_mode_code':'MARCHANT'}}"> </fa-layers-counter>
+          </fa-layers>
+          <span *ngIf="route.bOverload">
+            <fa-icon [icon]="faWeightHanging" class="fa-fw"></fa-icon><small class="badge badge-danger">Surcharge</small>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Route body (visible only when the route is selected) -->
+  <div class="card-body" [hidden]="route.routeId!=routes.currentRouteId"
+       cdkDropList (cdkDropListDropped)="onDropEvent($event,route)">
+    <div *ngFor="let POI of route.POIs ; let j = index" [attr.data-index]="j" class="container grab" cdkDrag>
+      <!-- The current step presentation -->
+      <div class="row route-step"
+           ng-class="{'route-step-institution':POI.site_type_code=='INSTITUTION'||POI.site_type_code=='TRANSPORTER','route-step-home':POI.site_type_code=='HOME'}">
+        <div class="col-md-2 route-step-marker">
+          <span *ngIf="POI.routeInfo && POI.routeInfo.startTime" class="route-step-time align-middle">
+            <button class="btn btn-link" (click)="setTargetDt(POI,route)">
+              <!-- automatically defined target dt -->
+              <strong *ngIf="POI.routeInfo.startTime*1000==POI.target_hr">{{POI.target_hr | utcTime}}</strong>
+              <!-- manually defined target dt -->
+              <strong *ngIf="POI.routeInfo.startTime*1000!=POI.target_hr"><em>{{POI.target_hr | utcTime}}</em></strong>
+            </button>
+          </span>
+          <fa-layers>
+            <fa-icon [icon]="faMapMarker" class="fa-fw"
+              [ngStyle]="{'color':(POI.site_type_code=='TRANSPORTER'?'#e9dfc2':getColor(POI))}"
+              size="2x"></fa-icon>
+            <fa-layers-text content="{{j+1}}" style="color: white;font-weight: bold"
+              transform="right-5 down-3"></fa-layers-text>
+          </fa-layers>
+        </div>
+        <div class="col-md-10">
+          <div class="container">
+            <!-- First Row : Name and City -->
+            <div class="row">
+              <div class="col-md-8 px-0">
+                <div class="step-label">
+                  <span *ngIf="POI.site_type_code=='HOME'">
+                    <span *ngIf="POI.transport_mode_code=='FAUTEUIL'">
+                      <fa-icon [icon]="faWheelchair"></fa-icon>
+                    </span>
+                    <span *ngIf="POI.transport_mode_code=='MARCHANT'">
+                      <fa-icon [icon]="faChild"></fa-icon>
+                    </span>
+                    <span>{{POI.hr_firstname}} {{POI.hr_lastname}}</span>
+                  </span>
+                  <span *ngIf="POI.site_type_code=='INSTITUTION'">
+                    <fa-icon [icon]="faHospital"></fa-icon>
+                    {{POI.label}}                    
+                  </span>
+                  <span *ngIf="POI.site_type_code=='TRANSPORTER'">
+                    <fa-icon [icon]="faShuttleVan"></fa-icon>
+                    {{POI.label}}                    
+                  </span>
+                  <!-- For each category and each level, display an icon if necessary (limited to one icon per level/category-->
+                  <ng-container *ngIf="route.errors" >
+                    <ng-container *ngFor="let level_code of ['ERROR','WARNING','INFO']">
+                      <ng-container *ngFor="let scope_code of ['VEHICLE_CAT','HR','TIME']">
+                        <span *ngFor="let error of route.errors | search:'scope_code':scope_code | search:'level_code':level_code | search:'site_poi_id':POI.id; let j = index">
+                          <button class='btn btn-link' *ngIf="j==0" (click)="datacheckerDetailsOnPOI($event,POI.id,route.errors,error.scope_th,error.level_th)">
+                            <fa-layers >
+                              <fa-icon [icon]="error.scope_code=='VEHICLE_CAT'?faShuttleVan:error.scope_code=='TIME'?faClock:faWheelchair"
+                                       class="fa-fw"
+                                       [ngStyle]="{'color':error.level_code=='ERROR'?'red':error.level_code=='WARNING'?'orange':'lightblue'}">
+                              </fa-icon>
+                            </fa-layers>
+                          </button>
+                        </span>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>                  
+                </div>
+              </div>
+              <div class="col-md-2">
+                <small class="step-label">{{POI.city}}</small>
+              </div>
+              <div class="col-md-2 step-actions">
+                <span class="float-right" [aclShow]="'/route/save'">
+                  <span *ngIf="POI.site_type_code=='HOME' || POI.site_type_code=='TRANSPORTER'"
+                        class='btn btn-sm btn-outline-secondary'
+                        (click)="onHomePOIRemove(route,POI,$event);">
+                    <fa-icon [icon]="faTimes"></fa-icon>
+                  </span>
+                  <button *ngIf="POI.site_type_code=='INSTITUTION'" class='btn btn-sm btn-outline-secondary'
+                        (click)="onInstitutionPOIRemove(route,j,$event);"
+                        [disabled]="!route.isPOIRemovable(j)">
+                    <fa-icon [icon]="faTimes"></fa-icon>
+                  </button>
+                </span>
+              </div>
+            </div>
+            <!-- Second Row : service duration and progress bars -->
+            <div class="row">
+              <div class="col-md-4 step-info">
+                <div class="d-flex justify-content-center">
+                  <div class="p-2 align-self-end">
+                    <a [routerLink]="" (click)="updateServiceDuration(POI,$event)">
+                      <fa-icon [icon]="faPause"></fa-icon>
+                      <span *ngIf="POI.service_duration!=null">{{ (POI.doNotApplyServiceDuration?0:POI.service_duration) + POI.waiting_duration + POI.pickupDuration + POI.deliveryDuration | duration}}</span>
+                      <span *ngIf="POI.service_duration==null">définir...</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <!-- PROGRESS BARS AREA -->
+              <div class="col-md-8 step-travel-duration" *ngIf="POI.routeInfo && POI.site_type_code=='HOME'">
+
+                <!-- WAITING DURATION PROGRESS BAR -->
+                <div class="d-flex justify-content-center" *ngIf="POI.acceptableDuration">
+                  <div class="p-2"><fa-icon [icon]="faRoad"></fa-icon></div>
+                  <div class="p-2 align-self-end progress-bar-area">
+                    <ngb-progressbar type="danger" [value]="POI.routeInfo.hrTransportDurationRatio" [striped]="true"
+                      *ngIf="POI.routeInfo.hrTransportDuration >POI.acceptableDuration/1000">
+                      {{POI.routeInfo.hrTransportDuration*1000 | duration}} / {{POI.acceptableDuration | duration}}
+                    </ngb-progressbar>
+                    <ngb-progressbar type="success" [value]="POI.routeInfo.hrTransportDurationRatio" [striped]="true"
+                      *ngIf="POI.routeInfo.hrTransportDuration<=POI.acceptableDuration/1000">
+                      {{POI.routeInfo.hrTransportDuration*1000 | duration}} / {{POI.acceptableDuration | duration}}
+                    </ngb-progressbar>
+                  </div>
+                </div>
+
+                <!-- TIME WINDOWS PROGRESS BARS -->
+                <div class="d-flex justify-content-center"
+                     *ngIf="(route.start_hr || route.end_hr) &&
+                      (
+                       ( route.bMorning && (
+                        (POI.pickupStartHour!=undefined && POI.routeInfo.startTime*1000-POI.pickupStartHour<0) ||
+                        (POI.pickupEndHour!=undefined && POI.pickupEndHour-POI.routeInfo.startTime*1000<0)
+                       )) ||
+                       ( !route.bMorning && (
+                        (POI.deliveryStartHour!=undefined && POI.routeInfo.startTime*1000-POI.deliveryStartHour<0) ||
+                        (POI.deliveryEndHour!=undefined && POI.deliveryEndHour-POI.routeInfo.startTime*1000<0)
+                       ))
+                      )">
+                  <div class="p-2"><fa-icon [icon]="faClock"></fa-icon></div>
+                  <div class="p-2 align-self-end progress-bar-area">
+                    <ngb-progressbar type="danger" [value]="100" [striped]="true">
+                      <span *ngIf="route.bMorning">
+                        <span *ngIf="POI.pickupStartHour!=undefined &&
+                                     POI.routeInfo.startTime*1000-POI.pickupStartHour<0">
+                          {{POI.pickupStartHour-POI.routeInfo.startTime*1000 | duration}} trop tôt
+                          ({{POI.pickupStartHour | utcTime}})
+                        </span>
+                        <span *ngIf="POI.pickupEndHour!=undefined &&
+                                     POI.pickupEndHour-POI.routeInfo.startTime*1000<0">
+                          {{POI.routeInfo.startTime*1000-POI.pickupEndHour | duration}} trop tard
+                          ({{POI.pickupEndHour | utcTime}})
+                        </span>
+                      </span>
+                      <span *ngIf="!route.bMorning">
+                        <span *ngIf="POI.deliveryStartHour!=undefined &&
+                                     POI.routeInfo.startTime*1000-POI.deliveryStartHour<0">
+                          {{POI.deliveryStartHour-POI.routeInfo.startTime*1000 | duration}} trop tôt
+                          ({{POI.deliveryStartHour | utcTime}})
+                        </span>
+                        <span *ngIf="POI.deliveryEndHour!=undefined &&
+                                     POI.deliveryEndHour-POI.routeInfo.startTime*1000<0">
+                          {{POI.routeInfo.startTime*1000-POI.deliveryEndHour | duration}} trop tard
+                          ({{POI.deliveryEndHour | utcTime}})
+                        </span>
+                      </span>
+                    </ngb-progressbar>
+                  </div>
+                </div>
+              </div>
+              <!-- Missing acceptable transport duration warning -->
+              <div class="col-md-8 step-travel-duration"
+                   *ngIf="!POI.acceptableDuration && POI.site_type_code=='HOME'">
+                <small class="badge badge-danger">durée de trajet acceptable non définie</small>
+              </div>
+              <!-- Opening hours for institution -->
+              <div class="col-md-8 step-travel-duration" *ngIf="POI.site_type_code=='INSTITUTION'">
+                <div class="d-flex justify-content-center" >
+                  <div class="p-2"><fa-icon [icon]="faClock"></fa-icon></div>
+                  <div class="p-2 align-self-end progress-bar-area">
+                    <small *ngIf="POI.opening_hours==null || POI.opening_hours==undefined || POI.opening_hours.length==0"
+                           class="badge badge-danger">pas d'horaires d'ouverture</small>
+                    <span *ngIf="POI.opening_hours!=null && POI.opening_hours!=undefined && POI.opening_hours.length>0">
+                      <span *ngFor="let opening_hours of POI.opening_hours">
+                        <!-- In case the arrival time of the vehicle at the institution enables to pick or delivery the HRs, use a
+                             badge success, otherwise, use a badge danger. The time used for comparison is startTime because it is
+                             the time displayed in the left column, so it is easy to compare this startTime with the opening hours.
+                             However, using startTime is inaccurate because we should take into account the service_duration (time
+                               to maneuver the vehicle to its pickup or delivery position) and also the pickup and delivery durations -->
+                        <small class="badge badge-danger"
+                               *ngIf="POI.routeInfo !=undefined && (
+                        POI.routeInfo.startTime*1000 < opening_hours.start_hr ||
+                        POI.routeInfo.startTime*1000 > opening_hours.end_hr
+                                      )">ouvert de {{opening_hours.start_hr | utcTime}} à {{opening_hours.end_hr | utcTime}}</small>
+                        <small class="badge badge-success"
+                               *ngIf="POI.routeInfo ==undefined || (
+                        POI.routeInfo.startTime*1000 > opening_hours.start_hr &&
+                        POI.routeInfo.startTime*1000 < opening_hours.end_hr
+                                      )">ouvert de {{opening_hours.start_hr | utcTime}} à {{opening_hours.end_hr | utcTime}}</small>
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- End of second row -->
+          </div>
+        </div>
+      </div>
+      <!-- Row between 2 steps -->
+      <div *ngIf="j!=route.POIs.length-1" class="row">
+        <div class="col-md-2" class="between-step-dot">
+          &#160;
+        </div>
+        <div class="col-lg-10" class="between-step-info">
+          <span *ngIf="POI.routeInfo">
+            <fa-icon [icon]="faRoad"></fa-icon>
+            {{POI.routeInfo.durationAfter*1000 | duration}}
+            &#160;
+            <small>{{POI.routeInfo.distanceAfter | distancePrecise}}</small>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End of route body -->
+</div>

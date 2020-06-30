@@ -1,0 +1,16 @@
+version: "3"
+services:
+
+  # building of optim webserver in dev
+  nomadrun:
+    build: 
+      dockerfile: containers/run/Dockerfile
+      context: "./"
+    volumes:
+      - ./src/www/docs:/var/www/docs
+      - ./src/www/data:/var/www/data
+      - ./src/www/config:/var/www/config
+      - ./src/optim:/opt/nomad/src
+    ports:
+      - 5014:80
+

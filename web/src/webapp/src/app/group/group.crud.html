@@ -1,0 +1,91 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-8 col-xl-7">
+      <!-- Main formular -->
+      <form #groupForm="ngForm" novalidate="true" autocomplete="off" *ngIf="currentRecord">
+        <!-- Has to be included within the formular so that crud-navbar component is aware of groupForm variable -->
+        <crud-navbar
+          [editMode]="editMode"
+          [valid]="groupForm.form.valid"
+          [pristine]="groupForm.form.pristine"
+          (editModeChange)="editModeChange($event)"
+          (saveEvent)="save()"
+          (markAsRemovedEvent)="markAsRemoved()"
+          (deleteEvent)="delete()"
+          [title]="(currentRecord.id?'Groupe de demandes':'Nouveau groupe de demandes')"
+          [aclObject]="'group'"
+          [recordId]="currentRecord.id">
+        </crud-navbar>
+
+        <!-- Label for the group-->
+        <div class="form-group row">
+          <label for="groupLabel" class="col-md-3  col-form-label" >Description </label>
+          <div class="col-md-9">
+            <input class="form-control"
+                   [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+                   type='text' name="groupLabel" [(ngModel)]="currentRecord.label"
+                   [required]="editMode!='view'" >
+          </div>
+        </div>
+        
+        <div *ngIf="demands && editMode!='view'" class="form-group" fillHeight="145" [hidden]="demands.length==0">
+          <ag-grid-angular
+        style="height: 100%;"
+        class="ag-theme-material"
+        [gridOptions]="gridOptions"
+        [rowData]="demands"
+        [enableFilter]="true"
+        [pagination]="true"
+        rowSelection="multiple"
+        (rowSelected)="onSelected($event)"
+        [suppressRowClickSelection]="true"
+        (gridReady)="gridReady($event)">
+          </ag-grid-angular>
+        </div>
+
+        <div *ngIf="demands && editMode=='view'" class="form-group" fillHeight="145" [hidden]="demands.length==0">
+          <ag-grid-angular
+        style="height: 100%;"
+        class="ag-theme-material"
+        [gridOptions]="gridOptionsView"
+        [rowData]="currentRecord.demands"
+        [enableFilter]="true"
+        [pagination]="true"
+        [enableSorting]="true"
+        (gridReady)="gridReady($event)">
+          </ag-grid-angular>
+        </div>
+
+      </form>
+    </div>
+    <!-- Open a Leaflet map and provided it with the list of POIs-->
+    <div class="col-lg-4 col-xl-5">
+        <route-toolbar class="group" *ngIf="editMode!='view'" [options]="options"
+        (multiselectChange)="toggleMultipleSelect()"></route-toolbar>
+      <div id="mapid" fillHeight></div>
+    </div>
+  </div>
+</div>

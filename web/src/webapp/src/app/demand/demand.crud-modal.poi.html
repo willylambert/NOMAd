@@ -1,0 +1,111 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<!-- Modal for picking a poi from a list + map -->
+<div class="modal-header">
+        <h4 class="modal-title col-md-5" id="modal-basic-title" >
+          Choisir un
+          <span *ngIf="siteType=='HOME'">usager</span>
+          <span *ngIf="siteType=='INSTITUTION'">établissement</span>
+
+        </h4>
+        <h4 class="modal-title col-md-5 text-right"><span *ngIf="selectedPOI">{{selectedPOI.label}}</span></h4>
+        <span class="pull-right" >
+          <button *ngIf="selectedPOI" type="button" class="btn btn-success btn-sm" (click)="saveModal()" >Valider</button>
+          <button type="button" class="btn btn-default btn-sm" (click)="activeModal.close(null)">Annuler</button>
+        </span>
+      </div>
+      <div class="modal-body">
+          <div class='row'>
+          <div class="col-md-6">
+        <span *ngIf="POIs">
+          <div *ngIf="POIs.length==0">
+            <em>
+              Aucun
+              <span *ngIf="siteType=='HOME'">usager</span>
+              <span *ngIf="siteType=='INSTITUTION'">établissement</span>
+              trouvé
+            </em>
+          </div>
+          <div class="form-group row" *ngIf="siteType=='HOME' && institution">
+            <div class="col-md-12">
+              <div class="btn-group" role="group" >
+                <button type="button" class="btn btn-default" (click)="toggleFilter(true)"
+                        [ngClass]="{'btn-success':bFilter}">
+                  &nbsp;Usagers rattachés à {{institution.label}}&nbsp;
+                </button>
+                &nbsp;
+                <button type="button" class="btn btn-default" (click)="toggleFilter(false)"
+                        [ngClass]="{'btn-success':!bFilter}">
+                  &nbsp; Tous les usager &nbsp;
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row" *ngIf="siteType=='HOME'">
+            <div class="col-md-12">
+              <input class="form-control" type='text' name="searchPattern" [(ngModel)]="search"
+                     (ngModelChange)="onPatternChange()" placeholder="Nom ou prénom">
+            </div>
+          </div>
+          <div class="form-group row" *ngIf="siteType=='INSTITUTION' && HR">
+            <div class="col-md-12">
+              <div class="btn-group" role="group" >
+                <button type="button" class="btn btn-default" (click)="toggleFilter(true)"
+                        [ngClass]="{'btn-success':bFilter}">
+                  &nbsp;Etablissements rattachés à {{HR.firstname}} {{HR.lastname}}&nbsp;
+                </button>
+                &nbsp;
+                <button type="button" class="btn btn-default" (click)="toggleFilter(false)"
+                        [ngClass]="{'btn-success':!bFilter}">
+                  &nbsp; Tous les établissements &nbsp;
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group" fillHeight="350" [hidden]="POIs.length==0">
+
+
+
+
+            <ag-grid-angular
+              style="height: 300px"
+              class="ag-theme-material"
+              [gridOptions]="gridOptions"
+              [rowData]="POIs"
+              (rowSelected)="onSelected()"
+              [enableFilter]="true"
+              (gridReady)="gridReady($event)"
+              (modelUpdated)="displayCheckBoxes()"
+              [paginationAutoPageSize]="true"
+              [pagination]="true">
+            </ag-grid-angular>
+          </div>
+        </span>
+      </div>
+        <div class="col-md-6">
+          <div id="mapId"></div>
+      </div>
+    </div>
+      </div>
+      

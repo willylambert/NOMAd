@@ -1,0 +1,260 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="container-fluid">
+  <div class="row" fillHeight>
+    <div class="col-sm">
+      <!-- Main formular -->
+      <form #demandForm="ngForm" novalidate="true" autocomplete="off" *ngIf="currentRecord">
+        <!-- Has to be included within the formular so that crud-navbar component is aware of demandForm variable -->
+        <crud-navbar
+          [editMode]="editMode"
+          [valid]="demandForm.form.valid && endDtMs>=startDtMs &&
+                   (!bMorning || currentRecord.pickupStartHour<=currentRecord.pickupEndHour || !currentRecord.bPickupTimeWindow) &&
+                   (!bAfternoon || currentRecord.deliveryStartHour<=currentRecord.deliveryEndHour || !currentRecord.bDeliveryTimeWindow)"
+          [pristine]="demandForm.form.pristine && !bChanges"
+          (editModeChange)="editModeChange($event)"
+          (saveEvent)="save()"
+          (markAsRemovedEvent)="markAsRemoved()"
+          (deleteEvent)="delete()"
+          [title]="(currentRecord.id?'Demande de transport':'Nouvelle demande')"
+          [aclObject]="'demand'"
+          [recordId]="currentRecord.id">
+        </crud-navbar>
+
+        <!-- Institution POI -->
+        <div class="form-group row">
+          <label for="demandInstitution" class="col-md-3  col-form-label" >Etablissement</label>
+          <div class="col-md-4" *ngIf="editMode!='view'">
+            <input type="hidden" name="demandInstitution" [(ngModel)]="currentRecord.institutionPOI" required="true">
+            <!-- Using required attribute is effectless on formular validation but enables ng-valid class to take effect -->
+            <button class="btn bnt-default" (click)="launchModalInstitutions()" required="true"
+            [ngClass]="{'ng-valid':currentRecord.institutionPOI,'ng-invalid':!currentRecord.institutionPOI}">
+              &nbsp;
+              <span *ngIf="!currentRecord.institutionPOI">Choisir un point</span>
+              <span *ngIf="currentRecord.institutionPOI">{{currentRecord.institutionPOI.label}}</span>
+              &nbsp;
+            </button>
+          </div>
+          <div class="col-md-9" *ngIf="editMode=='view'">
+            <span *ngIf="currentRecord.institutionPOI">
+              <input type="text" name="demandInstitution" class="form-control-plaintext"
+                [(ngModel)]="currentRecord.institutionPOI.label" [readonly]="true"/>
+            </span>
+          </div>
+        </div>
+
+        <!-- HR POI -->
+        <div class="form-group row">
+          <label for="demandHR" class="col-md-3 col-form-label" >Usager</label>
+          <div class="col-md-4" *ngIf="editMode!='view'">
+            <input  type='hidden' name="demandHR" [(ngModel)]="currentRecord.HRPOI" required="true">
+            <!-- Using required attribute is effectless on formular validation but enables ng-valid class to take effect -->
+            <button class="btn" (click)="launchModalHR()" required="true"
+                    [ngClass]="{'ng-valid':currentRecord.HRPOI,'ng-invalid':!currentRecord.HRPOI}">
+              &nbsp;
+              <span *ngIf="!currentRecord.HRPOI">Choisir un point</span>
+              <span *ngIf="currentRecord.HRPOI">{{currentRecord.HRPOI.label}}</span>
+              &nbsp;
+            </button>
+          </div>
+          <div class="col-md-9" *ngIf="editMode=='view'">
+            <span *ngIf="currentRecord.HRPOI">
+              <input type="text" name="demandHR" class="form-control-plaintext"
+                  [(ngModel)]="currentRecord.HRPOI.label" [readonly]="true"/>
+            </span>
+          </div>
+          <div class="col-md-5">
+            <span class='badge badge-danger' *ngIf="bPOIConflict">Usager non rattaché à l'établissement choisi</span>
+          </div>
+        </div>
+
+        <!-- Validity start date for the demand-->
+        <div class="form-group row">
+          <label for="demandStartDt" class="col-md-3  col-form-label" >Début</label>
+          <div class="col-md-4">
+            <div class="input-group">
+              <input [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+                     placeholder="yyyy-mm-dd" name="dstart" [(ngModel)]="currentRecord.startDt"
+                     ngbDatepicker #dStart="ngbDatepicker" readonly="true" [required]="editMode!='view'"
+                     (dateSelect)="onDateSelect()">
+              <div class="input-group-append" *ngIf="editMode!='view'">
+                <button class="btn btn-outline-secondary calendar" (click)="dStart.toggle()" type="button">
+                  &nbsp;<fa-icon [icon]="faCalendar"></fa-icon>&nbsp;
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Validity end date for the demand-->
+        <div class="form-group row">
+          <label for="demandEndDt" class="col-md-3  col-form-label" >Fin</label>
+          <div class="col-md-4">
+            <div class="input-group">
+              <input [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+                     placeholder="yyyy-mm-dd" name="dend" [(ngModel)]="currentRecord.endDt"
+                     ngbDatepicker #dEnd="ngbDatepicker" readonly="true" [required]="editMode!='view'"
+                     (dateSelect)="onDateSelect()">
+              <div class="input-group-append" *ngIf="editMode!='view'">
+                <button class="btn btn-outline-secondary calendar" (click)="dEnd.toggle()" type="button">
+                  &nbsp;<fa-icon [icon]="faCalendar"></fa-icon>&nbsp;
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <span class='badge badge-danger' *ngIf="endDtMs<startDtMs">
+              La date de fin a été choisie avant la date de début
+            </span>
+          </div>
+        </div>
+
+        <div class='form-group row'>
+          <label for="timeslots" class="col-md-3  col-form-label" >Créneaux </label>
+
+          <div class="col-lg-9">
+            <input  type='hidden' name="timeslots" [(ngModel)]="currentRecord.timeslots" required="true">
+            <!-- Using required attribute is effectless on formular validation but enables ng-valid class to take effect -->
+            <table class="table-sm" [ngClass]="{'ng-valid':currentRecord.timeslots.length>0&&editMode!='view','ng-invalid':currentRecord.timeslots.length==0&&editMode!='view'}" required="true">
+              <thead>
+                <tr>
+                  <th class="text-center">Lundi</th>
+                  <th class="text-center">Mardi</th>
+                  <th class="text-center">Mercredi</th>
+                  <th class="text-center">Jeudi</th>
+                  <th class="text-center">Vendredi</th>
+                  <th class="text-center">Samedi</th>
+                  <th class="text-center">Dimanche</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td *ngFor="let timeSlot of timeSlotsAM" style="padding:2px">
+                    <button class="btn btn-sm w-100"
+                            [ngClass]="{'btn-success':timeSlot.selected,'btn-outline-secondary':!timeSlot.selected}"
+                            (click)="toggleTimeSlot(timeSlot)" [disabled]="editMode=='view'">
+                      aller
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td *ngFor="let timeSlot of timeSlotsPM " style="padding:2px">
+                    <button class="btn btn-sm w-100"
+                            [ngClass]="{'btn-success':timeSlot.selected,'btn-outline-secondary':!timeSlot.selected}"
+                            (click)="toggleTimeSlot(timeSlot)" [disabled]="editMode=='view'">
+                      retour
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+
+
+        <!-- Pickup Time -->
+        <div class="form-group row" *ngIf="bMorning">
+          <label class="col-md-3 col-form-label" >Montée<span *ngIf="bAfternoon"> (aller)</span></label>
+          <label class="col-md-1 col-form-label" *ngIf="currentRecord.bPickupTimeWindow">
+            <div class="form-control-plaintext"  required="true"
+                 [ngClass]="{'ng-valid':pickupEarliest&&pickupLatest,
+                             'ng-invalid':!pickupEarliest||!pickupLatest}">
+              &nbsp;entre
+            </div>
+            <input type='hidden' name="pickupEarliestHidden" [(ngModel)]="pickupEarliest" required="true">
+            <input type='hidden' name="pickupLatestHidden" [(ngModel)]="pickupLatest" required="true">
+          </label>
+          <div class="col-md-2" *ngIf="currentRecord.bPickupTimeWindow">
+            <ngb-timepicker name="pickupEarliest" [(ngModel)]="pickupEarliest"
+                            [spinners]="false" (change)="checkTimes()" [disabled]="editMode=='view'"></ngb-timepicker>
+          </div>
+          <label class="col-md-1 col-form-label" *ngIf="currentRecord.bPickupTimeWindow">
+            <div class="form-control-plaintext">et</div>
+          </label>
+          <div class="col-md-2" *ngIf="currentRecord.bPickupTimeWindow">
+            <ngb-timepicker name="pickupLatest" [(ngModel)]="pickupLatest"
+                            [spinners]="false" (change)="checkTimes()" [disabled]="editMode=='view'"></ngb-timepicker>
+          </div>
+          <div class="col-md-3" *ngIf="currentRecord.bPickupTimeWindow">
+            <span class="badge badge-danger" *ngIf="currentRecord.pickupStartHour && currentRecord.pickupEndHour &&
+            currentRecord.pickupStartHour>currentRecord.pickupEndHour">Fenêtre de temps invalide</span>
+            <button class="btn btn-sm btn-outline-secondary" [disabled]="editMode=='view'"
+                    (click)="currentRecord.bPickupTimeWindow=false">
+              <fa-icon [icon]="faTimes"></fa-icon>
+            </button>
+          </div>
+          <div class="col-md-9" *ngIf="!currentRecord.bPickupTimeWindow">
+            <button class="btn" [disabled]="editMode=='view'" (click)="setDefaultPickupTimeWindows()">
+              Définir une fenêtre de temps
+            </button>
+          </div>
+        </div>
+
+        <!-- Delivery Time -->
+        <div class="form-group row" *ngIf="bAfternoon">
+          <label class="col-md-3 col-form-label" >Descente <span *ngIf="bMorning"> (retour)</span></label>
+          <label class="col-md-1 col-form-label"  *ngIf="currentRecord.bDeliveryTimeWindow">
+              <div class="form-control-plaintext" required="true"
+                   [ngClass]="{'ng-valid':deliveryEarliest&&deliveryLatest,
+                               'ng-invalid':!deliveryEarliest||!deliveryLatest}">
+                &nbsp;entre
+              </div>
+              <input type='hidden' name="deliveryEarliestHidden" [(ngModel)]="deliveryEarliest"
+                     required="true">
+              <input type='hidden' name="deliveryLatestHidden" [(ngModel)]="deliveryLatest"
+                     required="true">
+            </label>
+          <div class="col-md-2" *ngIf="currentRecord.bDeliveryTimeWindow">
+            <ngb-timepicker name="deliveryEarliest" [(ngModel)]="deliveryEarliest"
+                            [spinners]="false" (change)="checkTimes()" [disabled]="editMode=='view'"></ngb-timepicker>
+          </div>
+          <label class="col-md-1 col-form-label" *ngIf="currentRecord.bDeliveryTimeWindow">
+            <div class="form-control-plaintext">et</div>
+          </label>
+          <div class="col-md-2" *ngIf="currentRecord.bDeliveryTimeWindow">
+            <ngb-timepicker name="deliveryLatest" [(ngModel)]="deliveryLatest"
+                            [spinners]="false" (change)="checkTimes()" [disabled]="editMode=='view'"></ngb-timepicker>
+          </div>
+          <div class="col-md-3" *ngIf="currentRecord.bDeliveryTimeWindow">
+            <span class="badge badge-danger" *ngIf="currentRecord.deliveryStartHour && currentRecord.deliveryEndHour &&
+              currentRecord.deliveryStartHour>currentRecord.deliveryEndHour">Fenêtre de temps invalide</span>
+            <button class="btn btn-sm btn-outline-secondary" [disabled]="editMode=='view'"
+                    (click)="currentRecord.bDeliveryTimeWindow=false">
+              <fa-icon [icon]="faTimes"></fa-icon>
+            </button>
+          </div>
+          <div class="col-md-9" *ngIf="!currentRecord.bDeliveryTimeWindow">
+            <button class="btn" [disabled]="editMode=='view'" (click)="setDefaultDeliveryTimeWindows()">
+              Définir une fenêtre de temps
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- Open a Leaflet map and provided it with the list of POIs-->
+    <div class="col-sm">
+      <map-leaflet [POIs]="POIs" [changeInPOIs]="changeInPOIs" [noAOI]="true"></map-leaflet>
+    </div>
+  </div>
+</div>

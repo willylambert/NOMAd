@@ -1,0 +1,336 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<!-- Tab navbar, should be identical as the other tab navbars in the scenario menu -->
+<div class="crud-navbar">
+  <legend>
+    <div class="row">
+      <div class="col-lg-auto">
+        <button type="button" id="btn-list" class="btn btn-link" (click)="backToList()" ><fa-icon [icon]="faChevronLeft"></fa-icon> Liste</button>
+      </div>
+      <div class="col text-center">
+        <span class="h5">Scénario {{inputScenario.code}}</span>
+      </div>
+      <div class="col-lg-auto text-right">
+        <small><em *ngIf="bDatacheckerRunning">Exécution en cours...</em></small>
+        <button class="btn btn-info" [aclShow]="'/datachecker/run'" [disabled]="bDatacheckerRunning" (click)="runChecker()">Vérifier les données</button>
+      </div>
+    </div>
+  </legend>
+</div>
+<!-- The left column -->
+<div class="row">
+  <div class="col-sm">
+    <!-- year picker -->
+    <div class="card mt-3">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm">
+            <h5 class="card-title">Année</h5>
+          </div>
+          <div class="col-sm">
+            <ng-select name="yearView" [items]="years" bindLabel="label"
+                       [(ngModel)]="selectedYear"
+                       (change)="onYearChange(selectedYear)">
+            </ng-select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- list of weeks + week picker : we must wait for timeSlotsAsThesaurusItems variable to be ready, otherwise calls
+         to onWeekChange function will cause errors -->
+    <div class="card mt-3" *ngIf="selectedYear && timeSlotsAsThesaurusItems">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm">
+            <h5 class="card-title">Semaines</h5>
+          </div>
+        </div>
+        <div class="row overflow-auto d-block" fillHeight>
+          <div class="col-sm">
+            <ng-container *ngFor="let week of weeks">
+              <button (click)="onWeekChange(week)" class="btn btn-light btn-select-week" [ngClass]="{'week-selected':selectedWeek!=undefined&&week.id==selectedWeek.id}">
+                <!-- In case the weeks span over only one year, tell the year for less ambiguity -->
+                <span *ngIf="weeks && weeks.length>0 && weeks[0].number<36"> ({{weeks[0].year}})</span>
+                <span *ngIf="weeks && weeks.length>0 && weeks[weeks.length-1].number>35"> ({{weeks[weeks.length-1].year}})</span>
+                <span class='badge week-badge' [ngClass]="{'badge-danger':week.bErrors,'badge-success':!week.bErrors}">&nbsp;</span>        
+                {{week.year}} S{{week.number}}
+              </button>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- The right column -->
+  <div class="col-sm">
+
+    <div class="alert alert-info" *ngIf="bCopyInProgress">
+      <em>
+        <fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Propagation en cours ... {{copyProgressionPercent}}%
+      </em>
+    </div>  
+
+    <!-- week description and half day picker -->
+    <div class="card mt-3" *ngIf="selectedWeek!=null">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm">
+            <h5 class="card-title">Semaine {{getWeekLabel(selectedWeek)}} {{selectedWeek.year}}</h5>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm">
+            <table class="table-sm">
+              <thead>
+                <tr>
+                  <th class="text-center">Lundi</th>
+                  <th class="text-center">Mardi</th>
+                  <th class="text-center">Mercredi</th>
+                  <th class="text-center">Jeudi</th>
+                  <th class="text-center">Vendredi</th>
+                  <th class="text-center">Samedi</th>
+                  <th class="text-center">Dimanche</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <ng-container *ngFor="let timeSlot of timeSlots">
+                  <td *ngIf="timeSlot.bMorning" style="padding:2px">
+                    <button class="btn btn-sm w-100"
+                            [disabled]="timeSlot.bOutOfScenarioTimeRange"
+                            [ngClass]="{'btn-success':selectedTimeSlot!=undefined&&timeSlot.id==selectedTimeSlot.id,'btn-outline-secondary':selectedTimeSlot==undefined||timeSlot.id!=selectedTimeSlot.id}"
+                            (click)="onTimeslotChange(timeSlot)">
+                      <span class='badge' [ngClass]="{'badge-danger':timeSlot.bErrors,'badge-success':!timeSlot.bErrors}">aller</span>
+                    </button>
+                  </td>
+                  </ng-container>
+                </tr>
+                <tr>
+                  <ng-container *ngFor="let timeSlot of timeSlots">
+                    <td *ngIf="!timeSlot.bMorning" style="padding:2px">
+                      <button class="btn btn-sm w-100"
+                              [disabled]="timeSlot.bOutOfScenarioTimeRange"
+                              [ngClass]="{'btn-success':selectedTimeSlot!=undefined&&timeSlot.id==selectedTimeSlot.id,'btn-outline-secondary':selectedTimeSlot==undefined||timeSlot.id!=selectedTimeSlot.id}"
+                              (click)="onTimeslotChange(timeSlot)">
+                        <span class='badge' [ngClass]="{'badge-danger':timeSlot.bErrors,'badge-success':!timeSlot.bErrors}">retour</span>
+                      </button>
+                    </td>
+                  </ng-container>
+                </tr>
+              </tbody>
+            </table>
+            <span *ngIf="calendarsCount==0">
+              <br />
+              <div class="alert alert-warning" >
+                Aucune demande de transport pour cette journée et cette direction.
+                <button class="btn btn-info" [aclShow]="'/datachecker/run'" (click)="runCalendarUpdate(inputScenario.id,calendarDt,selectedTimeSlot.id)">Mettre à jour</button>
+              </div>
+            </span>
+            <span *ngIf="bUpdateTransportCalendarsFailed">
+              <br />
+              <div class="alert alert-danger" >
+                Echec de la mise à jour du calendrier des demandes de transport.
+              </div>
+            </span>             
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card mt-3" *ngIf="bUpdatingTransportCalendars">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm">
+            <!-- calendar upload can be quite long -->
+            <em >Mise à jour du calendrier des demande de transport en cours...</em>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- list of routes -->
+    <div class="card mt-3" *ngIf="!bUpdatingTransportCalendars && selectedTimeSlot">
+      <div class="card-header">
+        <div class="row">
+          <div class="col">
+            <div class='float-right'>
+              <span *ngIf="routesStats!=undefined">
+                <span *ngIf="routesStats.distance>0">
+                  <fa-icon [icon]="faRoad"></fa-icon>
+                  <em>{{routesStats.distance | distancePrecise}}</em>
+                </span>
+                <span *ngIf="routesStats.duration>0">
+                  <fa-icon [icon]="faClock" ></fa-icon>
+                  <span>{{(routesStats.duration*1000)| duration}}</span>
+                </span>
+              </span>
+              <span *ngIf="routesStats.cost>0">
+                <fa-icon [icon]="faEuroSign" ></fa-icon> 
+                <em >{{routesStats.cost | cost}}</em>
+              </span>
+              <span *ngIf="routesStats.co2>0">
+                <fa-icon [icon]="faLeaf" ></fa-icon> 
+                <em >{{routesStats.co2/1000 | cost}}kg</em>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm">
+            <h5 class="card-title">{{selectedDayLabel}}</h5>
+          </div>
+          <div class="col-sm">
+            <div class="float-right" id="action-bar">
+              <button
+                [disabled]="routes.list.length==0"
+                type="button" id="btn-build-routes"
+                (click)="updateCalendar()"
+                class="btn btn-link btn-sm"
+                [aclShow]="'/scenario/calendar/copy'" >
+                Propager
+              </button>
+              <button
+                type="button" id="btn-build-routes"
+                class="btn btn-link btn-sm"
+                (click)="viewRoutes()" >
+                <span *ngIf="!routes.loaded || routes.list.length==0" [aclShow]="'/route/save'">Ajouter</span>
+                <span *ngIf="routes.list.length>0">
+                  Voir
+                  <span [aclShow]="'/route/save'" [aclShowMode]="'display'" [aclShowDisplay]="'inline'">
+                    / Modifier
+                  </span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- ROUTES -->
+        <div class="row">
+          <div class="col-md-12">
+            <span *ngIf="routes.loaded">
+              <em  *ngIf="routes.list.length==0">Aucune tournée.</em>
+              <table *ngIf="routes.list.length>0" id="routes-table" class="table table-sm table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>Libellé</th>
+                    <th>Distance</th>
+                    <th>Véhicule</th>
+                    <th>Alertes</th>
+                    <th>Chauffeur</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let route of routes.list ; let i = index">
+                    <td>{{route.label}}</td>
+                    <td>{{route.distance | distancePrecise}}</td>
+                    <td>{{route.vehicleCategory.label}}</td>
+                    <td class="text-center">
+                      <!-- For each category and each level, display an icon if necessary (limited to one icon per level/category-->
+                      <ng-container *ngFor="let level_code of ['ERROR','WARNING','INFO']">
+                        <ng-container *ngFor="let scope_code of ['VEHICLE_CAT','HR','TIME']">
+                          <span *ngFor="let error of route.simplifiedErrors | search:'scope_code':scope_code | search:'level_code':level_code ; let j = index">
+                            <button class='btn btn-link' *ngIf="j==0" (click)="datacheckerDetails(route.errors,error.scope_th,error.level_th)">
+                              <fa-layers >
+                                <fa-icon [icon]="error.scope_code=='VEHICLE_CAT'?faShuttleVan:error.scope_code=='TIME'?faClock:faWheelchair"
+                                         class="fa-fw"
+                                         [ngStyle]="{'color':error.level_code=='ERROR'?'red':error.level_code=='WARNING'?'orange':'lightblue'}">
+                                </fa-icon>
+                              </fa-layers>
+                            </button>
+                          </span>
+                        </ng-container>
+                      </ng-container>                                                                                      
+                    </td>
+                    <td>
+                      <button class="btn btn-link" (click)="changeDriver(route)" [aclShow]="'/route/save'" [aclShowMode]="'display'">
+                        <span *ngIf="route.driver && route.driver.id">{{route.driver.firstname}} {{route.driver.lastname}}</span>
+                        <span *ngIf="!route.driver || !route.driver.id">Choisir un chauffeur</span>
+                      </button>
+                      <span [aclShow]="'/route/save'" [aclShowReverse]="true" [aclShowMode]="'display'" >
+                        <span *ngIf="route.driver && route.driver.id">{{route.driver.firstname}} {{route.driver.lastname}}</span>
+                        <span *ngIf="!route.driver || !route.driver.id"></span>
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>   
+            </span>      
+          </div>
+        </div>       
+      </div>
+    </div>
+
+    <div class="card mt-3" *ngIf="!bUpdatingTransportCalendars && selectedTimeSlot">
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <h5 class="card-title">Demandes <span class="badge badge-primary">{{calendars.list.length}}</span></h5>
+          </div>
+          <div class="col text-right">
+            <button class="btn btn-info" [aclShow]="'/datachecker/run'" (click)="runCalendarUpdate(inputScenario.id,calendarDt,selectedTimeSlot.id)">Mettre à jour depuis le calendrier</button>
+          </div>
+        </div>
+        <!-- CALENDAR -->
+        <div class="row">
+          <div class="col-md-12">
+            <span *ngIf="calendars.loaded">
+              <em  *ngIf="calendars.list.length==0">Aucune demande</em>
+              <div class="overflow-auto d-block" fillHeight>
+                <table *ngIf="calendars.list.length>0" id="routes-table" class="table table-sm table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th>Départ</th>
+                      <th>Arrivée</th>
+                      <th>Nb</th>
+                      <th>Active</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let calendar of calendars.list ; let i = index">
+                      <td>{{calendar.HRPOI.hr_firstname}} {{calendar.HRPOI.hr_lastname}} ({{calendar.HRPOI.label}})</td>
+                      <td>{{calendar.institutionPOI.label}}</td>
+                      <td class="text-center"><span class="badge" [ngClass]="{'badge-success':calendar.serviceCount==1 && calendar.transport_calendar_status_code=='TO_BE_SERVED' || 
+                                                                                              calendar.serviceCount==0 && calendar.transport_calendar_status_code=='DO_NOT_SERVE',
+                                                                              'badge-warning':calendar.serviceCount!=1 && calendar.transport_calendar_status_code=='TO_BE_SERVED'}"
+                                                                              ngbTooltip="{{getRoutesDescription(calendar.routes)}}">{{calendar.serviceCount}}</span></td>
+                      <td class="text-center">
+                        <label class="checkbox">
+                          <input type="checkbox" [checked]="calendar.transport_calendar_status_code=='TO_BE_SERVED'" (change)="updateTransportCalendarStatus(calendar,$event)"/>
+                          <span class="primary"></span>
+                        </label>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>   
+              </div>
+            </span>      
+          </div>
+        </div> 
+      </div>
+    </div>
+
+  </div>
+</div>
+   

@@ -1,0 +1,8 @@
+{
+  "viewportWidth": 1366,
+  "viewportHeight": 768,
+  "baseUrl": "http://localhost:4200",
+  "videoUploadOnPasses" : false,
+  "screenshotsFolder" : "/tmp/cypress_screenshots",
+  "defaultCommandTimeout" : 10000
+}

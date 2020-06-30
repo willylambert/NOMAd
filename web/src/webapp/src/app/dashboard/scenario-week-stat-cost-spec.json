@@ -1,0 +1,173 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 500,
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  },
+  "height": 200,
+  "padding": 5,
+
+  "title": {
+    "text": "Coût",
+    "anchor": "start",
+    "frame": "group"
+  },
+
+  "data": [
+    {
+      "name": "table",
+      "values":   [],
+      "transform": [
+        { "type": "collect", "sort": {"field": "yearWeek"} }
+       ]      
+    },   
+    {
+      "name":"average",
+      "source":"table",
+      "transform": [
+        {
+          "type": "aggregate",
+          "ops":["average","max"],
+          "fields": ["cost","dt"],
+          "as":["average_cost","max_dt"]
+        }
+      ]      
+    }
+  ],
+  "scales": [
+    {
+      "name": "xscale",
+      "type": "band",
+      "domain": {
+        "data": "table",
+        "field": "week"
+      },
+      "range": "width",
+      "padding": 0.05,
+      "round": true
+    },
+    {
+      "name": "xaveragescale",
+      "type": "linear",
+      "domain": {
+        "data": "table",
+        "field": "dt"
+      },
+      "range": "width",
+      "padding": 0.05,
+      "round": true
+    },    
+    {
+      "name": "yscale",
+      "domain": {
+        "data": "table",
+        "field": "cost"
+      },
+      "nice": true,
+      "range": "height"
+    }
+  ],
+  "axes": [
+    {
+      "orient": "bottom",
+      "scale": "xscale",
+      "title":"Semaines",
+      "encode":{
+        "labels": {
+          "update": {
+          "text": {"signal": "'S'+datum.value"}
+          }
+        }
+      }
+
+    },
+    {
+      "orient": "left",
+      "scale": "yscale",
+      "title":"Coût (€)",
+      "encode":{
+        "labels": {
+          "update": {
+          "text": {"signal": "round(datum.value)"}
+          }
+        }
+      }      
+    }
+  ],
+  "marks": [
+    {
+      "type": "rect",
+      "from": {
+        "data": "table"
+      },
+      "encode": {
+        "enter": {
+          "x": {
+            "scale": "xscale",
+            "field": "week"
+          },
+          "width": {
+            "scale": "xscale",
+            "band": 1
+          },
+          "y": {
+            "scale": "yscale",
+            "field": "cost"
+          },
+          "y2": {
+            "scale": "yscale",
+            "value": 0
+          },
+          "tooltip": {"signal": "{'Coût' : datum.year + ' S' + datum.week + ' : ' + round(datum.cost)  + ' €' }"}
+        },
+        "update": {
+          "fill": {
+            "value": "rgb(26,43,63)"
+          }
+        },
+        "hover": {
+          "fill": {
+            "value": "rgb(88,183,127)"
+          }
+        }
+      }
+    },
+    {
+      "type": "rule",
+      "from": {"data": "average"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "xscale", "value": 0},
+          "x2": {"scale": "xaveragescale", "field": "max_dt"},
+          "y": {"scale": "yscale", "field": "average_cost"},
+          "y2": {"scale": "yscale", "field": "average_cost"},
+          "stroke": {"value": "red"},
+          "strokeWidth": {"value": 2}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {"data": "average"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "xscale", "value": 0},
+          "x2": {"scale": "xaveragescale", "field": "max_dt"},
+          "y": {"scale": "yscale", "field": "average_cost"},
+          "y2": {"scale": "yscale", "field": "average_cost"},
+          "dx":{"value":2},
+          "dy":{"value":-5},
+          "stroke": {"value": "red"}
+
+        },
+        "update": {
+          "text":{"value":"moyenne"}
+        },
+        "hover": {
+          "text":{"signal":"round(datum.average_cost) + ' €'"}
+        }
+      }
+    }
+  ]
+}

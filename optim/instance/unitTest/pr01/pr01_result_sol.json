@@ -1,0 +1,185 @@
+{
+  "costSolution": 190.019,
+  "feasible": true,
+  "multiplier": 100000,
+  "name": "pr01",
+  "routes": [
+    {
+      "costRoute": 10124500.0,
+      "idRoute": 1,
+      "idVehicles": [
+        0
+      ],
+      "nodes": [
+        {
+          "capacity": 3,
+          "idNode": 50,
+          "time": 8313026,
+          "type": 2
+        },
+        {
+          "capacity": 1,
+          "idNode": 8,
+          "time": 8537655,
+          "type": 0
+        },
+        {
+          "capacity": 1,
+          "idNode": 16,
+          "time": 10462527,
+          "type": 0
+        },
+        {
+          "capacity": 1,
+          "idNode": 32,
+          "time": 12300000,
+          "type": 1
+        },
+        {
+          "capacity": 1,
+          "idNode": 7,
+          "time": 14590574,
+          "type": 0
+        },
+        {
+          "capacity": 1,
+          "idNode": 19,
+          "time": 17500000,
+          "type": 0
+        },
+        {
+          "capacity": 1,
+          "idNode": 0,
+          "time": 18721208,
+          "type": 0
+        },
+        {
+          "capacity": 1,
+          "idNode": 40,
+          "time": 20109438,
+          "type": 1
+        },
+        {
+          "capacity": 1,
+          "idNode": 6,
+          "time": 21273019,
+          "type": 0
+        },
+        {
+          "capacity": 1,
+          "idNode": 30,
+          "time": 22494893,
+          "type": 1
+        },
+        {
+          "capacity": 1,
+          "idNode": 43,
+          "time": 23586711,
+          "type": 1
+        },
+        {
+          "capacity": 1,
+          "idNode": 31,
+          "time": 24590574,
+          "type": 1
+        },
+        {
+          "capacity": 1,
+          "idNode": 1,
+          "time": 25823759,
+          "type": 0
+        },
+        {
+          "capacity": 1,
+          "idNode": 24,
+          "time": 27080703,
+          "type": 1
+        },
+        {
+          "capacity": 1,
+          "idNode": 4,
+          "time": 28634836,
+          "type": 0
+        },
+        {
+          "capacity": 1,
+          "idNode": 12,
+          "time": 33089135,
+          "type": 0
+        },
+        {
+          "capacity": 1,
+          "idNode": 28,
+          "time": 34417465,
+          "type": 1
+        },
+        {
+          "capacity": 1,
+          "idNode": 25,
+          "time": 35823759,
+          "type": 1
+        },
+        {
+          "capacity": 1,
+          "idNode": 15,
+          "time": 38861662,
+          "type": 0
+        },
+        {
+          "capacity": 1,
+          "idNode": 3,
+          "time": 40199123,
+          "type": 0
+        },
+        {
+          "capacity": 1,
+          "idNode": 27,
+          "time": 41600000,
+          "type": 1
+        },
+        {
+          "capacity": 1,
+          "idNode": 36,
+          "time": 43089135,
+          "type": 1
+        },
+        {
+          "capacity": 1,
+          "idNode": 18,
+          "time": 45400000,
+          "type": 0
+        },
+        {
+          "capacity": 1,
+          "idNode": 22,
+          "time": 47380580,
+          "type": 0
+        },
+        {
+          "capacity": 1,
+          "idNode": 39,
+          "time": 48861662,
+          "type": 1
+        },
+        {
+          "capacity": 1,
+          "idNode": 46,
+          "time": 50194707,
+          "type": 1
+        },
+        {
+          "capacity": 1,
+          "idNode": 42,
+          "time": 51385887,
+          "type": 1
+        },
+        {
+          "capacity": 3,
+          "idNode": 51,
+          "time": 52831353,
+          "type": 3
+        }
+      ]
+    }
+  ]
+}

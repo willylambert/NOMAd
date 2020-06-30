@@ -1,0 +1,62 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<!-- New Role Modal -->
+<div class="modal-header">
+  <h4 class="modal-title col-md-8" id="modal-basic-title">
+    <span *ngIf="POI.site_type_code=='HOME'">Heure d'arrivée sur le point 
+      <span *ngIf="route.bMorning">de prise en charge</span>
+      <span *ngIf="!route.bMorning">de dépose</span>
+      de {{POI.hr_firstname}} {{POI.hr_lastname}}
+    </span>
+    <span *ngIf="POI.site_type_code!='HOME'">Heure d'arrivée sur le point {{POI.label}}</span>
+  </h4>
+  <span class='pull-right col-md-4'>
+    <button type="button" class="btn btn-default btn-sm" 
+        (click)="activeModal.close(null)">Annuler</button>
+    <button type="button" class="btn btn-success btn-sm" 
+            (click)="validate()" [disabled]="!routeForm.form.valid">Valider</button>
+  </span>
+</div>
+<div class="modal-body">
+  <form #routeForm="ngForm">
+    <div class="form-group row">
+      <label for="computedDt" class="col-lg-6 col-form-label">Heure calculée</label>
+      <div class="col-lg-4 form-control-plaintext">
+        <span *ngIf="POI.target_hr_auto==undefined || POI.target_hr_auto==null">
+          Non définie
+        </span>
+        <span *ngIf="POI.target_hr_auto!=undefined && POI.target_hr_auto!=null">
+          {{POI.target_hr_auto | utcTime}}
+        </span>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="serviceDuration" class="col-lg-6 col-form-label">Heure personnalisée</label>
+      <div class="col-lg-4">
+        <ngb-timepicker name="manualDt" [(ngModel)]="manualDt"
+                        [spinners]="false" ></ngb-timepicker>
+      </div>
+    </div>
+  </form>
+</div>

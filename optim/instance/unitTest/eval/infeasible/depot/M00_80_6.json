@@ -1,0 +1,21 @@
+{
+    "routes": [
+        {
+            "idVehicle": 10,
+            "nodes": [
+                {
+                    "idUser": 12345,
+                    "type": "depotIn"
+                },
+                {
+                    "idUser": 15,
+                    "type": "pickup"
+                },
+                {
+                    "idUser": 15,
+                    "type": "delivery"
+                }
+            ]
+        }
+    ]
+}

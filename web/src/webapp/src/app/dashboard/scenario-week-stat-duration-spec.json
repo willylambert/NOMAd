@@ -1,0 +1,185 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 500,
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  },
+  "height": 200,
+  "padding": 5,
+
+  "title": {
+    "text": "Durée de trajet",
+    "anchor": "start",
+    "frame": "group"
+  },
+
+  "signals": [
+    {
+      "name": "tooltip",
+      "value": "",
+      "on": [
+        {"events": "mouseover", "update": "datum"},
+        {"events": "mouseout",  "update": "{}"}
+      ]
+    }      
+
+  ],
+
+  "data": [
+    {
+      "name": "table",
+      "values":   [],
+      "transform": [
+        { "type": "collect", "sort": {"field": "yearWeek"} }
+       ]      
+    },
+    {
+      "name":"average",
+      "source":"table",
+      "transform": [
+        {
+          "type": "aggregate",
+          "ops":["average","max"],
+          "fields": ["duration","dt"],
+          "as":["average_duration","max_dt"]
+        }
+      ]      
+    }
+  ],
+  "scales": [
+    {
+      "name": "xscale",
+      "type": "band",
+      "domain": {
+        "data": "table",
+        "field": "week"
+      },
+      "range": "width",
+      "padding": 0.05,
+      "round": true
+    },
+    {
+      "name": "xaveragescale",
+      "type": "linear",
+      "domain": {
+        "data": "table",
+        "field": "dt"
+      },
+      "range": "width",
+      "padding": 0.05,
+      "round": true
+    },    
+    {
+      "name": "yscale",
+      "domain": {
+        "data": "table",
+        "field": "duration"
+      },
+      "nice": true,
+      "range": "height"
+    }
+  ],
+  "axes": [
+    {
+      "orient": "bottom",
+      "scale": "xscale",
+      "title":"Semaines",
+      "encode":{
+        "labels": {
+          "update": {
+          "text": {"signal": "'S'+datum.value"}
+          }
+        }
+      }
+
+    },
+    {
+      "orient": "left",
+      "scale": "yscale",
+      "title":"Durée (minutes)",
+      "encode":{
+        "labels": {
+          "update": {
+          "text": {"signal": "round(datum.value / 60)"}
+          }
+        }
+      }      
+    }
+  ],
+  "marks": [
+    {
+      "type": "rect",
+      "from": {
+        "data": "table"
+      },
+      "encode": {
+        "enter": {
+          "x": {
+            "scale": "xscale",
+            "field": "week"
+          },
+          "width": {
+            "scale": "xscale",
+            "band": 1
+          },
+          "y": {
+            "scale": "yscale",
+            "field": "duration"
+          },
+          "y2": {
+            "scale": "yscale",
+            "value": 0
+          },
+          "tooltip": {"signal": "{'Durée' : datum.year + ' S' + datum.week + ' : ' + round(datum.duration/60)  + ' min.' }"}
+        },
+        "update": {
+          "fill": {
+            "value": "rgb(26,43,63)"
+          }
+        },
+        "hover": {
+          "fill": {
+            "value": "rgb(88,183,127)"
+          }          
+        }
+      }
+    },
+    {
+      "type": "rule",
+      "from": {"data": "average"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "xscale", "value": 0},
+          "x2": {"scale": "xaveragescale", "field": "max_dt"},
+          "y": {"scale": "yscale", "field": "average_duration"},
+          "y2": {"scale": "yscale", "field": "average_duration"},
+          "stroke": {"value": "red"},
+          "strokeWidth": {"value": 2}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {"data": "average"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "xscale", "value": 0},
+          "x2": {"scale": "xaveragescale", "field": "max_dt"},
+          "y": {"scale": "yscale", "field": "average_duration"},
+          "y2": {"scale": "yscale", "field": "average_duration"},
+          "dx":{"value":2},
+          "dy":{"value":-5},
+          "stroke": {"value": "red"}
+
+        },
+        "update": {
+          "text":{"value":"moyenne"}
+        },
+        "hover": {
+          "text":{"signal":"round(datum.average_duration/60) + ' min.'"}
+        }
+      }
+    }
+  ]
+}

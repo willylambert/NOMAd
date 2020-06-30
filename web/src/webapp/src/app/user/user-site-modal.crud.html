@@ -1,0 +1,87 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<!-- User Site Modal -->
+<div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title" >Ajouter / supprimer des sites</h4>
+        <span class="pull-right" *ngIf="sites">
+          <button type="button" class="btn btn-success btn-sm" (click)="saveModal()" >Valider</button>
+          <button type="button" class="btn btn-default btn-sm" (click)="activeModal.close(null)">Annuler</button>
+        </span>
+      </div>
+      <div class="modal-body">
+        <span *ngIf="sites">
+                <div class="form-group row">
+                        <div class="col-md-12">
+                          <div class="btn-group" role="group" >
+                            <button type="button" class="btn btn-default" (click)="setFilter('HOME')"
+                                    [ngClass]="{'btn-success':sFilter=='HOME'}"
+                                    [disabled]="user.type_code=='INSTITUTION' || user.type_code=='TRANSPORT_ORGANIZER'">
+                              &nbsp;Domicile&nbsp;
+                            </button>
+                            &nbsp;
+                            <button type="button" class="btn btn-default" (click)="setFilter('INSTITUTION')"
+                                    [ngClass]="{'btn-success':sFilter=='INSTITUTION'}">
+                              &nbsp; Etablissement &nbsp;
+                            </button>
+                            &nbsp;
+                            <button type="button" class="btn btn-default" (click)="setFilter('TRANSPORTER')"
+                                    [ngClass]="{'btn-success':sFilter=='TRANSPORTER'}"
+                                    [disabled]="user.type_code=='INSTITUTION' || user.type_code=='TRANSPORT_ORGANIZER'">
+                              &nbsp; Transporteur &nbsp;
+                            </button>
+                            &nbsp;
+                            <button type="button" class="btn btn-default" (click)="setFilter('')"
+                                    [ngClass]="{'btn-success':sFilter==''}"
+                                    [disabled]="user.type_code=='INSTITUTION' || user.type_code=='TRANSPORT_ORGANIZER'">
+                              &nbsp; Tous &nbsp;
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group row" >
+                        <div class="col-md-12">
+                          <input class="form-control" type='text' name="searchPattern" [(ngModel)]="search"
+                                 (ngModelChange)="onPatternChange()" placeholder="Rechercher...">
+                        </div>
+                      </div>
+          <div class="form-group" fillHeight="350">
+            <ag-grid-angular
+              style="height: 300px"
+              class="ag-theme-material"
+              [gridOptions]="gridOptions"
+              [rowData]="sites"
+              [enableFilter]="true"
+              (gridReady)="gridReady($event)"
+              (rowSelected)="onSelected($event)"
+              (modelUpdated)="displayCheckBoxes()"
+              [paginationAutoPageSize]="true"
+              [pagination]="true"
+              rowSelection="multiple">
+            </ag-grid-angular>
+          </div>
+        </span>
+
+      </div>
+
+          

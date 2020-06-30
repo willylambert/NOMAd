@@ -1,0 +1,130 @@
+{
+    "routes": [
+        {
+            "idVehicle": 10,
+            "nodes": [
+                {
+                    "idUser": 12345,
+                    "type": "depotOut"
+                },
+                {
+                    "idUser": 15,
+                    "type": "pickup"
+                },
+                {
+                    "idUser": 100000,
+                    "type": "pickup",
+                    "idItinerary": 0
+                },
+                {
+                    "idUser": 26,
+                    "idItinerary": 0,
+                    "type": "pickup"
+                },
+                {
+                    "idUser": 9,
+                    "type": "pickup"
+                },
+                {
+                    "idUser": 22,
+                    "type": "pickup"
+                },
+                {
+                    "idUser": 22,
+                    "type": "delivery"
+                },
+                {
+                    "id": 95,
+                    "idUser": 15,
+                    "type": "delivery",
+                    "idItinerary": 0,
+                    "time": 35171
+                },
+                {
+                    "id": 80,
+                    "idUser": 100000,
+                    "type": "delivery",
+                    "idItinerary": 0,
+                    "time": 35291
+                },
+                {
+                    "id": 89,
+                    "idUser": 9,
+                    "type": "delivery",
+                    "idItinerary": 0,
+                    "time": 35411
+                },
+                {
+                    "id": 106,
+                    "idUser": 26,
+                    "type": "delivery",
+                    "idItinerary": 0,
+                    "time": 35531
+                },
+                {
+                    "id": 76,
+                    "idUser": 76,
+                    "type": "pickup",
+                    "idItinerary": 0,
+                    "time": 36336
+                },
+                {
+                    "id": 72,
+                    "idUser": 72,
+                    "type": "pickup",
+                    "idItinerary": 0,
+                    "time": 36456
+                },
+                {
+                    "id": 75,
+                    "idUser": 75,
+                    "type": "pickup",
+                    "idItinerary": 0,
+                    "time": 36756
+                },
+                {
+                    "id": 77,
+                    "idUser": 77,
+                    "type": "pickup",
+                    "idItinerary": 0,
+                    "time": 36876
+                },
+                {
+                    "id": 156,
+                    "idUser": 76,
+                    "type": "delivery",
+                    "idItinerary": 0,
+                    "time": 37800
+                },
+                {
+                    "id": 157,
+                    "idUser": 77,
+                    "type": "delivery",
+                    "idItinerary": 0,
+                    "time": 37860
+                },
+                {
+                    "id": 152,
+                    "idUser": 72,
+                    "type": "delivery",
+                    "idItinerary": 0,
+                    "time": 37980
+                },
+                {
+                    "id": 155,
+                    "idUser": 75,
+                    "type": "delivery",
+                    "idItinerary": 0,
+                    "time": 38100
+                },
+                {
+                    "id": 161,
+                    "idUser": 12345,
+                    "type": "depotIn",
+                    "idItinerary": 0,
+                    "time": 39458
+                }
+            ]
+        }
+    ]
+}

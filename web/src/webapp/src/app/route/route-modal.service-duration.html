@@ -1,0 +1,124 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<!-- New Role Modal -->
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">
+    Temps de service pour {{POI.hr_firstname}} {{POI.hr_lastname}}
+  </h4>
+  <span class='pull-right'>
+    <button type="button" [aclShow]="'/poi/update-service-duration'" [aclShowMode]="'display'" class="btn btn-success btn-sm" (click)="validate()" [disabled]="!routeForm.form.valid">Valider</button>
+    <button type="button" [aclShow]="'/poi/update-service-duration'" [aclShowReverse]="true" [aclShowMode]="'display'" class="btn btn-sm" (click)="activeModal.close()">Fermer</button>
+  </span>
+</div>
+<div class="modal-body">
+  <form #routeForm="ngForm">
+    <!-- version for those who have right to modify the waiting and service durations -->
+    <span [aclShow]="'/poi/update-service-duration'" [aclShowMode]="'display'">
+      <div class="form-group row" >
+        <label for="waitingDuration" class="col-lg-6 col-form-label">Attente avant le service</label>
+        <div class="col-lg-4">
+          <div class="input-group" >
+            <input type="text" class="form-control" name="waitingDuration" [(ngModel)]="waitingDuration"
+                   pattern="(0|[1-9]+[0-9]*)"
+                   required="true"/>
+            <div class="input-group-append">
+              <span class="input-group-text">minutes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="serviceDuration" class="col-lg-6 col-form-label">Temps de service</label>
+        <div class="col-lg-4">
+          <div class="input-group">
+            <input type="text" class="form-control" name="serviceDuration" [(ngModel)]="serviceDuration"
+                   pattern="(0|[1-9]+[0-9]*)"
+                   required="true"/>
+            <div class="input-group-append">
+              <span class="input-group-text">minutes</span>
+            </div>
+          </div>
+        </div>
+      </div>    
+    </span>
+    <!-- version for those who do NOT have right to modify the waiting and service durations -->
+    <span [aclShow]="'/poi/update-service-duration'" [aclShowReverse]="true" [aclShowMode]="'display'">
+      <div class="form-group row" >
+        <label for="waitingDurationView" class="col-lg-6 col-form-label">Attente avant le service</label>
+        <div class="col-lg-4">
+          <div class="input-group">
+            <input type="text" class="form-control" name="waitingDurationView" [(ngModel)]="waitingDuration"
+                   pattern="(0|[1-9]+[0-9]*)"
+                   disabled="true"/>
+            <div class="input-group-append">
+              <span class="input-group-text">minutes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="serviceDurationView" class="col-lg-6 col-form-label">Temps de service</label>
+        <div class="col-lg-4">
+          <div class="input-group">
+            <input type="text" class="form-control" name="serviceDurationView" [(ngModel)]="serviceDuration"
+                   pattern="(0|[1-9]+[0-9]*)"
+                   disabled="true"/>
+            <div class="input-group-append">
+              <span class="input-group-text">minutes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </span>
+
+    <div class="form-group row">
+      <label for="pickupDuration" class="col-lg-6 col-form-label">Temps de montée</label>
+      <div class="col-lg-4">
+        <div class="input-group">
+          <input type="text" class="form-control" name="pickupDuration" [(ngModel)]="pickupDuration"
+                 pattern="(0|[1-9]+[0-9]*)"
+                 required="true"
+                 disabled="true"/>
+          <div class="input-group-append">
+            <span class="input-group-text">minutes</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="deliveryDuration" class="col-lg-6 col-form-label">Temps de descente</label>
+      <div class="col-lg-4">
+        <div class="input-group">
+          <input type="text" class="form-control" name="deliveryDuration" [(ngModel)]="deliveryDuration"
+                 pattern="(0|[1-9]+[0-9]*)"
+                 required="true"
+                 disabled="true"/>
+          <div class="input-group-append">
+            <span class="input-group-text">minutes</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

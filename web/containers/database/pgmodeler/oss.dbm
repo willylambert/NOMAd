@@ -1,0 +1,3168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.1" last-position="880,0" last-zoom="1"
+   default-owner="postgres">
+<role name="odovia"
+      superuser="true"
+      inherit="true"
+      login="true"
+      bypassrls="true"
+      encrypted="true"
+      password="********">
+</role>
+
+<role name="talend_insert_grp"
+      inherit="true"
+      bypassrls="true"
+      encrypted="true"
+      password="********">
+  <comment><![CDATA[Groupe qui a le droit d'insert dans les tables]]></comment>
+</role>
+
+<role name="talend_select_grp"
+      inherit="true"
+      bypassrls="true"
+      encrypted="true"
+      password="********">
+  <comment><![CDATA[Groupe qui a uniquement le droit de lecture dans les tables]]></comment>
+</role>
+
+<role name="e.lardeux"
+      superuser="true"
+      createdb="true"
+      replication="true"
+      createrole="true"
+      inherit="true"
+      login="true"
+      bypassrls="true"
+      encrypted="true"
+      password="********">
+</role>
+
+<role name="odovia_cp"
+      superuser="true"
+      inherit="true"
+      login="true"
+      bypassrls="true"
+      encrypted="true"
+      password="********">
+</role>
+
+<role name="odovia_cp1"
+      superuser="true"
+      inherit="true"
+      login="true"
+      bypassrls="true"
+      encrypted="true"
+      password="********">
+</role>
+
+<database name="oss_dev" encoding="UTF8" lc-collate="en_US.UTF-8" lc-ctype="en_US.UTF-8" is-template="false" allow-conns="true">
+  <role name="&quot;e.lardeux&quot;"/>
+  <tablespace name="pg_default"/>
+</database>
+
+<schema name="public" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<schema name="reference" rect-visible="true" fill-color="#83af1f">
+  <role name="odovia"/>
+</schema>
+
+<extension name="postgis">
+  <schema name="reference"/>
+</extension>
+
+<table name="site_main">
+  <schema name="reference"/>
+  <role name="odovia"/>
+  <comment><![CDATA[Site list]]></comment>
+  <position x="1740" y="900"/>
+  <column name="id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[site_main : PK]]></comment>
+  </column>
+  <column name="code" not-null="true">
+    <type name="text" length="0"/>
+  </column>
+  <column name="label">
+    <type name="text" length="0"/>
+    <comment><![CDATA[label]]></comment>
+  </column>
+  <column name="site_main_id_entity">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[entity]]></comment>
+  </column>
+  <column name="site_main_id_customer">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[associated customer ]]></comment>
+  </column>
+  <column name="site_main_id_father">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[father of the site]]></comment>
+  </column>
+  <column name="type_th" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[type site - FK util_thesaurs]]></comment>
+  </column>
+  <column name="status_th">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[Status - FK util_thesaurs]]></comment>
+  </column>
+  <column name="extra_data">
+    <type name="json" length="0"/>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Record status]]></comment>
+  </column>
+  <constraint name="site_main_UN" type="uq-constr" table="reference.site_main">
+    <columns names="code" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="site_main_PK" type="pk-constr" table="reference.site_main">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<usertype name="geometry" configuration="base"
+ internal-length="0" by-value="false"
+ alignment="double precision" storage="main"
+ delimiter=":"
+ category="U" sql-disabled="true">
+  <schema name="public"/>
+  <role name="postgres"/>
+  <comment><![CDATA[postgis type: Planar spatial data type.]]></comment>
+</usertype>
+
+<table name="site_poi">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[poi for a site_main]]></comment>
+  <position x="1240" y="580"/>
+  <column name="id" not-null="true" default-value="uuid_generate_V1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="site_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[site]]></comment>
+  </column>
+  <column name="position" not-null="true">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[position into a site]]></comment>
+  </column>
+  <column name="label">
+    <type name="text" length="0"/>
+    <comment><![CDATA[label]]></comment>
+  </column>
+  <column name="addr1">
+    <type name="text" length="0"/>
+    <comment><![CDATA[adress 1]]></comment>
+  </column>
+  <column name="addr2">
+    <type name="text" length="0"/>
+    <comment><![CDATA[adress 2]]></comment>
+  </column>
+  <column name="postcode">
+    <type name="text" length="0"/>
+    <comment><![CDATA[post code]]></comment>
+  </column>
+  <column name="city">
+    <type name="text" length="0"/>
+    <comment><![CDATA[city]]></comment>
+  </column>
+  <column name="country_th">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[country]]></comment>
+  </column>
+  <column name="type_th">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[Type]]></comment>
+  </column>
+  <column name="geom">
+    <type name="public.geometry" length="0"/>
+    <comment><![CDATA[point geometry]]></comment>
+  </column>
+  <column name="service_duration" not-null="true" default-value="300">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[Duration of service in second]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Record status]]></comment>
+  </column>
+  <constraint name="site_poi_PK" type="pk-constr" table="reference.site_poi">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="poi_site_UN" type="uq-constr" table="reference.site_poi">
+    <columns names="site_main_id,position" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<function name="bttextcmp" sql-disabled="true"
+    window-func="false"
+    returns-setof="false"
+    behavior-type="STRICT"
+    function-type="IMMUTABLE"
+    security-type="SECURITY INVOKER"
+    execution-cost="1"
+    row-amount="0">
+  <schema name="pg_catalog"/>
+  <role name="postgres"/>
+  <comment><![CDATA[less-equal-greater]]></comment>
+  <language name="internal" sql-disabled="true"/>
+  <return-type>
+  <type name="integer" length="1"/>
+  </return-type>
+  <parameter name="_param1">
+    <type name="text" length="0"/>
+  </parameter>
+  <parameter name="_param2">
+    <type name="text" length="0"/>
+  </parameter>
+  <definition><![CDATA[bttextcmp]]></definition>
+</function>
+
+<function name="text_lt" sql-disabled="true"
+    window-func="false"
+    returns-setof="false"
+    behavior-type="STRICT"
+    function-type="IMMUTABLE"
+    security-type="SECURITY INVOKER"
+    execution-cost="1"
+    row-amount="0">
+  <schema name="pg_catalog"/>
+  <role name="postgres"/>
+  <comment><![CDATA[implementation of < operator]]></comment>
+  <language name="internal" sql-disabled="true"/>
+  <return-type>
+  <type name="boolean" length="1"/>
+  </return-type>
+  <parameter name="_param1">
+    <type name="text" length="0"/>
+  </parameter>
+  <parameter name="_param2">
+    <type name="text" length="0"/>
+  </parameter>
+  <definition><![CDATA[text_lt]]></definition>
+</function>
+
+<function name="scalarltsel" sql-disabled="true"
+    window-func="false"
+    returns-setof="false"
+    behavior-type="STRICT"
+    function-type="STABLE"
+    security-type="SECURITY INVOKER"
+    execution-cost="1"
+    row-amount="0">
+  <schema name="pg_catalog"/>
+  <role name="postgres"/>
+  <comment><![CDATA[restriction selectivity of < and related operators on scalar datatypes]]></comment>
+  <language name="internal" sql-disabled="true"/>
+  <return-type>
+  <type name="double precision" length="1"/>
+  </return-type>
+  <parameter name="_param1">
+    <type name="internal" length="0"/>
+  </parameter>
+  <parameter name="_param2">
+    <type name="oid" length="0"/>
+  </parameter>
+  <parameter name="_param3">
+    <type name="internal" length="0"/>
+  </parameter>
+  <parameter name="_param4">
+    <type name="integer" length="0"/>
+  </parameter>
+  <definition><![CDATA[scalarltsel]]></definition>
+</function>
+
+<function name="scalarltjoinsel" sql-disabled="true"
+    window-func="false"
+    returns-setof="false"
+    behavior-type="STRICT"
+    function-type="STABLE"
+    security-type="SECURITY INVOKER"
+    execution-cost="1"
+    row-amount="0">
+  <schema name="pg_catalog"/>
+  <role name="postgres"/>
+  <comment><![CDATA[join selectivity of < and related operators on scalar datatypes]]></comment>
+  <language name="internal" sql-disabled="true"/>
+  <return-type>
+  <type name="double precision" length="1"/>
+  </return-type>
+  <parameter name="_param1">
+    <type name="internal" length="0"/>
+  </parameter>
+  <parameter name="_param2">
+    <type name="oid" length="0"/>
+  </parameter>
+  <parameter name="_param3">
+    <type name="internal" length="0"/>
+  </parameter>
+  <parameter name="_param4">
+    <type name="smallint" length="0"/>
+  </parameter>
+  <parameter name="_param5">
+    <type name="internal" length="0"/>
+  </parameter>
+  <definition><![CDATA[scalarltjoinsel]]></definition>
+</function>
+
+<operator name="&lt;" sql-disabled="true">
+  <schema name="pg_catalog"/>
+  <role name="postgres"/>
+  <comment><![CDATA[less than]]></comment>
+  <type name="text" length="1" ref-type="left-type"/>
+  <type name="text" length="1" ref-type="right-type"/>
+  <function ref-type="operfunc" signature="pg_catalog.text_lt(text,text)"/>
+  <function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
+  <function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
+</operator>
+
+<function name="text_le" sql-disabled="true"
+    window-func="false"
+    returns-setof="false"
+    behavior-type="STRICT"
+    function-type="IMMUTABLE"
+    security-type="SECURITY INVOKER"
+    execution-cost="1"
+    row-amount="0">
+  <schema name="pg_catalog"/>
+  <role name="postgres"/>
+  <comment><![CDATA[implementation of <= operator]]></comment>
+  <language name="internal" sql-disabled="true"/>
+  <return-type>
+  <type name="boolean" length="1"/>
+  </return-type>
+  <parameter name="_param1">
+    <type name="text" length="0"/>
+  </parameter>
+  <parameter name="_param2">
+    <type name="text" length="0"/>
+  </parameter>
+  <definition><![CDATA[text_le]]></definition>
+</function>
+
+<operator name="&lt;=" sql-disabled="true">
+  <schema name="pg_catalog"/>
+  <role name="postgres"/>
+  <comment><![CDATA[less than or equal]]></comment>
+  <type name="text" length="1" ref-type="left-type"/>
+  <type name="text" length="1" ref-type="right-type"/>
+  <function ref-type="operfunc" signature="pg_catalog.text_le(text,text)"/>
+  <function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
+  <function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
+</operator>
+
+<function name="texteq" sql-disabled="true"
+    window-func="false"
+    leakproof="true"
+    returns-setof="false"
+    behavior-type="STRICT"
+    function-type="IMMUTABLE"
+    security-type="SECURITY INVOKER"
+    execution-cost="1"
+    row-amount="0">
+  <schema name="pg_catalog"/>
+  <role name="postgres"/>
+  <comment><![CDATA[implementation of = operator]]></comment>
+  <language name="internal" sql-disabled="true"/>
+  <return-type>
+  <type name="boolean" length="1"/>
+  </return-type>
+  <parameter name="_param1">
+    <type name="text" length="0"/>
+  </parameter>
+  <parameter name="_param2">
+    <type name="text" length="0"/>
+  </parameter>
+  <definition><![CDATA[texteq]]></definition>
+</function>
+
+<function name="eqsel" sql-disabled="true"
+    window-func="false"
+    returns-setof="false"
+    behavior-type="STRICT"
+    function-type="STABLE"
+    security-type="SECURITY INVOKER"
+    execution-cost="1"
+    row-amount="0">
+  <schema name="pg_catalog"/>
+  <role name="postgres"/>
+  <comment><![CDATA[restriction selectivity of = and related operators]]></comment>
+  <language name="internal" sql-disabled="true"/>
+  <return-type>
+  <type name="double precision" length="1"/>
+  </return-type>
+  <parameter name="_param1">
+    <type name="internal" length="0"/>
+  </parameter>
+  <parameter name="_param2">
+    <type name="oid" length="0"/>
+  </parameter>
+  <parameter name="_param3">
+    <type name="internal" length="0"/>
+  </parameter>
+  <parameter name="_param4">
+    <type name="integer" length="0"/>
+  </parameter>
+  <definition><![CDATA[eqsel]]></definition>
+</function>
+
+<function name="eqjoinsel" sql-disabled="true"
+    window-func="false"
+    returns-setof="false"
+    behavior-type="STRICT"
+    function-type="STABLE"
+    security-type="SECURITY INVOKER"
+    execution-cost="1"
+    row-amount="0">
+  <schema name="pg_catalog"/>
+  <role name="postgres"/>
+  <comment><![CDATA[join selectivity of = and related operators]]></comment>
+  <language name="internal" sql-disabled="true"/>
+  <return-type>
+  <type name="double precision" length="1"/>
+  </return-type>
+  <parameter name="_param1">
+    <type name="internal" length="0"/>
+  </parameter>
+  <parameter name="_param2">
+    <type name="oid" length="0"/>
+  </parameter>
+  <parameter name="_param3">
+    <type name="internal" length="0"/>
+  </parameter>
+  <parameter name="_param4">
+    <type name="smallint" length="0"/>
+  </parameter>
+  <parameter name="_param5">
+    <type name="internal" length="0"/>
+  </parameter>
+  <definition><![CDATA[eqjoinsel]]></definition>
+</function>
+
+<operator name="=" sql-disabled="true">
+  <schema name="pg_catalog"/>
+  <role name="postgres"/>
+  <comment><![CDATA[equal]]></comment>
+  <type name="text" length="1" ref-type="left-type"/>
+  <type name="text" length="1" ref-type="right-type"/>
+  <function ref-type="operfunc" signature="pg_catalog.texteq(text,text)"/>
+  <function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
+  <function ref-type="restriction" signature="pg_catalog.eqsel(internal,oid,internal,integer)"/>
+</operator>
+
+<function name="text_ge" sql-disabled="true"
+    window-func="false"
+    returns-setof="false"
+    behavior-type="STRICT"
+    function-type="IMMUTABLE"
+    security-type="SECURITY INVOKER"
+    execution-cost="1"
+    row-amount="0">
+  <schema name="pg_catalog"/>
+  <role name="postgres"/>
+  <comment><![CDATA[implementation of >= operator]]></comment>
+  <language name="internal" sql-disabled="true"/>
+  <return-type>
+  <type name="boolean" length="1"/>
+  </return-type>
+  <parameter name="_param1">
+    <type name="text" length="0"/>
+  </parameter>
+  <parameter name="_param2">
+    <type name="text" length="0"/>
+  </parameter>
+  <definition><![CDATA[text_ge]]></definition>
+</function>
+
+<function name="scalargtsel" sql-disabled="true"
+    window-func="false"
+    returns-setof="false"
+    behavior-type="STRICT"
+    function-type="STABLE"
+    security-type="SECURITY INVOKER"
+    execution-cost="1"
+    row-amount="0">
+  <schema name="pg_catalog"/>
+  <role name="postgres"/>
+  <comment><![CDATA[restriction selectivity of > and related operators on scalar datatypes]]></comment>
+  <language name="internal" sql-disabled="true"/>
+  <return-type>
+  <type name="double precision" length="1"/>
+  </return-type>
+  <parameter name="_param1">
+    <type name="internal" length="0"/>
+  </parameter>
+  <parameter name="_param2">
+    <type name="oid" length="0"/>
+  </parameter>
+  <parameter name="_param3">
+    <type name="internal" length="0"/>
+  </parameter>
+  <parameter name="_param4">
+    <type name="integer" length="0"/>
+  </parameter>
+  <definition><![CDATA[scalargtsel]]></definition>
+</function>
+
+<function name="scalargtjoinsel" sql-disabled="true"
+    window-func="false"
+    returns-setof="false"
+    behavior-type="STRICT"
+    function-type="STABLE"
+    security-type="SECURITY INVOKER"
+    execution-cost="1"
+    row-amount="0">
+  <schema name="pg_catalog"/>
+  <role name="postgres"/>
+  <comment><![CDATA[join selectivity of > and related operators on scalar datatypes]]></comment>
+  <language name="internal" sql-disabled="true"/>
+  <return-type>
+  <type name="double precision" length="1"/>
+  </return-type>
+  <parameter name="_param1">
+    <type name="internal" length="0"/>
+  </parameter>
+  <parameter name="_param2">
+    <type name="oid" length="0"/>
+  </parameter>
+  <parameter name="_param3">
+    <type name="internal" length="0"/>
+  </parameter>
+  <parameter name="_param4">
+    <type name="smallint" length="0"/>
+  </parameter>
+  <parameter name="_param5">
+    <type name="internal" length="0"/>
+  </parameter>
+  <definition><![CDATA[scalargtjoinsel]]></definition>
+</function>
+
+<operator name="&gt;=" sql-disabled="true">
+  <schema name="pg_catalog"/>
+  <role name="postgres"/>
+  <comment><![CDATA[greater than or equal]]></comment>
+  <type name="text" length="1" ref-type="left-type"/>
+  <type name="text" length="1" ref-type="right-type"/>
+  <function ref-type="operfunc" signature="pg_catalog.text_ge(text,text)"/>
+  <function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
+  <function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
+</operator>
+
+<function name="text_gt" sql-disabled="true"
+    window-func="false"
+    returns-setof="false"
+    behavior-type="STRICT"
+    function-type="IMMUTABLE"
+    security-type="SECURITY INVOKER"
+    execution-cost="1"
+    row-amount="0">
+  <schema name="pg_catalog"/>
+  <role name="postgres"/>
+  <comment><![CDATA[implementation of > operator]]></comment>
+  <language name="internal" sql-disabled="true"/>
+  <return-type>
+  <type name="boolean" length="1"/>
+  </return-type>
+  <parameter name="_param1">
+    <type name="text" length="0"/>
+  </parameter>
+  <parameter name="_param2">
+    <type name="text" length="0"/>
+  </parameter>
+  <definition><![CDATA[text_gt]]></definition>
+</function>
+
+<operator name="&gt;" sql-disabled="true">
+  <schema name="pg_catalog"/>
+  <role name="postgres"/>
+  <comment><![CDATA[greater than]]></comment>
+  <type name="text" length="1" ref-type="left-type"/>
+  <type name="text" length="1" ref-type="right-type"/>
+  <function ref-type="operfunc" signature="pg_catalog.text_gt(text,text)"/>
+  <function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
+  <function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
+</operator>
+
+<opclass  name="text_ops" index-type="btree" default="true" sql-disabled="true">
+  <schema name="pg_catalog"/>
+  <role name="postgres"/>
+  <type name="text" length="1"/>
+  <element type="function" stg-number="1">
+    <function signature="pg_catalog.bttextcmp(text,text)"/>
+  </element>
+  <element type="operator" stg-number="1">
+    <operator  signature="pg_catalog.&lt;(text,text)"/>
+  </element>
+  <element type="operator" stg-number="2">
+    <operator  signature="pg_catalog.&lt;=(text,text)"/>
+  </element>
+  <element type="operator" stg-number="3">
+    <operator  signature="pg_catalog.=(text,text)"/>
+  </element>
+  <element type="operator" stg-number="4">
+    <operator  signature="pg_catalog.&gt;=(text,text)"/>
+  </element>
+  <element type="operator" stg-number="5">
+    <operator  signature="pg_catalog.&gt;(text,text)"/>
+  </element>
+</opclass>
+
+<table name="util_thesaurus">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[thesaurus]]></comment>
+  <position x="1440" y="1360"/>
+  <column name="id" not-null="true" default-value="uuid_generate_V1()">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[util_thesaurus : PK]]></comment>
+  </column>
+  <column name="cat" not-null="true">
+    <type name="text" length="0"/>
+    <comment><![CDATA[category]]></comment>
+  </column>
+  <column name="code" not-null="true">
+    <type name="text" length="0"/>
+    <comment><![CDATA[code]]></comment>
+  </column>
+  <column name="label" not-null="true">
+    <type name="text" length="0"/>
+    <comment><![CDATA[label]]></comment>
+  </column>
+  <column name="orderDisplay">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[order of display]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Record status]]></comment>
+  </column>
+  <constraint name="site_thesaurus_PK" type="pk-constr" table="reference.util_thesaurus">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="site_thesaurus_UN" type="uq-constr" table="reference.util_thesaurus">
+    <columns names="cat,code" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<index name="site_main_IDX01" table="reference.site_main"
+   concurrent="false" unique="false" fast-update="false" buffering="false"
+   index-type="btree" factor="0">
+    <idxelement use-sorting="false">
+      <column name="code"/>
+    </idxelement>
+    <idxelement use-sorting="true" nulls-first="false" asc-order="true">
+      <column name="type_th"/>
+    </idxelement>
+    <idxelement use-sorting="true" nulls-first="false" asc-order="true">
+      <column name="status_th"/>
+    </idxelement>
+</index>
+
+<table name="user_main">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[user list]]></comment>
+  <position x="2520" y="800"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1 ()">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[user_main : PK]]></comment>
+  </column>
+  <column name="login" not-null="true">
+    <type name="text" length="0"/>
+    <comment><![CDATA[login]]></comment>
+  </column>
+  <column name="passwd">
+    <type name="text" length="0"/>
+    <comment><![CDATA[password]]></comment>
+  </column>
+  <column name="firstname">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Firstname]]></comment>
+  </column>
+  <column name="lastname">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Lastname]]></comment>
+  </column>
+  <column name="domain">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Domain LDAP for connection]]></comment>
+  </column>
+  <column name="status_th" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[Status]]></comment>
+  </column>
+  <column name="lastconnection_dt">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[Date of last connexion.
+If null, password must be changed]]></comment>
+  </column>
+  <column name="type_th" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[type of user : customer or society]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Record status]]></comment>
+  </column>
+  <constraint name="user_main_PK" type="pk-constr" table="reference.user_main">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="user_main_UN" type="uq-constr" table="reference.user_main">
+    <columns names="login" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="user_mainsite">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[list of entity of the user]]></comment>
+  <position x="2140" y="700"/>
+  <column name="id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="user_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[user]]></comment>
+  </column>
+  <column name="site_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[site - entity]]></comment>
+  </column>
+  <column name="rec_st" not-null="true">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Record status]]></comment>
+  </column>
+  <constraint name="user_society_PK" type="pk-constr" table="reference.user_mainsite">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="user_mainsite_UN" type="uq-constr" table="reference.user_mainsite">
+    <columns names="user_main_id,site_main_id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="acl_role">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[role list into application]]></comment>
+  <position x="3460" y="1040"/>
+  <column name="id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[right_role : PK]]></comment>
+  </column>
+  <column name="code" not-null="true">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Code]]></comment>
+  </column>
+  <column name="label" not-null="true">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Label]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Record status]]></comment>
+  </column>
+  <constraint name="acl_role_PK" type="pk-constr" table="reference.acl_role">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="acl_role_UN" type="uq-constr" table="reference.acl_role">
+    <columns names="code" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="acl_action">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[action list into application]]></comment>
+  <position x="3460" y="700"/>
+  <column name="id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[right_action : PK]]></comment>
+  </column>
+  <column name="code" not-null="true">
+    <type name="text" length="0"/>
+    <comment><![CDATA[code]]></comment>
+  </column>
+  <column name="label" not-null="true">
+    <type name="text" length="0"/>
+    <comment><![CDATA[label]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Record status]]></comment>
+  </column>
+  <constraint name="acl_action_PK" type="pk-constr" table="reference.acl_action">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="acl_action_UN" type="uq-constr" table="reference.acl_action">
+    <columns names="code" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="acl_roleaction">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[List of actions associated with a role]]></comment>
+  <position x="3900" y="840"/>
+  <column name="id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[right_roleaction : PK]]></comment>
+  </column>
+  <column name="acl_action_id">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[action]]></comment>
+  </column>
+  <column name="acl_role_id">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[role]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Record status]]></comment>
+  </column>
+  <constraint name="acl_roleaction_PK" type="pk-constr" table="reference.acl_roleaction">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="acl_roleaction_UN" type="uq-constr" table="reference.acl_roleaction">
+    <columns names="acl_action_id,acl_role_id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="acl_roleuser">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[List of roles for a user]]></comment>
+  <position x="3080" y="860"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1 ()">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[right_roleuser : PK]]></comment>
+  </column>
+  <column name="user_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[user]]></comment>
+  </column>
+  <column name="acl_role_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[role]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Record status]]></comment>
+  </column>
+  <constraint name="acl_roleuser_PK" type="pk-constr" table="reference.acl_roleuser">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="acl_roleuser_UN" type="uq-constr" table="reference.acl_roleuser">
+    <columns names="user_main_id,acl_role_id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<index name="user_main _IDX01" table="reference.user_main"
+   concurrent="false" unique="false" fast-update="false" buffering="false"
+   index-type="btree" factor="0">
+    <idxelement use-sorting="false">
+      <column name="login"/>
+    </idxelement>
+</index>
+
+<table name="audit_trail">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[audit trail]]></comment>
+  <position x="2440" y="400"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1 ()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="dt" not-null="true">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[date of event]]></comment>
+  </column>
+  <column name="table_name" not-null="true">
+    <type name="text" length="0"/>
+    <comment><![CDATA[table name]]></comment>
+  </column>
+  <column name="column_name" not-null="true">
+    <type name="text" length="0"/>
+    <comment><![CDATA[column name]]></comment>
+  </column>
+  <column name="event_code" not-null="true">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Code event]]></comment>
+  </column>
+  <column name="record_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[record id into table name]]></comment>
+  </column>
+  <column name="column_value">
+    <type name="json" length="0"/>
+    <comment><![CDATA[value of column]]></comment>
+  </column>
+  <column name="user_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[user ]]></comment>
+  </column>
+  <constraint name="audit_trail_PK" type="pk-constr" table="reference.audit_trail">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="user_lastsession">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[last user session]]></comment>
+  <position x="2800" y="400"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1 ()">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[user_lastsession : PK]]></comment>
+  </column>
+  <column name="user_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[user : FK]]></comment>
+  </column>
+  <column name="date_beginsession_dt" not-null="true">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[Date of beginning session]]></comment>
+  </column>
+  <column name="date_lastaction_dt" not-null="true">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[date of the last action]]></comment>
+  </column>
+  <column name="application_name">
+    <type name="text" length="0"/>
+    <comment><![CDATA[application name]]></comment>
+  </column>
+  <column name="variables_session">
+    <type name="json" length="0"/>
+    <comment><![CDATA[Variables session]]></comment>
+  </column>
+  <constraint name="user_lastsession_PK" type="pk-constr" table="reference.user_lastsession">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="vehicle_main">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[List of vehicle]]></comment>
+  <position x="3000" y="1260"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1 ()">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[vehicle_main : id]]></comment>
+  </column>
+  <column name="code" not-null="true">
+    <type name="text" length="0"/>
+    <comment><![CDATA[code]]></comment>
+  </column>
+  <column name="label">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Label]]></comment>
+  </column>
+  <column name="licence">
+    <type name="text" length="0"/>
+  </column>
+  <column name="vehicle_category_id">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="site_main_id">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[Entity or customer]]></comment>
+  </column>
+  <column name="ptra">
+    <type name="real" length="0"/>
+    <comment><![CDATA[ptra]]></comment>
+  </column>
+  <column name="site_poi_id_depot">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[site de rattachement]]></comment>
+  </column>
+  <column name="status_th" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[Status]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+  </column>
+  <constraint name="vehicle_main_PK" type="pk-constr" table="reference.vehicle_main">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="vehicle_main_UN" type="uq-constr" table="reference.vehicle_main">
+    <columns names="code" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="vehicle_category">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[Category of vehicle]]></comment>
+  <position x="3580" y="1260"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1 ()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="code" not-null="true">
+    <type name="text" length="0"/>
+    <comment><![CDATA[code]]></comment>
+  </column>
+  <column name="label">
+    <type name="text" length="0"/>
+  </column>
+  <column name="axles_count">
+    <type name="integer" length="0"/>
+  </column>
+  <column name="fuel_consumption">
+    <type name="real" length="0"/>
+  </column>
+  <column name="daily_cost">
+    <type name="real" length="0"/>
+  </column>
+  <column name="hourly_cost">
+    <type name="real" length="0"/>
+  </column>
+  <column name="kilometric_cost">
+    <type name="real" length="0"/>
+  </column>
+  <column name="co2_quantity">
+    <type name="real" length="0"/>
+    <comment><![CDATA[gram from co2 to kilogram]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[record status]]></comment>
+  </column>
+  <constraint name="vehicle_category_PK" type="pk-constr" table="reference.vehicle_category">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="vehicle_category_UN" type="uq-constr" table="reference.vehicle_category">
+    <columns names="code" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="hr_main">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[list of employee / intervener]]></comment>
+  <position x="2260" y="1640"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1 ()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="lastname">
+    <type name="text" length="0"/>
+    <comment><![CDATA[lastname]]></comment>
+  </column>
+  <column name="lastnamemaiden">
+    <type name="text" length="0"/>
+    <comment><![CDATA[maiden lastname]]></comment>
+  </column>
+  <column name="firstname">
+    <type name="text" length="0"/>
+    <comment><![CDATA[firstname]]></comment>
+  </column>
+  <column name="gender_th">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[gender (see thesaurus)]]></comment>
+  </column>
+  <column name="birthday_dt">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[birthday]]></comment>
+  </column>
+  <column name="type_th" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[Type of person : user, salaried]]></comment>
+  </column>
+  <column name="status_th">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[status (see thesaurus)]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+  </column>
+  <constraint name="hr_main_PK" type="pk-constr" table="reference.hr_main">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="beacon_main">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[list of beacom]]></comment>
+  <position x="2020" y="2200"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1 ()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="code" not-null="true">
+    <type name="text" length="0"/>
+  </column>
+  <column name="beacon_uuid" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="beacon_major" not-null="true">
+    <type name="smallint" length="0"/>
+  </column>
+  <column name="model">
+    <type name="text" length="0"/>
+  </column>
+  <column name="version">
+    <type name="text" length="0"/>
+  </column>
+  <column name="service_dt">
+    <type name="smallint" length="0"/>
+    <comment><![CDATA[date de mise en sevrice]]></comment>
+  </column>
+  <column name="battery_dt">
+    <type name="smallint" length="0"/>
+    <comment><![CDATA[date de changement de la pile]]></comment>
+  </column>
+  <column name="parameter">
+    <type name="json" length="0"/>
+  </column>
+  <column name="vehicle_main_id">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+  </column>
+  <constraint name="beacon_main_PK" type="pk-constr" table="reference.beacon_main">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="beacon_main_UN" type="uq-constr" table="reference.beacon_main">
+    <columns names="beacon_uuid,beacon_major" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="device_main">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <position x="2600" y="2080"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1 ()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="code" not-null="true">
+    <type name="text" length="0"/>
+    <comment><![CDATA[code of device]]></comment>
+  </column>
+  <column name="label">
+    <type name="text" length="0"/>
+    <comment><![CDATA[label of device]]></comment>
+  </column>
+  <column name="user_main_id">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[User who use device]]></comment>
+  </column>
+  <column name="description">
+    <type name="text" length="0"/>
+  </column>
+  <column name="events">
+    <type name="json" length="0"/>
+  </column>
+  <column name="apn_token">
+    <type name="text" length="0"/>
+  </column>
+  <column name="token_connect_yn">
+    <type name="text" length="0"/>
+  </column>
+  <column name="vehicle_main_id">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[vehicle associated with device]]></comment>
+  </column>
+  <column name="status_th">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[Status]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+  </column>
+  <constraint name="device_main_PK" type="pk-constr" table="reference.device_main">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="device_main_UN" type="uq-constr" table="reference.device_main">
+    <columns names="code" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="gis_devicebeacon">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <position x="2180" y="2580"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="device_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="beacon_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="beacon_minor">
+    <type name="integer" length="0"/>
+  </column>
+  <column name="gis_device_id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <constraint name="gis_devicebeacon_PK" type="pk-constr" table="reference.gis_devicebeacon">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="doc_file">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[List of files]]></comment>
+  <position x="940" y="1320"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1()">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[doc file identifier]]></comment>
+  </column>
+  <column name="label">
+    <type name="text" length="0"/>
+    <comment><![CDATA[File label]]></comment>
+  </column>
+  <column name="dt">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[Date as unix timestamp at which the document was inserted]]></comment>
+  </column>
+  <column name="namefile" not-null="true">
+    <type name="text" length="0"/>
+    <comment><![CDATA[File name (without path)]]></comment>
+  </column>
+  <column name="type_th" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[File type (see thesaurus)]]></comment>
+  </column>
+  <column name="content">
+    <type name="json" length="0"/>
+    <comment><![CDATA[File content, encoded in base 64]]></comment>
+  </column>
+  <column name="status_th">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[File status, approved or rejected for instance (see thesaurus)]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[File deletion mark, D means marked as deleted]]></comment>
+  </column>
+  <constraint name="doc_file_PK" type="pk-constr" table="reference.doc_file">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="doc_filesite">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[Link between a document and a site]]></comment>
+  <position x="1040" y="980"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="doc_file_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[FK for doc_file table]]></comment>
+  </column>
+  <column name="site_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[FK for site_main table]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[File deletion mark, D means marked as deleted]]></comment>
+  </column>
+  <constraint name="doc_filesite_PK" type="pk-constr" table="reference.doc_filesite">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="hr_contact">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[list of phone/email for a person]]></comment>
+  <position x="1660" y="1540"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="hr_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[FK for hr_main table]]></comment>
+  </column>
+  <column name="priority" not-null="true" default-value="1">
+    <type name="smallint" length="0"/>
+    <comment><![CDATA[priority into contact]]></comment>
+  </column>
+  <column name="content">
+    <type name="text" length="0"/>
+    <comment><![CDATA[phone number or email]]></comment>
+  </column>
+  <column name="type_th" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[type of phone (mobile, fix ...) or email]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Record status, C:create, D: deleted]]></comment>
+  </column>
+  <constraint name="hr_phone_PK" type="pk-constr" table="reference.hr_contact">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="hr_phone_UN" type="uq-constr" table="reference.hr_contact">
+    <columns names="hr_main_id,content" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="util_context">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[context of OSS]]></comment>
+  <position x="4020" y="420"/>
+  <column name="version">
+    <type name="text" length="0"/>
+    <comment><![CDATA[version]]></comment>
+  </column>
+  <column name="date_dt">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[date of version]]></comment>
+  </column>
+</table>
+
+<table name="vehicle_configuration">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[list of configurations possible for a category of vehicles]]></comment>
+  <position x="4020" y="1420"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="code" not-null="true">
+    <type name="text" length="0"/>
+  </column>
+  <column name="label">
+    <type name="text" length="0"/>
+  </column>
+  <column name="vehicle_category_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[FK for vehicle_category table]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[record status]]></comment>
+  </column>
+  <constraint name="vehicle_configuration_PK" type="pk-constr" table="reference.vehicle_configuration">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="vehicle_configuration_UN" type="uq-constr" table="reference.vehicle_configuration">
+    <columns names="code,vehicle_category_id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="gis_hr_current">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[lazst position for hr_main]]></comment>
+  <position x="1420" y="1800"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="hr_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[Fk for hr_main table]]></comment>
+  </column>
+  <column name="geom_dt" not-null="true">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[date of geom]]></comment>
+  </column>
+  <column name="geom" not-null="true">
+    <type name="geometry" length="0"/>
+  </column>
+  <constraint name="gis_hr_current_PK" type="pk-constr" table="reference.gis_hr_current">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="gis_hr_current_UN" type="uq-constr" table="reference.gis_hr_current">
+    <columns names="hr_main_id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="gis_vehicle_current">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <position x="3460" y="1820"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="vehicle_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="geom_dt">
+    <type name="integer" length="0"/>
+  </column>
+  <column name="geom">
+    <type name="geometry" length="0"/>
+  </column>
+  <column name="hr_main_id_driver">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="load">
+    <type name="json" length="0"/>
+  </column>
+  <constraint name="gis_vehicle_current_PK" type="pk-constr" table="reference.gis_vehicle_current">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="gis_vehicle_current_UN" type="uq-constr" table="reference.gis_vehicle_current">
+    <columns names="vehicle_main_id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="gis_device">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <position x="3040" y="2400"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="device_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="geom_dt" not-null="true">
+    <type name="integer" length="0"/>
+  </column>
+  <column name="geom" not-null="true">
+    <type name="geometry" length="0"/>
+  </column>
+  <column name="heading">
+    <type name="integer" length="0"/>
+  </column>
+  <column name="speed">
+    <type name="integer" length="0"/>
+  </column>
+  <column name="accuracy">
+    <type name="integer" length="0"/>
+  </column>
+  <column name="event">
+    <type name="json" length="0"/>
+  </column>
+  <constraint name="gis_device_PK" type="pk-constr" table="reference.gis_device">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="gis_device_UN" type="uq-constr" table="reference.gis_device">
+    <columns names="device_main_id,geom_dt" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="gis_device_current">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <position x="3100" y="2060"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="device_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="geom_dt" not-null="true">
+    <type name="integer" length="0"/>
+  </column>
+  <column name="geom" not-null="true">
+    <type name="geometry" length="0"/>
+  </column>
+  <constraint name="gis_device_current_PK" type="pk-constr" table="reference.gis_device_current">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="gis_device_current_UN" type="uq-constr" table="reference.gis_device_current">
+    <columns names="device_main_id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="site_aoi">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[aoi for a site_main]]></comment>
+  <position x="1320" y="1060"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="site_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[site]]></comment>
+  </column>
+  <column name="position" not-null="true">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[position into a site]]></comment>
+  </column>
+  <column name="label">
+    <type name="text" length="0"/>
+    <comment><![CDATA[label]]></comment>
+  </column>
+  <column name="type_th">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[type]]></comment>
+  </column>
+  <column name="geom">
+    <type name="geometry" length="0"/>
+    <comment><![CDATA[aoi geometry]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Record status]]></comment>
+  </column>
+  <constraint name="site_aoi_PK" type="pk-constr" table="reference.site_aoi">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="site_aoi_UN" type="uq-constr" table="reference.site_aoi">
+    <columns names="site_main_id,position" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="vehicle_capacity">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[capacity of a vehicle]]></comment>
+  <position x="4040" y="1680"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="vehicle_configuration_id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="quantity" not-null="true">
+    <type name="real" length="0"/>
+  </column>
+  <column name="unit_th" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[unit of transported]]></comment>
+  </column>
+  <column name="transported_th" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+  </column>
+  <constraint name="vehicle_capacity_PK" type="pk-constr" table="reference.vehicle_capacity">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<textbox name="aa" font-size="9">
+  <position x="4020" y="1360"/>
+  <comment><![CDATA[configuration 1 : 2 assis + 3 fauteuils
+configuration 2 : 4 assis + 1 fauteuils]]></comment>
+</textbox>
+
+<textbox name="dd" font-size="9">
+  <position x="4020" y="1600"/>
+  <comment><![CDATA[- 25 000 / tonne/ de matériau
+- 2         / enfants / assis
+- 3        / enfants / en fauteuils]]></comment>
+</textbox>
+
+<table name="hr_mainsite">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[Link between hr_main and site_main with a type of link]]></comment>
+  <position x="2100" y="1200"/>
+  <column name="id" not-null="true" default-value="uuid_generate_V1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="hr_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="site_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="type_th" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+  </column>
+  <constraint name="hr_mainsite_PK" type="pk-constr" table="reference.hr_mainsite">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="transport_route">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[List of route]]></comment>
+  <position x="800" y="120"/>
+  <column name="id" not-null="true" default-value="uuid_generate_V1()">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[PK for transport_route]]></comment>
+  </column>
+  <column name="code" not-null="true">
+    <type name="text" length="0"/>
+    <comment><![CDATA[code of the route]]></comment>
+  </column>
+  <column name="label">
+    <type name="text" length="0"/>
+  </column>
+  <column name="date_dt">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[Date of the transport. If the date is null, this is a typical tour for a time slot]]></comment>
+  </column>
+  <column name="timeslot_th" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[time slot, foregin key to util_thesaurus]]></comment>
+  </column>
+  <column name="start_hr">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[Heure de début du trajet en seconde]]></comment>
+  </column>
+  <column name="end_hr">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[Heure de fin du trajet en seconde]]></comment>
+  </column>
+  <column name="vehicle_category_id">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="site_poi_id_start">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[Starting point ]]></comment>
+  </column>
+  <column name="site_poi_id_end">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[Arrival point ]]></comment>
+  </column>
+  <column name="duration">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[duration of the route in second]]></comment>
+  </column>
+  <column name="distance">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[distance of the route]]></comment>
+  </column>
+  <column name="scenario_main_id">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[record status : D means marked as deleted]]></comment>
+  </column>
+  <constraint name="transport_route_PK" type="pk-constr" table="reference.transport_route">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="transport_route_UN" type="uq-constr" table="reference.transport_route">
+    <columns names="code" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="hr_maindetail">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[List of detail about a human ressource]]></comment>
+  <position x="2660" y="1800"/>
+  <column name="id" not-null="true" default-value="uuid_generate_V1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="hr_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="crisis_risk">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Crisis risks]]></comment>
+  </column>
+  <column name="specific_arrangement">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Specific arrangements (earphones, toys, means of restraint, ...)]]></comment>
+  </column>
+  <column name="transportmode_th">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[mode of transport]]></comment>
+  </column>
+  <column name="pickup_duration">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[duration to pick the hr in a vehicle in seconds]]></comment>
+  </column>
+  <column name="delivery_duration">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[duration to deliver the hr from a vehicle in seconds]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+  </column>
+  <constraint name="hr_maindetail_PK" type="pk-constr" table="reference.hr_maindetail">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="transport_demand">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[List of demand of transport]]></comment>
+  <position x="1800" y="260"/>
+  <column name="id" not-null="true" default-value="uuid_generate_V1()">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[PK of tranport_demand]]></comment>
+  </column>
+  <column name="site_poi_id_institution" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[poi for institution ]]></comment>
+  </column>
+  <column name="site_poi_id_hr" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[point of the child's depot]]></comment>
+  </column>
+  <column name="hr_main_id">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[child]]></comment>
+  </column>
+  <column name="start_dt" not-null="true">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[date of the beginning of the demand]]></comment>
+  </column>
+  <column name="end_dt" not-null="true">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[date of the end of the demand]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[record status : D means marked as deleted]]></comment>
+  </column>
+  <constraint name="transport_demand_PK" type="pk-constr" table="reference.transport_demand">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="transport_demand" type="uq-constr" table="reference.transport_demand">
+    <columns names="site_poi_id_institution,site_poi_id_hr,hr_main_id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="transport_calendar">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[List of demand day by day : this table is a catch of the table transport_demand]]></comment>
+  <position x="1280" y="180"/>
+  <column name="id" not-null="true" default-value="uuid_generate_V1()">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[PK for transport_calendar]]></comment>
+  </column>
+  <column name="transport_demand_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[foreign key for the associated demand]]></comment>
+  </column>
+  <column name="site_poi_id_institution" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[poi for institution]]></comment>
+  </column>
+  <column name="site_poi_id_hr" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[point of the child''s depot]]></comment>
+  </column>
+  <column name="hr_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[child]]></comment>
+  </column>
+  <column name="date_dt" not-null="true">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[Date of the transport]]></comment>
+  </column>
+  <column name="timeslot_th" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[time slot, foregin key to util_thesaurus]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[record status : D means marked as deleted]]></comment>
+  </column>
+  <column name="start_hr">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[pickup start time in second]]></comment>
+  </column>
+  <column name="end_hr">
+    <type name="integer" length="0"/>
+  </column>
+  <column name="manually_updated_yn" not-null="true" default-value="'N'">
+    <type name="text" length="0"/>
+  </column>
+  <constraint name="transport_calendar_PK" type="pk-constr" table="reference.transport_calendar">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="transport_demandtime">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[List of time slot for a demand]]></comment>
+  <position x="2200" y="140"/>
+  <column name="id" not-null="true" default-value="uuid_generate_V1()">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[PK of transport_demandtime]]></comment>
+  </column>
+  <column name="transport_demand_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[foreign key for the associated demand]]></comment>
+  </column>
+  <column name="timeslot_th" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[time slot, foregin key to util_thesaurus]]></comment>
+  </column>
+  <column name="start_hr">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[pickup start time in second]]></comment>
+  </column>
+  <column name="end_hr">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[pickup end time in second]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[record status : D means marked as deleted]]></comment>
+  </column>
+  <column name="repeatDemand">
+    <type name="json" length="0"/>
+  </column>
+  <constraint name="transport_demandtime_PK" type="pk-constr" table="reference.transport_demandtime">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="transport_routesitepoi">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[list of points of a route]]></comment>
+  <position x="700" y="480"/>
+  <column name="id" not-null="true" default-value="uuid_generate_V1()">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[PK for transport_routesitepoi]]></comment>
+  </column>
+  <column name="transport_route_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[foreign key for transport_route]]></comment>
+  </column>
+  <column name="transport_calendar_id">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="site_poi_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[Point ]]></comment>
+  </column>
+  <column name="hr_main_id">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="orderRoute">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[order of point in the route]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[record status : D means marked as deleted]]></comment>
+  </column>
+  <column name="waiting_duration">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[waiting duration before reaching the point (in seconds)]]></comment>
+  </column>
+  <constraint name="transport_routesitepoi_PK" type="pk-constr" table="reference.transport_routesitepoi">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="scenario_main">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[List of scenario]]></comment>
+  <position x="180" y="540"/>
+  <column name="id" not-null="true" default-value="uuid_generate_V1()">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[PK for scenario_main]]></comment>
+  </column>
+  <column name="code" not-null="true">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Code of the scenario]]></comment>
+  </column>
+  <column name="label">
+    <type name="text" length="0"/>
+    <comment><![CDATA[Label of the scenario]]></comment>
+  </column>
+  <column name="status_th" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[Status of the scenario]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+  </column>
+  <column name="scenario_directory_id">
+    <type name="uuid" length="0"/>
+  </column>
+  <constraint name="scenario_main_PK" type="pk-constr" table="reference.scenario_main">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="scenario_main_UN" type="uq-constr" table="reference.scenario_main">
+    <columns names="code" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="optim_main">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[list of optim run]]></comment>
+  <position x="0" y="180"/>
+  <column name="id" not-null="true" default-value="uuid_generate_V1()">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[PK for optim_main]]></comment>
+  </column>
+  <column name="code" not-null="true">
+    <type name="text" length="0"/>
+  </column>
+  <column name="label">
+    <type name="text" length="0"/>
+  </column>
+  <column name="date_dt" not-null="true">
+    <type name="integer" length="0"/>
+  </column>
+  <column name="instance">
+    <type name="json" length="0"/>
+    <comment><![CDATA[Json representation of a collection of demands]]></comment>
+  </column>
+  <column name="parameters">
+    <type name="json" length="0"/>
+    <comment><![CDATA[Json representation of parameters]]></comment>
+  </column>
+  <column name="solution">
+    <type name="json" length="0"/>
+    <comment><![CDATA[Solver output as Json]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[record status : D means marked as deleted]]></comment>
+  </column>
+  <constraint name="optim_main_PK" type="pk-constr" table="reference.optim_main">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="optim_main_UN" type="uq-constr" table="reference.optim_main">
+    <columns names="code" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="site_poisitepoi">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[characteristics between two poi]]></comment>
+  <position x="760" y="760"/>
+  <column name="id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="site_poi_id_start" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="site_poi_id_end" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="acceptable_duration">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[Acceptable duration of the journey in second]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+  </column>
+  <constraint name="site_poisitepoi_PK" type="pk-constr" table="reference.site_poisitepoi">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+  <constraint name="site_poisitepoi_UN" type="uq-constr" table="reference.site_poisitepoi">
+    <columns names="site_poi_id_start,site_poi_id_end" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="user_mainhr">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[list of hr of the user]]></comment>
+  <position x="2480" y="1280"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1 ()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="user_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="hr_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <constraint name="user_mainhr_PK" type="pk-constr" table="reference.user_mainhr">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="site_poivehiclecategory">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[Set the of vehicles of a given type parked at a given poi]]></comment>
+  <position x="1800" y="520"/>
+  <column name="id" not-null="true" default-value="uuid_generate_V1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="site_poi_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[poi]]></comment>
+  </column>
+  <column name="vehicle_category_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[vehicle category]]></comment>
+  </column>
+  <column name="quantity" not-null="true" default-value="0">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[The number of available vehicles for the poi/category]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+  </column>
+  <constraint name="site_poivehiclecategory_PK" type="pk-constr" table="reference.site_poivehiclecategory">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="site_hour">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <comment><![CDATA[List of opening periods for a site]]></comment>
+  <position x="520" y="920"/>
+  <column name="id" not-null="true" default-value="uuid_generate_V1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="type_th">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="site_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[foreign key for the site]]></comment>
+  </column>
+  <column name="timeslot_th" not-null="true">
+    <type name="uuid" length="0"/>
+    <comment><![CDATA[time slot, foregin key to util_thesaurus]]></comment>
+  </column>
+  <column name="start_hr">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[opening time for the opening period in second]]></comment>
+  </column>
+  <column name="end_hr">
+    <type name="integer" length="0"/>
+    <comment><![CDATA[close time for the opening period in second]]></comment>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+    <comment><![CDATA[record status : D means marked as deleted]]></comment>
+  </column>
+  <constraint name="site_hour_PK" type="pk-constr" table="reference.site_hour">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="transport_group">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <position x="1400" y="20"/>
+  <column name="id" not-null="true" default-value="uuid_generate_V1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="label">
+    <type name="text" length="0"/>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+  </column>
+  <constraint name="transport_group_pk" type="pk-constr" table="reference.transport_group">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="transport_groupdemand">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <position x="1760" y="60"/>
+  <column name="id" not-null="true" default-value="uuid_generate_V1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="transport_demand_id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="transport_group_id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+  </column>
+  <constraint name="transport_groupdemand_pk" type="pk-constr" table="reference.transport_groupdemand">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="scenario_transportgroup">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <position x="360" y="20"/>
+  <column name="id" not-null="true" default-value="uuid_generate_V1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="scenario_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="transport_group_id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="rec_st" not-null="true" default-value="'C'">
+    <type name="text" length="0"/>
+  </column>
+</table>
+
+<table name="scenario_vehiclecategory">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <position x="180" y="1140"/>
+  <column name="id" not-null="true" default-value="uuid_generate_v1()">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="vehicle_category_id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="scenario_main_id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="quantity">
+    <type name="integer" length="0"/>
+  </column>
+  <column name="rec_st" default-value="'C'">
+    <type name="text" length="0"/>
+  </column>
+</table>
+
+<table name="scenario_directory">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <position x="200" y="800"/>
+  <column name="id" not-null="true">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="label">
+    <type name="smallint" length="0"/>
+  </column>
+  <column name="scenario_directory_id_parent">
+    <type name="uuid" length="0"/>
+  </column>
+  <column name="rec_st" default-value="'C'">
+    <type name="text" length="0"/>
+  </column>
+  <constraint name="scenario_directory_PK" type="pk-constr" table="reference.scenario_directory">
+    <columns names="id" ref-type="src-columns"/>
+  </constraint>
+</table>
+
+<table name="scenario_calendar">
+  <schema name="reference"/>
+  <role name="postgres"/>
+  <position x="420" y="320"/>
+</table>
+
+<constraint name="site_main_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.site_main">
+  <columns names="status_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="site_main_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.site_main">
+  <columns names="type_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="site_main_FK03" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_main" table="reference.site_main">
+  <columns names="site_main_id_entity" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="site_main_FK04" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_main" table="reference.site_main">
+  <columns names="site_main_id_customer" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="site_main_FK05" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_main" table="reference.site_main">
+  <columns names="site_main_id_father" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="poi_site_FK01" type="fk-constr" comparison-type="MATCH SIMPLE"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_main" table="reference.site_poi">
+  <columns names="site_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="user_main_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.user_main">
+  <columns names="status_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="user_main_FK03" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.user_main">
+  <columns names="type_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="user_society_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.user_main" table="reference.user_mainsite">
+  <columns names="user_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="user_society_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_main" table="reference.user_mainsite">
+  <columns names="site_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="acl_roleaction_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.acl_action" table="reference.acl_roleaction">
+  <columns names="acl_action_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="acl_roleaction_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.acl_role" table="reference.acl_roleaction">
+  <columns names="acl_role_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="acl_roleuser_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.user_main" table="reference.acl_roleuser">
+  <columns names="user_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="acl_roleuser_FK2" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.acl_role" table="reference.acl_roleuser">
+  <columns names="acl_role_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="audit_trail_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.user_main" table="reference.audit_trail">
+  <columns names="user_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="user_lastsession_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.user_main" table="reference.user_lastsession">
+  <columns names="user_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="vehicle_main_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.vehicle_category" table="reference.vehicle_main">
+  <columns names="vehicle_category_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="vehicle_main_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_main" table="reference.vehicle_main">
+  <columns names="site_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="vehicle_main_FK03" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_poi" table="reference.vehicle_main">
+  <columns names="site_poi_id_depot" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="vehicle_main_FK04" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.vehicle_main">
+  <columns names="status_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="hr_main_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.hr_main">
+  <columns names="gender_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="hr_main_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.hr_main">
+  <columns names="status_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="hr_main_FK03" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.hr_main">
+  <columns names="type_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="beacon_main_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.vehicle_main" table="reference.beacon_main">
+  <columns names="vehicle_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="device_main_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.device_main">
+  <columns names="status_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="device_main_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.user_main" table="reference.device_main">
+  <columns names="user_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="device_main_FK03" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.vehicle_main" table="reference.device_main">
+  <columns names="vehicle_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="gis_devicebeacon_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.device_main" table="reference.gis_devicebeacon">
+  <columns names="device_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="gis_devicebeacon_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.beacon_main" table="reference.gis_devicebeacon">
+  <columns names="beacon_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="gis_devicebeacon_FK03" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.gis_device" table="reference.gis_devicebeacon">
+  <columns names="gis_device_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="doc_file_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.doc_file">
+  <columns names="type_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="doc_file_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.doc_file">
+  <columns names="status_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="doc_filesite_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.doc_file" table="reference.doc_filesite">
+  <columns names="doc_file_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="doc_filesite_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_main" table="reference.doc_filesite">
+  <columns names="site_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="hr_phone_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.hr_contact">
+  <columns names="type_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="hr_phone_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.hr_main" table="reference.hr_contact">
+  <columns names="hr_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="vehicle_configuration_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.vehicle_category" table="reference.vehicle_configuration">
+  <columns names="vehicle_category_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="gis_hr_current_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.hr_main" table="reference.gis_hr_current">
+  <columns names="hr_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="gis_vehicle_current_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.vehicle_main" table="reference.gis_vehicle_current">
+  <columns names="vehicle_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="gis_vehicle_current_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.vehicle_main" table="reference.gis_vehicle_current">
+  <columns names="hr_main_id_driver" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="gis_device_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.device_main" table="reference.gis_device">
+  <columns names="device_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="gis_device_current_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.device_main" table="reference.gis_device_current">
+  <columns names="device_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="site_aoi_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_main" table="reference.site_aoi">
+  <columns names="site_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="vehicle_capacity_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.vehicle_configuration" table="reference.vehicle_capacity">
+  <columns names="vehicle_configuration_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="vehicle_capacity_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.vehicle_capacity">
+  <columns names="transported_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="vehicle_capacity_FK03" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.vehicle_capacity">
+  <columns names="unit_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="hr_mainsite_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.hr_main" table="reference.hr_mainsite">
+  <columns names="hr_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="hr_mainsite_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_main" table="reference.hr_mainsite">
+  <columns names="site_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="hr_mainsite_FK03" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.hr_mainsite">
+  <columns names="type_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_route_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.transport_route">
+  <columns names="timeslot_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_route_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_poi" table="reference.transport_route">
+  <columns names="site_poi_id_start" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_route_FK04" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_poi" table="reference.transport_route">
+  <columns names="site_poi_id_end" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_route_FK05" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.vehicle_category" table="reference.transport_route">
+  <columns names="vehicle_category_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_route_FK06" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.scenario_main" table="reference.transport_route">
+  <columns names="scenario_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="hr_maindetail_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.hr_main" table="reference.hr_maindetail">
+  <columns names="hr_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="hr_maindetail_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.hr_maindetail">
+  <columns names="transportmode_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_demand_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_poi" table="reference.transport_demand">
+  <columns names="site_poi_id_institution" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_demand_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_poi" table="reference.transport_demand">
+  <columns names="site_poi_id_hr" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_demand_FK03" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.hr_main" table="reference.transport_demand">
+  <columns names="hr_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_calendar_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.transport_demand" table="reference.transport_calendar">
+  <columns names="transport_demand_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_calendar_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_poi" table="reference.transport_calendar">
+  <columns names="site_poi_id_institution" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_calendar_FK03" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_poi" table="reference.transport_calendar">
+  <columns names="site_poi_id_hr" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_calendar_FK04" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.hr_main" table="reference.transport_calendar">
+  <columns names="hr_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_calendar_FK05" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.transport_calendar">
+  <columns names="timeslot_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_demandtime_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.transport_demand" table="reference.transport_demandtime">
+  <columns names="transport_demand_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_demandtime_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.transport_demandtime">
+  <columns names="timeslot_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_routesitepoi_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.transport_route" table="reference.transport_routesitepoi">
+  <columns names="transport_route_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_routesitepoi_FK03" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_poi" table="reference.transport_routesitepoi">
+  <columns names="site_poi_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_routesitepoi_FK04" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.hr_main" table="reference.transport_routesitepoi">
+  <columns names="hr_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="scenario_main_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.scenario_main">
+  <columns names="status_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="scenario_main_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.scenario_directory" table="reference.scenario_main">
+  <columns names="scenario_directory_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="site_poisitepoi_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_poi" table="reference.site_poisitepoi">
+  <columns names="site_poi_id_start" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="site_poisitepoi_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_poi" table="reference.site_poisitepoi">
+  <columns names="site_poi_id_end" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="user_mainhr_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.user_main" table="reference.user_mainhr">
+  <columns names="user_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="user_mainhr_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.hr_main" table="reference.user_mainhr">
+  <columns names="hr_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="site_poivehiclecategory_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_poi" table="reference.site_poivehiclecategory">
+  <columns names="site_poi_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="site_poivehiclecategory_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.vehicle_category" table="reference.site_poivehiclecategory">
+  <columns names="vehicle_category_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="site_hour_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.site_main" table="reference.site_hour">
+  <columns names="site_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="site_hour_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.site_hour">
+  <columns names="timeslot_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="site_hour_FK03" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.util_thesaurus" table="reference.site_hour">
+  <columns names="type_th" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_groupdemand_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.transport_demand" table="reference.transport_groupdemand">
+  <columns names="transport_demand_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="transport_groupdemand_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.transport_group" table="reference.transport_groupdemand">
+  <columns names="transport_group_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="scenario_maingroup_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.scenario_main" table="reference.scenario_transportgroup">
+  <columns names="scenario_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="scenario_maingroup_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.transport_group" table="reference.scenario_transportgroup">
+  <columns names="transport_group_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="scenario_mainvehicle_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.vehicle_category" table="reference.scenario_vehiclecategory">
+  <columns names="vehicle_category_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="scenario_mainvehicle_FK02" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.scenario_main" table="reference.scenario_vehiclecategory">
+  <columns names="scenario_main_id" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="scenario_directory_FK01" type="fk-constr" comparison-type="MATCH FULL"
+   upd-action="NO ACTION" del-action="NO ACTION" ref-table="reference.scenario_directory" table="reference.scenario_directory">
+  <columns names="scenario_directory_id_parent" ref-type="src-columns"/>
+  <columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="rel_site_main_util_thesaurus" type="relfk"
+   src-table="reference.site_main"
+   dst-table="reference.util_thesaurus" reference-fk="site_main_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_site_main_util_thesaurus1" type="relfk"
+   src-table="reference.site_main"
+   dst-table="reference.util_thesaurus" reference-fk="site_main_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_site_main_site_main" type="relfk"
+   src-table="reference.site_main"
+   dst-table="reference.site_main" reference-fk="site_main_FK03"
+   src-required="false" dst-required="false">
+  <line>
+    <position x="2080.23" y="1042.49"/>
+  <position x="2080.23" y="843.589"/>
+  <position x="1883.8" y="843.589"/>
+  </line>
+</relationship>
+
+<relationship name="rel_site_main_site_main1" type="relfk"
+   src-table="reference.site_main"
+   dst-table="reference.site_main" reference-fk="site_main_FK04"
+   src-required="false" dst-required="false">
+  <line>
+    <position x="2102.93" y="1065.2"/>
+  <position x="2102.93" y="820.884"/>
+  <position x="1861.09" y="820.884"/>
+  </line>
+</relationship>
+
+<relationship name="rel_site_main_site_main2" type="relfk"
+   src-table="reference.site_main"
+   dst-table="reference.site_main" reference-fk="site_main_FK05"
+   src-required="false" dst-required="false">
+  <line>
+    <position x="2125.64" y="1087.9"/>
+  <position x="2125.64" y="798.179"/>
+  <position x="1838.39" y="798.179"/>
+  </line>
+</relationship>
+
+<relationship name="rel_site_poi_site_main" type="relfk"
+   src-table="reference.site_poi"
+   dst-table="reference.site_main" reference-fk="poi_site_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_user_main_util_thesaurus" type="relfk"
+   src-table="reference.user_main"
+   dst-table="reference.util_thesaurus" reference-fk="user_main_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_user_main_util_thesaurus1" type="relfk"
+   src-table="reference.user_main"
+   dst-table="reference.util_thesaurus" reference-fk="user_main_FK03"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_user_mainsite_user_main" type="relfk"
+   src-table="reference.user_mainsite"
+   dst-table="reference.user_main" reference-fk="user_society_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_user_mainsite_site_main" type="relfk"
+   src-table="reference.user_mainsite"
+   dst-table="reference.site_main" reference-fk="user_society_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_acl_roleaction_acl_action" type="relfk"
+   src-table="reference.acl_roleaction"
+   dst-table="reference.acl_action" reference-fk="acl_roleaction_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_acl_roleaction_acl_role" type="relfk"
+   src-table="reference.acl_roleaction"
+   dst-table="reference.acl_role" reference-fk="acl_roleaction_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_acl_roleuser_user_main" type="relfk"
+   src-table="reference.acl_roleuser"
+   dst-table="reference.user_main" reference-fk="acl_roleuser_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_acl_roleuser_acl_role" type="relfk"
+   src-table="reference.acl_roleuser"
+   dst-table="reference.acl_role" reference-fk="acl_roleuser_FK2"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_audit_trail_user_main" type="relfk"
+   src-table="reference.audit_trail"
+   dst-table="reference.user_main" reference-fk="audit_trail_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_user_lastsession_user_main" type="relfk"
+   src-table="reference.user_lastsession"
+   dst-table="reference.user_main" reference-fk="user_lastsession_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_vehicle_main_vehicle_category" type="relfk"
+   src-table="reference.vehicle_main"
+   dst-table="reference.vehicle_category" reference-fk="vehicle_main_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_vehicle_main_site_main" type="relfk"
+   src-table="reference.vehicle_main"
+   dst-table="reference.site_main" reference-fk="vehicle_main_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_vehicle_main_site_poi" type="relfk"
+   src-table="reference.vehicle_main"
+   dst-table="reference.site_poi" reference-fk="vehicle_main_FK03"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_vehicle_main_util_thesaurus" type="relfk"
+   src-table="reference.vehicle_main"
+   dst-table="reference.util_thesaurus" reference-fk="vehicle_main_FK04"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_hr_main_util_thesaurus" type="relfk"
+   src-table="reference.hr_main"
+   dst-table="reference.util_thesaurus" reference-fk="hr_main_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_hr_main_util_thesaurus1" type="relfk"
+   src-table="reference.hr_main"
+   dst-table="reference.util_thesaurus" reference-fk="hr_main_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_hr_main_util_thesaurus2" type="relfk"
+   src-table="reference.hr_main"
+   dst-table="reference.util_thesaurus" reference-fk="hr_main_FK03"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_beacon_main_vehicle_main" type="relfk"
+   src-table="reference.beacon_main"
+   dst-table="reference.vehicle_main" reference-fk="beacon_main_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_device_main_util_thesaurus" type="relfk"
+   src-table="reference.device_main"
+   dst-table="reference.util_thesaurus" reference-fk="device_main_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_device_main_user_main" type="relfk"
+   src-table="reference.device_main"
+   dst-table="reference.user_main" reference-fk="device_main_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_device_main_vehicle_main" type="relfk"
+   src-table="reference.device_main"
+   dst-table="reference.vehicle_main" reference-fk="device_main_FK03"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_gis_devicebeacon_device_main" type="relfk"
+   src-table="reference.gis_devicebeacon"
+   dst-table="reference.device_main" reference-fk="gis_devicebeacon_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_gis_devicebeacon_beacon_main" type="relfk"
+   src-table="reference.gis_devicebeacon"
+   dst-table="reference.beacon_main" reference-fk="gis_devicebeacon_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_gis_devicebeacon_gis_device" type="relfk"
+   src-table="reference.gis_devicebeacon"
+   dst-table="reference.gis_device" reference-fk="gis_devicebeacon_FK03"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_doc_file_util_thesaurus" type="relfk"
+   src-table="reference.doc_file"
+   dst-table="reference.util_thesaurus" reference-fk="doc_file_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_doc_file_util_thesaurus1" type="relfk"
+   src-table="reference.doc_file"
+   dst-table="reference.util_thesaurus" reference-fk="doc_file_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_doc_filesite_doc_file" type="relfk"
+   src-table="reference.doc_filesite"
+   dst-table="reference.doc_file" reference-fk="doc_filesite_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_doc_filesite_site_main" type="relfk"
+   src-table="reference.doc_filesite"
+   dst-table="reference.site_main" reference-fk="doc_filesite_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_hr_contact_util_thesaurus" type="relfk"
+   src-table="reference.hr_contact"
+   dst-table="reference.util_thesaurus" reference-fk="hr_phone_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_hr_contact_hr_main" type="relfk"
+   src-table="reference.hr_contact"
+   dst-table="reference.hr_main" reference-fk="hr_phone_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_vehicle_configuration_vehicle_category" type="relfk"
+   src-table="reference.vehicle_configuration"
+   dst-table="reference.vehicle_category" reference-fk="vehicle_configuration_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_gis_hr_current_hr_main" type="relfk"
+   src-table="reference.gis_hr_current"
+   dst-table="reference.hr_main" reference-fk="gis_hr_current_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_gis_vehicle_current_vehicle_main" type="relfk"
+   src-table="reference.gis_vehicle_current"
+   dst-table="reference.vehicle_main" reference-fk="gis_vehicle_current_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_gis_vehicle_current_vehicle_main1" type="relfk"
+   src-table="reference.gis_vehicle_current"
+   dst-table="reference.vehicle_main" reference-fk="gis_vehicle_current_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_gis_device_device_main" type="relfk"
+   src-table="reference.gis_device"
+   dst-table="reference.device_main" reference-fk="gis_device_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_gis_device_current_device_main" type="relfk"
+   src-table="reference.gis_device_current"
+   dst-table="reference.device_main" reference-fk="gis_device_current_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_site_aoi_site_main" type="relfk"
+   src-table="reference.site_aoi"
+   dst-table="reference.site_main" reference-fk="site_aoi_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_vehicle_capacity_vehicle_configuration" type="relfk"
+   src-table="reference.vehicle_capacity"
+   dst-table="reference.vehicle_configuration" reference-fk="vehicle_capacity_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_vehicle_capacity_util_thesaurus" type="relfk"
+   src-table="reference.vehicle_capacity"
+   dst-table="reference.util_thesaurus" reference-fk="vehicle_capacity_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_vehicle_capacity_util_thesaurus1" type="relfk"
+   src-table="reference.vehicle_capacity"
+   dst-table="reference.util_thesaurus" reference-fk="vehicle_capacity_FK03"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_hr_mainsite_hr_main" type="relfk"
+   src-table="reference.hr_mainsite"
+   dst-table="reference.hr_main" reference-fk="hr_mainsite_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_hr_mainsite_site_main" type="relfk"
+   src-table="reference.hr_mainsite"
+   dst-table="reference.site_main" reference-fk="hr_mainsite_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_hr_mainsite_util_thesaurus" type="relfk"
+   src-table="reference.hr_mainsite"
+   dst-table="reference.util_thesaurus" reference-fk="hr_mainsite_FK03"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_transport_route_util_thesaurus" type="relfk"
+   src-table="reference.transport_route"
+   dst-table="reference.util_thesaurus" reference-fk="transport_route_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_transport_route_site_poi" type="relfk"
+   src-table="reference.transport_route"
+   dst-table="reference.site_poi" reference-fk="transport_route_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_transport_route_site_poi1" type="relfk"
+   src-table="reference.transport_route"
+   dst-table="reference.site_poi" reference-fk="transport_route_FK04"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_transport_route_vehicle_category" type="relfk"
+   src-table="reference.transport_route"
+   dst-table="reference.vehicle_category" reference-fk="transport_route_FK05"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_hr_maindetail_hr_main" type="relfk"
+   src-table="reference.hr_maindetail"
+   dst-table="reference.hr_main" reference-fk="hr_maindetail_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_hr_maindetail_util_thesaurus" type="relfk"
+   src-table="reference.hr_maindetail"
+   dst-table="reference.util_thesaurus" reference-fk="hr_maindetail_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_transport_demand_site_poi" type="relfk"
+   src-table="reference.transport_demand"
+   dst-table="reference.site_poi" reference-fk="transport_demand_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_transport_demand_site_poi1" type="relfk"
+   src-table="reference.transport_demand"
+   dst-table="reference.site_poi" reference-fk="transport_demand_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_transport_demand_hr_main" type="relfk"
+   src-table="reference.transport_demand"
+   dst-table="reference.hr_main" reference-fk="transport_demand_FK03"
+   src-required="false" dst-required="false"/>
+
+<relationship name="&quot;rel_transport_calendar_DELETED_transport_demand&quot;" type="relfk"
+   src-table="reference.transport_calendar"
+   dst-table="reference.transport_demand" reference-fk="transport_calendar_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="&quot;rel_transport_calendar_DELETED_site_poi&quot;" type="relfk"
+   src-table="reference.transport_calendar"
+   dst-table="reference.site_poi" reference-fk="transport_calendar_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="&quot;rel_transport_calendar_DELETED_site_poi1&quot;" type="relfk"
+   src-table="reference.transport_calendar"
+   dst-table="reference.site_poi" reference-fk="transport_calendar_FK03"
+   src-required="false" dst-required="false"/>
+
+<relationship name="&quot;rel_transport_calendar_DELETED_hr_main&quot;" type="relfk"
+   src-table="reference.transport_calendar"
+   dst-table="reference.hr_main" reference-fk="transport_calendar_FK04"
+   src-required="false" dst-required="false"/>
+
+<relationship name="&quot;rel_transport_calendar_DELETED_util_thesaurus&quot;" type="relfk"
+   src-table="reference.transport_calendar"
+   dst-table="reference.util_thesaurus" reference-fk="transport_calendar_FK05"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_transport_demandtime_transport_demand" type="relfk"
+   src-table="reference.transport_demandtime"
+   dst-table="reference.transport_demand" reference-fk="transport_demandtime_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_transport_demandtime_util_thesaurus" type="relfk"
+   src-table="reference.transport_demandtime"
+   dst-table="reference.util_thesaurus" reference-fk="transport_demandtime_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_transport_routesitepoi_transport_route" type="relfk"
+   src-table="reference.transport_routesitepoi"
+   dst-table="reference.transport_route" reference-fk="transport_routesitepoi_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_transport_routesitepoi_site_poi" type="relfk"
+   src-table="reference.transport_routesitepoi"
+   dst-table="reference.site_poi" reference-fk="transport_routesitepoi_FK03"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_transport_routesitepoi_hr_main" type="relfk"
+   src-table="reference.transport_routesitepoi"
+   dst-table="reference.hr_main" reference-fk="transport_routesitepoi_FK04"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_scenario_main_util_thesaurus" type="relfk"
+   src-table="reference.scenario_main"
+   dst-table="reference.util_thesaurus" reference-fk="scenario_main_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_transport_route_scenario_main" type="relfk"
+   src-table="reference.transport_route"
+   dst-table="reference.scenario_main" reference-fk="transport_route_FK06"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_site_poisitepoi_site_poi" type="relfk"
+   src-table="reference.site_poisitepoi"
+   dst-table="reference.site_poi" reference-fk="site_poisitepoi_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_site_poisitepoi_site_poi1" type="relfk"
+   src-table="reference.site_poisitepoi"
+   dst-table="reference.site_poi" reference-fk="site_poisitepoi_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_user_mainhr_user_main" type="relfk"
+   src-table="reference.user_mainhr"
+   dst-table="reference.user_main" reference-fk="user_mainhr_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_user_mainhr_hr_main" type="relfk"
+   src-table="reference.user_mainhr"
+   dst-table="reference.hr_main" reference-fk="user_mainhr_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_site_poivehiclecategory_site_poi" type="relfk"
+   src-table="reference.site_poivehiclecategory"
+   dst-table="reference.site_poi" reference-fk="site_poivehiclecategory_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_site_poivehiclecategory_vehicle_category" type="relfk"
+   src-table="reference.site_poivehiclecategory"
+   dst-table="reference.vehicle_category" reference-fk="site_poivehiclecategory_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_site_hour_site_main" type="relfk"
+   src-table="reference.site_hour"
+   dst-table="reference.site_main" reference-fk="site_hour_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_site_hour_util_thesaurus" type="relfk"
+   src-table="reference.site_hour"
+   dst-table="reference.util_thesaurus" reference-fk="site_hour_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_site_hour_util_thesaurus1" type="relfk"
+   src-table="reference.site_hour"
+   dst-table="reference.util_thesaurus" reference-fk="site_hour_FK03"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_transport_groupdemand_transport_demand" type="relfk"
+   src-table="reference.transport_groupdemand"
+   dst-table="reference.transport_demand" reference-fk="transport_groupdemand_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_transport_groupdemand_transport_group" type="relfk"
+   src-table="reference.transport_groupdemand"
+   dst-table="reference.transport_group" reference-fk="transport_groupdemand_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_scenario_maingroup_scenario_main" type="relfk"
+   src-table="reference.scenario_transportgroup"
+   dst-table="reference.scenario_main" reference-fk="scenario_maingroup_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_scenario_maingroup_transport_group" type="relfk"
+   src-table="reference.scenario_transportgroup"
+   dst-table="reference.transport_group" reference-fk="scenario_maingroup_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_scenario_mainvehicle_vehicle_category" type="relfk"
+   src-table="reference.scenario_vehiclecategory"
+   dst-table="reference.vehicle_category" reference-fk="scenario_mainvehicle_FK01"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_scenario_mainvehicle_scenario_main" type="relfk"
+   src-table="reference.scenario_vehiclecategory"
+   dst-table="reference.scenario_main" reference-fk="scenario_mainvehicle_FK02"
+   src-required="false" dst-required="false"/>
+
+<relationship name="rel_scenario_directory_scenario_directory" type="relfk"
+   src-table="reference.scenario_directory"
+   dst-table="reference.scenario_directory" reference-fk="scenario_directory_FK01"
+   src-required="false" dst-required="false">
+  <line>
+    <position x="524.873" y="840.75"/>
+  <position x="524.873" y="789"/>
+  <position x="409.249" y="789"/>
+  </line>
+</relationship>
+
+<relationship name="rel_scenario_main_scenario_directory" type="relfk"
+   src-table="reference.scenario_main"
+   dst-table="reference.scenario_directory" reference-fk="scenario_main_FK02"
+   src-required="false" dst-required="false"/>
+
+<permission>
+  <object name="reference" type="schema"/>
+  <roles names="odovia"/>
+  <privileges create="true" usage="true"/>
+</permission>
+<permission>
+  <object name="reference" type="schema"/>
+  <roles names="talend_insert_grp"/>
+  <privileges create="true" usage="true"/>
+</permission>
+<permission>
+  <object name="reference" type="schema"/>
+  <roles names="talend_select_grp"/>
+  <privileges create="true" usage="true"/>
+</permission>
+<permission>
+  <object name="reference.site_poi" type="table"/>
+  <roles names="odovia"/>
+  <privileges select="true" delete="true" insert="true" update="true" truncate="true" references="true" trigger="true"/>
+</permission>
+<permission>
+  <object name="reference.site_poi" type="table"/>
+  <roles names="talend_insert_grp"/>
+  <privileges select="true" delete="true" insert="true" update="true" truncate="true" references="true" trigger="true"/>
+</permission>
+<permission>
+  <object name="reference.site_main" type="table"/>
+  <roles names="odovia"/>
+  <privileges select="true" delete="true" insert="true" update="true" truncate="true" references="true" trigger="true"/>
+</permission>
+<permission>
+  <object name="reference.site_main" type="table"/>
+  <roles names="talend_insert_grp"/>
+  <privileges select="true" delete="true" insert="true" update="true" truncate="true" references="true" trigger="true"/>
+</permission>
+</dbmodel>

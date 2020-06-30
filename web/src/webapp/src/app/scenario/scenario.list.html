@@ -1,0 +1,82 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="container-fluid">
+  <fieldset>
+    <list-navbar
+      [title]="'Scénarios'"
+      [aclObject]="'scenario'"
+      (searchEvent)="updateSearch($event)">
+    </list-navbar>
+    <div>
+      <div class="card mt-5" *ngFor="let status of statuses">
+        <div class='card-header'>
+          <div class='row align-items-center'>
+            <div class='col'>{{status.label}}</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <span *ngIf="scenariosByStatus(status.id).length==0">
+            <i>Aucun scénario</i>
+          </span>
+          <table id="scenario-table" class="table table-sm table-striped table-hover" *ngIf="scenariosByStatus(status.id).length>0">
+            <thead>
+             <tr>
+               <th>Référence</th>
+               <th>Libellé</th>
+               <th>Statut</th>
+               <th>Début</th>
+               <th>Fin</th>
+               <th>Usagers</th>
+             </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let scenario of scenariosByStatus(status.id)">
+                <td><a [routerLink]="['/logistics/scenario/crud',scenario.id]">{{scenario.code}}</a></td>
+                <td >{{scenario.label}}</td>
+                <td >{{scenario.status_label}}</td>
+                <td >{{scenario.start_dt | date}}</td>
+                <td >{{scenario.end_dt | date}}</td>
+                <td >
+                    <fa-layers>
+                        <fa-icon [icon]="faWheelchair" class="fa-fw"></fa-icon>
+                        <fa-layers-counter
+                          content="{{scenario.HRs | count:'transport_mode_code':'FAUTEUIL'}}"> </fa-layers-counter>
+                      </fa-layers>
+                      &#160;
+                      <fa-layers>
+                        <fa-icon [icon]="faChild" class="fa-fw"></fa-icon>
+                        <fa-layers-counter
+                          content="{{scenario.HRs | count:'transport_mode_code':'MARCHANT'}}"> </fa-layers-counter>
+                      </fa-layers>
+                </td>
+              </tr>
+            </tbody>
+           </table>
+        </div>
+
+      </div>
+
+    </div>
+  </fieldset>
+</div>

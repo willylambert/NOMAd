@@ -1,0 +1,106 @@
+{
+  "activeUsers": [
+    72,
+    77
+  ],
+  "cost": 92.9139,
+  "errors": {
+    "capacityDepotError": [],
+    "positionNodeError": [],
+    "userNotFoundError": [],
+    "vehicleTypeError": []
+  },
+  "execTime": 0,
+  "feasible": false,
+  "irregularity": 0,
+  "multiplier": 1,
+  "name": "M00_80",
+  "nbIteration": 0,
+  "nbUsers": "2",
+  "nonInsertedUsers": [],
+  "objectiveValue": 92.9139,
+  "routes": [
+    {
+      "cost": 92.9139,
+      "distance": 55960,
+      "duration": 5050,
+      "errors": {
+        "nbReconfigurationErrors": [],
+        "noVehicleCapable": false,
+        "rideTimeErrors": [],
+        "timeWindowErrors": [
+          3
+        ],
+        "vehicleCapacityErrors": []
+      },
+      "feasible": false,
+      "feasibleVehicles": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "id": 0,
+      "idVehicle": 10,
+      "irregularity": 0,
+      "nbReconfigurations": 0,
+      "nodes": [
+        {
+          "debug": "id:160, user:0, itin:0, point:79",
+          "idItinerary": 0,
+          "idPoint": 79,
+          "idUser": 12345,
+          "irregularity": 0,
+          "time": 35795,
+          "type": "depotOut"
+        },
+        {
+          "debug": "id:72, user:72, itin:0, point:68",
+          "idItinerary": 0,
+          "idPoint": 68,
+          "idUser": 72,
+          "irregularity": 0,
+          "time": 36900,
+          "type": "pickup"
+        },
+        {
+          "debug": "id:152, user:72, itin:0, point:78",
+          "idItinerary": 0,
+          "idPoint": 78,
+          "idUser": 72,
+          "irregularity": 0,
+          "time": 37800,
+          "type": "delivery"
+        },
+        {
+          "debug": "id:77, user:77, itin:0, point:68",
+          "idItinerary": 0,
+          "idPoint": 68,
+          "idUser": 77,
+          "irregularity": 0,
+          "time": 38529,
+          "type": "pickup"
+        },
+        {
+          "debug": "id:157, user:77, itin:0, point:78",
+          "idItinerary": 0,
+          "idPoint": 78,
+          "idUser": 77,
+          "irregularity": 0,
+          "time": 39427,
+          "type": "delivery"
+        },
+        {
+          "debug": "id:161, user:0, itin:0, point:79",
+          "idItinerary": 0,
+          "idPoint": 79,
+          "idUser": 12345,
+          "irregularity": 0,
+          "time": 40845,
+          "type": "depotIn"
+        }
+      ],
+      "objVal": 92.9139
+    }
+  ]
+}

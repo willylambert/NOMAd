@@ -1,0 +1,623 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="container-fluid">
+  <div class="row" fillHeight>
+    <div class="col-sm">
+      <ngb-tabset [activeId]="activeTab">
+        <ngb-tab title="Fiche" id="crud">
+          <ng-template ngbTabContent>
+            <!-- Main formular -->
+            <form #scenarioForm="ngForm" novalidate="true" autocomplete="off" *ngIf="currentRecord">
+
+              <!-- Has to be included within the formular so that crud-navbar component is aware of scenarioForm variable -->
+              <crud-navbar
+                [editMode]="editMode"
+                [valid]="scenarioForm.form.valid"
+                [pristine]="scenarioForm.form.pristine && !bChanges"
+                (editModeChange)="editModeChange($event)"
+                (saveEvent)="save()"
+                (markAsRemovedEvent)="markAsRemoved()"
+                (deleteEvent)="delete()"
+                [title]="(currentRecord.id?'Scénario '+currentRecord.code:'Nouveau scénario')"
+                [aclObject]="'scenario'"
+                [recordId]="currentRecord.id">
+              </crud-navbar>
+  
+              <!-- Code -->
+              <div class="form-group row">
+                <label for="scenarioCode" class="col-md-3  col-form-label" >Référence</label>
+                <div class="col-md-9">
+                  <input type="text" class="form-control" name="scenarioCode"
+                    [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+                    [(ngModel)]="currentRecord.code"
+                    [required]="editMode!='view'"
+                    [readonly]="editMode=='view'"
+                     pattern="[A-Za-z0-9_\.-]{1,36}" />
+                </div>
+              </div>
+  
+              <!-- Label -->
+              <div class="form-group row">
+                <label for="scenarioLabel" class="col-md-3  col-form-label" >Description</label>
+                <div class="col-md-9">
+                  <input type="text" class="form-control" name="scenarioLabel"
+                    [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+                    [(ngModel)]="currentRecord.label"
+                    [required]="editMode!='view'"
+                    [readonly]="editMode=='view'" />
+                </div>
+              </div>
+ 
+              <!-- Start date for the scenario -->
+              <div class="form-group row">
+                <label for="scenarioStartDt" class="col-md-3 col-form-label" >Début</label>
+                <div class="col-md-4">
+                  <div class="input-group">
+                    <input [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+                           placeholder="yyyy-mm-dd" name="dstart" [(ngModel)]="currentRecord.startDt"
+                           ngbDatepicker #dStart="ngbDatepicker" readonly="true" [required]="editMode!='view'"
+                           (dateSelect)="onDateSelect()">
+                    <div class="input-group-append" *ngIf="editMode!='view'">
+                      <button class="btn btn-outline-secondary calendar" (click)="dStart.toggle()" type="button">
+                        &nbsp;<fa-icon [icon]="faCalendar"></fa-icon>&nbsp;
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- End date for the scenario -->
+              <div class="form-group row">
+                <label for="scenarioEndDt" class="col-md-3 col-form-label" >Fin</label>
+                <div class="col-md-4">
+                  <div class="input-group">
+                    <input [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+                           placeholder="yyyy-mm-dd" name="dend" [(ngModel)]="currentRecord.endDt"
+                           ngbDatepicker #dEnd="ngbDatepicker" readonly="true" [required]="editMode!='view'"
+                           (dateSelect)="onDateSelect()">
+                    <div class="input-group-append" *ngIf="editMode!='view'">
+                      <button class="btn btn-outline-secondary calendar" (click)="dEnd.toggle()" type="button">
+                        &nbsp;<fa-icon [icon]="faCalendar"></fa-icon>&nbsp;
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <span class='badge badge-danger' *ngIf="endDtMs<startDtMs">
+                    La date de fin a été choisie avant la date de début
+                  </span>
+                </div>
+              </div>
+
+              <!-- Scenario status -->
+              <div class="form-group row">
+                <label for="scenarioStatus" class="col-md-3  col-form-label" >Statut</label>
+                <div class="col-md-4">
+                  <ng-select name="scenarioStatus" [items]="statuses" bindLabel="label" bindValue="id"
+                    [(ngModel)]="currentRecord.status_th"
+                    [disabled]="editMode=='view'"
+                    [required]="editMode!='view'">
+                  </ng-select>
+                </div>
+              </div>
+
+              <!-- Transport demands groups -->
+              <div class="card mt-3" *ngIf="currentRecord.groups">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-sm">
+                      <h5 class="card-title">Groupes de demandes de transport </h5>
+                    </div>
+                    <div class="col-sm">
+                      <div class="float-right" id="action-bar">
+                        <button *ngIf="editMode!='view'" type="button" id="btn-update-groups"
+                                class="btn btn-link btn-sm"
+                                (click)="updateGroups()" >
+                          Ajouter/Supprimer
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngIf="currentRecord.groups.length==0">
+                    <em>Aucun groupe de demandes de transport rattaché au scénario</em>
+                  </div>
+                  <div *ngIf="currentRecord.groups.length>0">
+                    <table id="groups-table" class="table table-sm table-striped table-hover">
+                      <thead>
+                        <tr>
+                          <th>Description</th>
+                          <th>Nombre de demandes</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let group of currentRecord.groups ; let i = index">
+                          <td>
+                            <button *ngIf="editMode=='view'" type="button" class="btn btn-link" (click)="viewGroup(group)" >{{group.data.label}}</button>
+                            <span *ngIf="editMode!='view'">{{group.data.label}}</span>
+                          </td>
+                          <td>{{group.data.demands_count}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+  
+              <!-- List of vehicle categories -->
+              <div class="card mt-3" *ngIf="currentRecord.fleet">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-sm">
+                      <h5 class="card-title">Flotte de véhicules </h5>
+                    </div>
+                    <div class="col-sm">
+                      <div class="float-right" id="action-bar">
+                        <button *ngIf="editMode!='view'" type="button" id="btn-update-fleet"
+                                class="btn btn-link btn-sm"
+                                (click)="updateFleet()" >
+                          Ajouter/Supprimer
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngIf="currentRecord.fleet.length==0">
+                    <em>Aucune catégorie de véhicules rattachée au scénario</em>
+                  </div>
+                  <div *ngIf="currentRecord.fleet.length>0">
+                    <table id="fleet-table" class="table table-sm table-striped table-hover">
+                      <thead>
+                        <tr>
+                          <th>Référence</th>
+                          <th>Description</th>
+                          <th>Configurations</th>
+                          <th>Quantité</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let fleetItem of currentRecord.fleet ; let i = index">
+                          <td>
+                            <button *ngIf="editMode=='view'" type="button" class="btn btn-link" (click)="viewVehicleCategory(fleetItem)" >{{fleetItem.data.code}}</button>
+                            <span *ngIf="editMode!='view'">{{fleetItem.data.code}}</span>
+                          </td>
+                          <td>{{fleetItem.data.label}}</td>
+                          <td>
+                            <div *ngFor="let configuration of fleetItem.data.configurations" class="badge badge-info ml-3">
+                              <span *ngFor="let capacity of configuration.capacities">
+                                <span *ngIf="capacity.transported_code=='FAUTEUIL'">{{capacity.quantity}} <fa-icon [icon]="faWheelchair"></fa-icon></span>
+                                <span *ngIf="capacity.transported_code=='MARCHANT'">{{capacity.quantity}} <fa-icon [icon]="faChild"></fa-icon></span>
+                              </span>
+                            </div>
+                          </td>
+                          <td>
+                            <ng-container *ngFor="let depot of fleetItem.data.vehicle_category_site_quantity; let j = index">
+                              <div class="row" *ngIf="editMode=='view'">
+                                <div class="col">{{depot.site_main_label}}</div>
+                                <div class="col">
+                                  <span *ngIf="depot.unlimited">illimité</span>
+                                  <span *ngIf="!depot.unlimited">{{depot.quantity}} </span>
+                                </div>
+                              </div>
+                              <div class="row" *ngIf="depot.site_main_id && editMode!='view'">
+                                <!--
+                                  <input name="quantity_{{i}}" *ngIf="!fleetItem.unlimited" class="form-control" [(ngModel)]="fleetItem.quantity" required="true" pattern="[0-9]+" />
+                                  <input name="unlimited_{{i}}" class="fleet-checkbox" type="checkbox" [(ngModel)]="fleetItem.unlimited" />&nbsp;illimité
+                                -->
+                                <div class="col">{{depot.site_main_label}}</div>
+                                <div class="col">
+                                  <input name="quantity_{{i}}_{{j}}" *ngIf="!depot.unlimited" class="form-control" [(ngModel)]="depot.quantity" required="true" pattern="[0-9]+" />
+                                  <input name="unlimited_{{i}}_{{j}}" class="fleet-checkbox" type="checkbox" [(ngModel)]="depot.unlimited" />&nbsp;illimité                  
+                                </div>
+                              </div>
+                            </ng-container>
+                            <!--                           
+                            <span *ngIf="fleetItem.unlimited!=undefined && fleetItem.unlimited!=null && fleetItem.unlimited">
+                              illimité
+                            </span>
+                            <span *ngIf="fleetItem.unlimited==undefined || fleetItem.unlimited==null || !fleetItem.unlimited">
+                              {{fleetItem.quantity}}
+                            </span>
+                            -->
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </ng-template>
+        </ngb-tab>
+        <ngb-tab title="Durées de trajet" [disabled]="editMode!='view'">
+          <ng-template ngbTabContent>
+            <div class="crud-navbar"> 
+              <legend >
+                <div class="row">
+                  <div class="col-lg-auto">
+                    <button type="button" id="btn-list" class="btn btn-link" (click)="backToList()" ><fa-icon [icon]="faChevronLeft"></fa-icon> Liste</button>
+                  </div>
+                  <div class="col text-center">
+                    <span class="h5">Durées de trajet pour le scénario {{currentRecord.code}}</span>
+                  </div>
+                  <div class="col-lg-auto text-right"></div>
+                </div>
+              </legend>
+            </div>
+            <div *ngIf="currentRecord.groups.length==0">Aucune demande de transport impliquée dans le scénario</div>
+            <div *ngIf="currentRecord.groups.length>0">
+
+              <!-- Filters -->
+              <form #durationsForm="ngForm" novalidate="true" autocomplete="off" class="col-md-12"> 
+                <!-- Direction -->
+                <div class="form-group row">
+                  <label for="direction" class="col-md-3 col-form-label" >Direction</label>
+                  <div class="col-md-2">
+                    <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="selectedAMPM">
+                      <label ngbButtonLabel class="btn-primary">
+                        <input ngbButton type="radio" value="AM"> Aller
+                      </label>
+                      <label ngbButtonLabel class="btn-primary">
+                        <input ngbButton type="radio" value="PM"> Retour
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </form>   
+
+              <!-- Modification in mass of the acceptable durations -->
+              <div class="card mt-3" *ngIf="currentRecord && editMode=='view'" 
+                   [aclShow]="'/poi/save-acceptable-durations'" [aclShowMode]="'display'">
+                <div class="card-body" >
+                  <div class="row">
+                    <div class="col-sm">
+                      <h5 class="card-title">Modifier les durées de trajet acceptables</h5>
+                    </div>
+                    <div class="col-sm">
+                      <div class="float-right" id="action-bar">
+                        <button
+                          [disabled]="!durationsModified"
+                          type="button" id="cancel-acceptable-duration"
+                          (click)="cancelDurations()"
+                          class="btn btn-default btn-sm">
+                          Annuler
+                        </button>
+                        <button
+                          [disabled]="!durationsModified"
+                          type="button" id="save-acceptable-duration"
+                          (click)="saveDurations()"
+                          class="btn btn-success btn-sm">
+                          Enregistrer
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3">  
+                      <button class="btn btn-sm btn-secondary" (click)="resetDurations()" >Réinitialiser</button>
+                    </div>     
+                    <div class="col-md-9">                
+                      <form #acceptableDurationForm="ngForm" novalidate="true" autocomplete="off" >  
+                        <div class="form-group row">
+                          <label for="factor" class="col-md-5  col-form-label" >
+                            Coefficient
+                          </label>
+                          <div class="col-md-6">
+                            <input type="text" class="form-control" name="factor"
+                              [(ngModel)]="factor"
+                              [required]="true"
+                              pattern="(^[0-9]([.][0-9]+)?$)|(^[1-9][0-9]*([.][0-9]+)?$)" />
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label for="minimal" class="col-md-5 col-form-label" >
+                            Valeur minimale
+                          </label>
+                          <div class="col-md-6">
+                            <div class="input-group">
+                                    <input type="text" class="form-control" name="minimal"
+                                      [(ngModel)]="minimalValue"
+                                      [required]="true"
+                                      pattern="[1-9][0-9]*" />
+                              <div class="input-group-append">
+                                <span class="input-group-text">minutes</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>  
+                        <div class="row">
+                          <div class="col-md-5">&nbsp;</div>
+                          <div class="col-md-7">
+                            <button class="btn btn-sm btn-secondary"
+                            [disabled]="!acceptableDurationForm.form.valid"
+                            (click)="computeAcceptableDurations()" >
+                              Appliquer
+                            </button>                           
+                          </div>
+                        </div>                 
+                      </form>
+                    </div>
+                  </div>            
+                </div>  
+              </div>  
+              <br/>
+   
+              <!-- List of demands -->          
+              <span *ngFor="let group of currentRecord.groups">
+                <span *ngIf="currentRecord.groups.length>1">Groupe {{group.data.label}}</span>
+                <span *ngIf="group.data.demands.length==0"><em>Pas de demande de transport</em></span>                
+                <table *ngIf="group.data.demands.length>0" id="demands-table" class="table table-sm table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th>Prénom</th>
+                      <th>Nom</th>
+                      <th>Ville</th>
+                      <th>Etablissement</th>
+                      <th>Trajet direct</th>
+                      <th>Durée acceptable</th>                
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let demand of group.data.demands">
+                      <td>{{demand.HRPOI.hr_firstname}}</td>
+                      <td>{{demand.HRPOI.hr_lastname}}</td>
+                      <td>{{demand.HRPOI.city}}</td>
+                      <td>{{demand.institutionPOI.site_main_label}}</td>
+                      <td *ngIf="selectedAMPM=='AM'">
+                        <span *ngIf="demand.HRPOI.home_to_institution_duration == undefined || demand.HRPOI.home_to_institution_duration == null">
+                          <button class="btn btn-sm btn-link" (click)=getDuration(demand)>non défini</button>
+                        </span>
+                        <span *ngIf="demand.HRPOI.home_to_institution_duration != undefined || demand.HRPOI.home_to_institution_duration != null">
+                          {{demand.HRPOI.home_to_institution_duration | durationPrecise}}
+                        </span>
+                      </td>
+                      <td *ngIf="selectedAMPM=='AM'">
+                        <span *ngIf="demand.HRPOI.home_to_institution_acceptable_duration == undefined || demand.HRPOI.home_to_institution_acceptable_duration == null">
+                          <button class="btn btn-sm btn-link" (click)=getAcceptableDuration(demand)>non définie</button>
+                        </span>
+                        <span *ngIf="demand.HRPOI.home_to_institution_acceptable_duration != undefined || demand.HRPOI.home_to_institution_acceptable_duration != null">
+                          {{demand.HRPOI.home_to_institution_acceptable_duration | durationPrecise}}
+                        </span>
+                      </td>
+                      <td *ngIf="selectedAMPM=='PM'">
+                        <span *ngIf="demand.HRPOI.institution_to_home_duration == undefined || demand.HRPOI.institution_to_home_duration == null">
+                          <button class="btn btn-sm btn-link" (click)=getDuration(demand)>non défini</button>
+                        </span>
+                        <span *ngIf="demand.HRPOI.institution_to_home_duration != undefined || demand.HRPOI.institution_to_home_duration != null">
+                          {{demand.HRPOI.institution_to_home_duration | durationPrecise}}
+                        </span>
+                      </td>
+                      <td *ngIf="selectedAMPM=='PM'">
+                        <span *ngIf="demand.HRPOI.institution_to_home_acceptable_duration == undefined || demand.HRPOI.institution_to_home_acceptable_duration == null">
+                          <button class="btn btn-sm btn-link" (click)=getAcceptableDuration(demand)>non définie</button>
+                        </span>
+                        <span *ngIf="demand.HRPOI.institution_to_home_acceptable_duration != undefined || demand.HRPOI.institution_to_home_acceptable_duration != null">
+                          {{demand.HRPOI.institution_to_home_acceptable_duration | durationPrecise}}
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>                             
+              </span>      
+            </div>
+          </ng-template>
+        </ngb-tab>
+        <ngb-tab title="Durées de montée/descente" [disabled]="editMode!='view'">
+          <ng-template ngbTabContent>
+            <div class="crud-navbar"> 
+              <legend >
+                <div class="row">
+                  <div class="col-lg-auto">
+                    <button type="button" id="btn-list" class="btn btn-link" (click)="backToList()" ><fa-icon [icon]="faChevronLeft"></fa-icon> Liste</button>
+                  </div>
+                  <div class="col text-center">
+                    <span class="h5">Durées de montée/descente pour le scénario {{currentRecord.code}}</span>
+                  </div>
+                  <div class="col-lg-auto text-right"></div>
+                </div>
+              </legend>
+            </div>
+            <div *ngIf="currentRecord.groups.length==0">Aucune demande de transport impliquée dans le scénario</div>
+            <div *ngIf="currentRecord.groups.length>0">
+
+              <!-- Filters -->
+              <form #serviceDurationsForm="ngForm" novalidate="true" autocomplete="off" class="col-md-12"> 
+                <!-- Pickup or delivery -->
+                <div class="form-group row">
+                  <label for="pickup-delivery" class="col-md-3 col-form-label" >Sens</label>
+                  <div class="col-md-2">
+                    <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="selectedPickupDelivery">
+                      <label ngbButtonLabel class='btn-primary' [ngClass]="{'active-by-default':selectedPickupDelivery=='PICKUP'}">
+                        <input ngbButton type="radio" value="PICKUP"> Montée
+                      </label>
+                      <label ngbButtonLabel class='btn-primary' [ngClass]="{'active-by-default':selectedPickupDelivery=='DELIVERY'}">
+                        <input ngbButton type="radio" value="DELIVERY"> Descente
+                      </label>
+                    </div>
+                  </div>
+                </div>                
+                <!-- Transport Mode code -->
+                <div class="form-group row">
+                  <label for="transport-mode" class="col-md-3 col-form-label" >Mode de transport</label>
+                  <div class="col-md-2">
+                    <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="selectedTransportModeCode">
+                      <label ngbButtonLabel class='btn-primary' [ngClass]="{'active-by-default':selectedTransportModeCode=='MARCHANT'}">
+                        <input ngbButton type="radio" value="MARCHANT"> Marchant
+                      </label>
+                      <label ngbButtonLabel class='btn-primary' [ngClass]="{'active-by-default':selectedTransportModeCode=='FAUTEUIL'}">
+                        <input ngbButton type="radio" value="FAUTEUIL"> Fauteuil
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </form>  
+
+              <!-- Modification in mass of the pickup or delivery durations -->
+              <div class="card mt-3" *ngIf="currentRecord && editMode=='view'"
+                   [aclShow]="'/hr/update-durations'"
+                   [aclShowMode]="'display'">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-sm">
+                      <h5 class="card-title">Modifier les durées de 
+                        <span *ngIf="selectedPickupDelivery=='PICKUP'">montée</span>
+                        <span *ngIf="selectedPickupDelivery=='DELIVERY'">descente</span>
+                      </h5>
+                    </div>
+                    <div class="col-sm">
+                      <div class="float-right" id="action-bar">
+                        <button
+                          [disabled]="!serviceDurationsModified"
+                          type="button" id="cancel-service-duration"
+                          (click)="cancelServiceDurations()"
+                          class="btn btn-default btn-sm">
+                          Annuler
+                        </button>
+                        <button
+                          [disabled]="!serviceDurationsModified"
+                          type="button" id="save-service-duration"
+                          (click)="saveServiceDurations()"
+                          class="btn btn-success btn-sm">
+                          Enregistrer
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <form #multiplyServiceDurationForm="ngForm" novalidate="true" autocomplete="off" class="col-md-12">  
+                      <div class="form-group row">
+                        <label for="multiplyServiceDuration" class="col-md-3  col-form-label" >
+                          <!-- TODO : pour remonter le bouton, on peut lui mettre un margin-top -3px -->
+                          <button class="btn btn-sm btn-secondary"
+                                  [disabled]="!multiplyServiceDurationForm.form.valid"
+                                  (click)="multiplyServiceDurationsBy(multipleServiceDuration)" >
+                          Multiplier par</button>
+                        </label>
+                        <div class="col-md-3">
+                          <input type="text" class="form-control" name="multiplyServiceDuration"
+                            [(ngModel)]="multipleServiceDuration"
+                            [required]="true"
+                            pattern="(^[0-9]([.][0-9]+)?$)|(^[1-9][0-9]*([.][0-9]+)?$)" />
+                        </div>
+                      </div>
+                    </form>
+                    <form #additionServiceDurationForm="ngForm" novalidate="true" autocomplete="off" class="col-md-12">  
+                      <div class="form-group row">
+                        <label for="additionServiceDuration" class="col-md-3 col-form-label" >
+                          <button class="btn btn-sm btn-secondary"
+                                  [disabled]="!additionServiceDurationForm.form.valid"
+                                  (click)="addToServiceDurations(additionServiceDuration)" >Ajouter/Soustraire</button>
+                        </label>
+                        <div class="col-md-3">
+                          <div class="input-group">
+                                  <input type="text" class="form-control" name="additionServiceDuration"
+                                    [(ngModel)]="additionServiceDuration"
+                                    [required]="true"
+                                    pattern="[-]?[1-9][0-9]*" />
+                            <div class="input-group-append">
+                              <span class="input-group-text">secondes</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>  
+                    </form>
+                    <form #resetServiceDurationForm="ngForm" novalidate="true" autocomplete="off" class="col-md-12">  
+                      <div class="form-group row">
+                        <label for="resetServiceDurationValue" class="col-md-3 col-form-label" >
+                          <button class="btn btn-sm btn-secondary" 
+                                  [disabled]="!resetServiceDurationForm.form.valid"
+                                  (click)="resetServiceDurationsTo(resetServiceDurationValue)" >Affecter une valeur</button>
+                        </label>
+                        <div class="col-md-3">
+                          <div class="input-group">
+                                  <input type="text" class="form-control" name="resetServiceDurationValue"
+                                    [(ngModel)]="resetServiceDurationValue"
+                                    [required]="true"
+                                    pattern="[1-9][0-9]*" />
+                            <div class="input-group-append">
+                              <span class="input-group-text">secondes</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>  
+                    </form>
+                  </div>            
+                </div>  
+              </div>  
+              <br/>
+   
+              <!-- List of demands -->          
+              <span *ngFor="let group of currentRecord.groups">
+                <span *ngIf="currentRecord.groups.length>1">Groupe {{group.data.label}}</span>
+                <span *ngIf="group.data.demands.length==0"><em>Pas de demande de transport</em></span>     
+                <table *ngIf="group.data.demands.length>0" id="demands-table" class="table table-sm table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th>Prénom</th>
+                      <th>Nom</th>
+                      <th *ngIf="selectedPickupDelivery=='PICKUP'">Durée de montée</th>
+                      <th *ngIf="selectedPickupDelivery=='DELIVERY'">Durée de descente</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let demand of group.data.demands" [hidden]="demand.HRPOI.transport_mode_code!=selectedTransportModeCode">
+                      <td>{{demand.HRPOI.hr_firstname}}</td>
+                      <td>{{demand.HRPOI.hr_lastname}}</td>
+                      <td *ngIf="selectedPickupDelivery=='PICKUP'">
+                        <span *ngIf="demand.HRPOI.hr_pickup_duration == undefined || demand.HRPOI.hr_pickup_duration == null">
+                          <span>non défini</span>
+                        </span>
+                        <span *ngIf="demand.HRPOI.hr_pickup_duration != undefined || demand.HRPOI.hr_pickup_duration != null">
+                          {{demand.HRPOI.hr_pickup_duration | durationPrecise}}
+                        </span>
+                      </td>
+                      <td *ngIf="selectedPickupDelivery=='DELIVERY'">
+                          <span *ngIf="demand.HRPOI.hr_delivery_duration == undefined || demand.HRPOI.hr_delivery_duration == null">
+                            <span>non défini</span>
+                          </span>
+                          <span *ngIf="demand.HRPOI.hr_delivery_duration != undefined || demand.HRPOI.hr_delivery_duration != null">
+                            {{demand.HRPOI.hr_delivery_duration | durationPrecise}}
+                          </span>
+                        </td>
+                    </tr>
+                  </tbody>
+                </table>                             
+              </span>      
+            </div>
+          </ng-template>
+        </ngb-tab>
+        <ngb-tab title="Tournées" [disabled]="editMode!='view'" id="routes">
+          <ng-template ngbTabContent>
+            <scenario-calendar [inputScenario]="currentRecord" (changeInPOIs)="updatePOIs($event)"></scenario-calendar>
+          </ng-template>
+        </ngb-tab>
+      </ngb-tabset>
+    </div>
+
+    <!-- Open a Leaflet map and provided it with the list of POIs-->
+    <div class="col-sm p-0">
+      <map-leaflet
+        [editMode]="'view'"
+        [POIs]="POIs" [changeInPOIs]="changeInPOIs" [noAOI]="true"></map-leaflet>
+    </div>
+  </div>
+</div>

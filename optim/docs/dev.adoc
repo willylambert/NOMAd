@@ -1,0 +1,119 @@
+= Documentation développeur sur le serveur d'optimisation
+
+== Récupération des sources
+
+Les sources se situent sur le serveur gitlab du projet nomad. La commande pour cloner les sources est la suivante :
+
+....
+mkdir optim
+cd optim
+git clone https://gitlab.odo-via.com/nomad/optim.git
+....
+
+== Intégrations de modifications du code CPP
+
+Une partie des sources est récupérée depuis le compte Bitbucket `https://bitbucket.org/vercraene/taxi_share_algo` : il s'agit principalement du code CPP de l'optimisateur. Il est préconisé de télécharger les sources dans un répertoire séparé et de migrer fichier par fichier les évolutions de Bitbucket vers Gitlab. On peut utiliser un outil comme Winmerge pour vérifier les différences avant de migrer les fichiers.
+
+En particulier on fera attention à la liste de fichiers et répertoires suivant :
+* répertoire `.git` : garder la version de Gitlab
+* répertoire `containers` : garder la version de Gitlab
+* fichier `.gitignore` : garder la version de Gitlab
+* fichier `docker-compose.yml` : garder la version de Gitlab
+* fichier `src/build.sh` : garder la version de Gitlab et s'assurer que les fins de ligne sont bien de type LF
+* fichier `src/CMakeLists.txt` : garder la version de Gitlab
+* fichier `src/main.cpp` : résoudre les conflits
+
+S'il y a des conflits sur le fichier `src/main.cpp` (modifié à la fois sur Bitbucket et sur Gitlab) alors il faut résoudre ces conflits manuellement (pour l'instant)
+
+== Déploiement du serveur d'optimisation en développement
+
+Le déploiement se fait en 2 phases : 
+* compilation du code CPP (container nomadbuild_dev)
+* déploiment du serveur web d'optimisation (container nomadrun)
+
+=== Compilation du code CPP
+
+S'assurer que les répertoires `src` et `containers` sont bien synchronisés :
+
+....
+rm containers\build\src -r -fo
+rm containers\build\instance -r -fo
+xcopy src containers\build\src\ /E /Y
+xcopy instance containers\build\instance\ /E /Y
+....
+
+Nettoyer l'ancien container de compilation du code CPP au cas où, puis lancer la compilation du code CPP
+
+....
+docker-compose rm -f -s nomadbuild_dev
+docker-compose build nomadbuild_dev
+....
+
+Notons que si on a une erreur du type `/bin/sh: 1: /opt/nomad/src/build.sh: not found`, vérifier que le fichier `container\build\src\build.sh` a bien LF comme fin de ligne.
+
+=== Construire et démarrer le container nomadrun
+
+Maintenant il faut construire le container nomadrun. Avant cela il faut s'assurer que ce container va bien se construire à partir d'un container nomadbuild_dev. Dans le fichier `containers/run/Dockerfile`, s'assurer que la première ligne contient :
+
+....
+FROM <nom de mon repository github>_nomadbuild_dev
+....
+
+Puis lancer le container nomadrun
+
+....
+docker-compose build nomadrun
+docker-compose up -d nomadrun
+....
+
+
+== Déploiement du serveur d'optimisation en production
+
+Le déploiement est similaires au déploiement en développement avec les différences suivantes :
+* la compilation du code CPP se fait avec le container nomadbuild_release (sans point de montage)
+* le serveur web d'optimisation est construit puis stocké dans une image
+* le serveur web d'optimisation est démarré à partir d'une image et sans utiliser docker-compose
+
+=== Compilation du code CPP
+
+....
+./release.bat
+....
+
+Dans le cas où le script ne s'execute pas correctement, exécuter une par une les instructions dans un terminal
+
+=== Construire le container nomadrun
+
+Maintenant il faut construire le container nomadrun. Avant cela il faut s'assurer que ce container va bien se construire à partir d'un container nomadbuild_release. Dans le fichier `containers/run/Dockerfile`, s'assurer que la première ligne contient :
+
+....
+FROM <nom de mon repository github>_nomadbuild_release
+....
+
+Construire le serveur web qui encapsule l'executable :
+
+....
+docker-compose stop nomadrun
+docker-compose rm -f nomadrun
+docker-compose build nomadrun
+....
+
+Se connecter à AWS :
+
+....
+aws ecr get-login --no-include-email --region eu-west-3
+....
+
+Exécuter le code de retour de la ligne ci-dessus pour se connecter à AWS.
+Note : à la première connection à AWS, il est nécessaire de configurer la connection, se référer à la documentation similaire concernant le serveur web Nomad.
+
+Mettre à disposition l'image créé derrière un tag nomad-optim:latest :
+
+....
+docker tag optim_nomadrun:latest 359385410439.dkr.ecr.eu-west-3.amazonaws.com/nomad-optim:latest
+docker push 359385410439.dkr.ecr.eu-west-3.amazonaws.com/nomad-optim:latest
+....
+
+=== Démarrer le container nomadrun
+
+Le démarrage en production se font en même temps pour le serveur d'optimisation Nomad et le serveur web Nomad. Se référer à la documentation sur le démarrage du serveur web Nomad en production.

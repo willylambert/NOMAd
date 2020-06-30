@@ -1,0 +1,321 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="container-fluid">
+
+ <!-- Main formular -->
+  <form #userForm="ngForm" novalidate="true" autocomplete="off" *ngIf="me">
+
+    <!-- NavBar -->
+    <crud-navbar  [editMode]="editMode"
+                  [valid]="userForm.form.valid"
+                  [pristine]="userForm.form.pristine"
+                  (editModeChange)="editModeChange($event)"
+                  (saveEvent)="save()"
+                  (markAsRemovedEvent)="markAsRemoved()"
+                  (deleteEvent)="delete()"
+                  [title]="(currentRecord.id?'Utilisateur '+currentRecord.login:'Nouvel utilisateur')"
+                  [aclObject]="'user'"
+                  [recordId]="currentRecord.id" ></crud-navbar>
+
+    <!-- Login -->
+    <div class="form-group row">
+      <label for="login" class="col-md-2 col-form-label" >Identifiant</label>
+      <div class="col-md-4">
+        <input type="text" class="form-control" name="login"
+               [(ngModel)]="currentRecord.login" pattern="[a-z0-9_\.-]{1,20}"
+               [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+               [required]="editMode!='view'"
+               [readonly]="editMode!='edit'" />
+      </div>
+    </div>
+
+    <!-- Passwd : password is mandatory only at user creation. Password is optional at user update because an
+           administrator may want to update some user information without knowing the password -->
+    <div class="form-group row">
+      <label for="passwd" class="col-lg-2 col-form-label" >Mot de passe</label>
+      <div class="col-lg-4">
+        <input type="password" name="passwd"
+               placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
+               [(ngModel)]="currentRecord.passwd"
+               pattern="[^ ]{8,20}"
+               [ngClass]="{'form-control-plaintext':editMode=='view'&&!bUpdatePassword,
+                           'form-control':editMode!='view'||bUpdatePassword}"
+               [required]="(editMode!='view' && currentRecord.id==undefined) || bUpdatePassword"
+               [readonly]="editMode!='edit'&&!bUpdatePassword"
+               #passwd="ngModel" />
+      </div>
+      <!-- The password update button is overkill for admins, because they have access to the user form in 'edit' mode -->
+      <div class="col-lg-4" *ngIf="me.type_code!='ADMIN'">
+        <button type="button" *ngIf="!bUpdatePassword" id="btn-edit-password" class="btn btn-sm"
+                (click)="bUpdatePassword=true">Changer le mot de passe</button>
+        <button type="button" *ngIf="bUpdatePassword" id="btn-cancel-password" class="btn btn-sm"
+                (click)="cancelPassword()">Annuler</button>
+        <button type="button" [disabled]="passwd.invalid" *ngIf="bUpdatePassword" id="btn-save-password"
+                class="btn btn-success" (click)="updatePassword()">Enregistrer</button>
+      </div>
+    </div>
+
+
+    <!-- Firstname -->
+    <div class="form-group row">
+      <label for="firstname" class="col-lg-2 col-form-label">Prénom </label>
+      <div class="col-lg-10">
+        <input type="text" name="firstname"
+               [(ngModel)]="currentRecord.firstname"
+               [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+               [required]="editMode!='view'"
+               [readonly]="editMode!='edit'"/>
+      </div>
+    </div>
+
+    <!-- lastname -->
+    <div class="form-group row">
+      <label for="lastname" class="col-lg-2 col-form-label">Nom </label>
+      <div class="col-lg-10">
+        <input type="text" class="form-control" name="lastname" placeholder="Nom..."
+               [(ngModel)]="currentRecord.lastname"
+               [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+               [required]="editMode!='view'"
+               [readonly]="editMode!='edit'"/>
+      </div>
+    </div>
+
+    <!-- Status : currently only accessible to ADMIN, we consider that this information is useless for other user types
+         A user can be enabled or disabled : 
+          - disabled : no access to the application
+          - enabled : access to the application
+        -->
+    <div class='form-group row' *ngIf="me.type_code=='ADMIN'">
+      <label for="status" class='col-lg-2 col-form-label'>Statut </label>
+      <div class='col-lg-4'>
+        <ng-select name="status" [items]="th('USER_MAIN_STATUS') | async" bindLabel="label" bindValue="id"
+                   [(ngModel)]="currentRecord.status_th"
+                   [disabled]="editMode!='edit'"
+                   [required]="editMode!='view'">
+        </ng-select>
+      </div>
+    </div>
+
+    <!-- Type : 
+      ADMIN : administrator user
+      TRANSPORT_ORGANIZER : has access to several institutions and can update scenarios
+      INSTITUTION : has access to several institutions
+      DRIVER : can read the route information he is assigned to
+      CLIENT : a user that manages a HR (or maybe several HR but few)
+    -->
+    <div class='form-group row'>
+      <label for="type" class='col-lg-2 col-form-label'>Type </label>
+      <div class='col-lg-4'>
+        <ng-select name="type" [items]="th('USER_MAIN_TYPE') | async" bindLabel="label" bindValue="id"
+                   [(ngModel)]="currentRecord.type_th"
+                   [disabled]="editMode!='edit'"
+                   [required]="editMode!='view'"
+                   (change)="onTypeChange()">
+        </ng-select>
+      </div>
+    </div>
+
+    <!-- Only for a user of ADMIN type : we can set the list of Roles -->
+    <div class="card mt-3" *ngIf="currentRecord.type_th && currentRecord.type_code=='ADMIN'">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm">
+            <h5 class="card-title">Rôles</h5>
+          </div>
+          <div class="col-sm">
+            <div class="float-right" id="action-bar">
+              <button *ngIf="editMode!='view'" type="button" id="btn-update-roles" class="btn btn-link btn-sm"
+                      (click)="updateRoles()" >
+                    Ajouter/Supprimer
+              </button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!currentRecord.roles || currentRecord.roles.length==0">
+          <em>Aucun rôle rattaché à l'utilisateur</em>
+        </div>
+        <div *ngIf="currentRecord.roles && currentRecord.roles.length>0">
+          <table id="roles-table" class="table table-sm table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Rôle</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let role of currentRecord.roles ; let i = index" [attr.data-index]="i">
+                <td>{{role.code}}</td>
+                <td>{{role.label}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSTITUTION type or TRANSPORT_ORGANIZER type : we can set the list of sites -->
+    <div class="card mt-3" *ngIf="currentRecord.type_th && 
+    (currentRecord.type_code=='INSTITUTION' || currentRecord.type_code=='TRANSPORT_ORGANIZER')">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm">
+            <h5 class="card-title">Sites</h5>
+          </div>
+          <div class="col-sm">
+            <div class="float-right" id="action-bar">
+              <button *ngIf="editMode!='view'"
+                      type="button" id="btn-update-sites" class="btn btn-link btn-sm"
+                      (click)="updateSites()" >
+                    Ajouter/Supprimer
+              </button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!currentRecord.sites || currentRecord.sites.length==0">
+          <em>Aucun site rattaché à l'utilisateur</em>
+        </div>
+        <div *ngIf="currentRecord.sites && currentRecord.sites.length>0">
+          <table id="sites-table" class="table table-sm table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Description</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- A user with INSTITUTION or TRANSPORT_ORGANIZER type should see only sites of type INSTITUTION
+                   He can access sites of type HOME but through a HR -->
+              <tr *ngFor="let site of currentRecord.sites ; let i = index" [attr.data-index]="i"
+                  [hidden]="site.type_code != 'INSTITUTION' ">
+                <td>{{site.code}}</td>
+                <td>{{site.label}}</td>
+                <td>{{site.type_label}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENT TYPE (responsible for a group of HRs): we can set the list of HRs -->
+    <div class="card mt-3" *ngIf="currentRecord.type_th && currentRecord.type_code=='CLIENT'">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm">
+            <h5 class="card-title">Usagers</h5>
+          </div>
+          <div class="col-sm">
+            <div class="float-right" id="action-bar">
+              <button *ngIf="editMode!='view'" type="button" id="btn-update-hrs" class="btn btn-link btn-sm"
+                      (click)="updateHRs(true)" >
+                    Ajouter/Supprimer
+              </button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!currentRecord.hrs || currentRecord.hrs.length==0">
+          <em>Aucun usager rattaché à l'utilisateur</em>
+        </div>
+        <div *ngIf="currentRecord.hrs && currentRecord.hrs.length>0">
+          <table id="hrs-table" class="table table-sm table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Genre</th>
+                <th>Date de naissance</th>
+                <th>Statut</th>
+                <th>Type</th>
+                <th>Demandes de transport</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let hr of currentRecord.hrs ; let i = index" [attr.data-index]="i">
+                <td>{{hr.lastname}}</td>
+                <td>{{hr.firstname}}</td>
+                <th>{{hr.gender_label}}</th>
+                <td><span *ngIf="hr.birthday_dt">{{hr.birthday_dt | date}}</span></td>
+                <td>{{hr.status_label}}</td>
+                <td>{{hr.type_label}}</td>
+                <td>{{hr.demands_count}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- DRIVER TYPE : linked to only one hr -->
+    <div class="card mt-3" *ngIf="currentRecord.type_th && currentRecord.type_code=='DRIVER'">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm">
+            <h5 class="card-title">Usager</h5>
+          </div>
+          <div class="col-sm">
+            <div class="float-right" id="action-bar">
+              <button *ngIf="editMode!='view'" type="button" id="btn-update-hrs" 
+                      class="btn btn-link btn-sm"
+                      (click)="updateHRs(false)" >
+                <span *ngIf="currentRecord.hrs && currentRecord.hrs.length>0">Modifier/Supprimer</span>
+                <span *ngIf="!currentRecord.hrs || currentRecord.hrs.length==0">Ajouter</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!currentRecord.hrs || currentRecord.hrs.length==0">
+          <em>Aucun usager rattaché à l'utilisateur</em>
+        </div>
+        <div *ngIf="currentRecord.hrs && currentRecord.hrs.length>0">
+          <table id="hrs-table" class="table table-sm table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Genre</th>
+                <th>Date de naissance</th>
+                <th>Statut</th>
+                <th>Type</th>
+                <th>Demandes de transport</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let hr of currentRecord.hrs ; let i = index" [attr.data-index]="i">
+                <td>{{hr.lastname}}</td>
+                <td>{{hr.firstname}}</td>
+                <th>{{hr.gender_label}}</th>
+                <td><span *ngIf="hr.birthday_dt">{{hr.birthday_dt | date}}</span></td>
+                <td>{{hr.status_label}}</td>
+                <td>{{hr.type_label}}</td>
+                <td>{{hr.demands_count}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>

@@ -1,0 +1,208 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="container-fluid">
+  <!-- Filter -->
+  <div class="row align-items-center h-80 row-filter">
+    <div class="col-md-3">
+      <span class="h5">Tournées</span>
+      &nbsp;
+      <span class="h6 btn btn-outline-light" (click)="viewScenario()">Scénario {{filters.scenarioMain.label}}</span>
+    </div>
+    <div class="col-md-2">
+        &nbsp;
+        <button class='btn btn-sm' style="background:#517390c7" [disabled]="!bDataLoaded"
+                (click)="previousWeek()">
+          <fa-icon [icon]="faCaretLeft"></fa-icon>
+        </button>
+        <span class="h6" *ngIf="weekNumber!=undefined">semaine {{weekNumber}}</span>
+        <button class='btn btn-sm' style="background:#517390c7" [disabled]="!bDataLoaded"
+                (click)="nextWeek()">
+          <fa-icon [icon]="faCaretRight"></fa-icon>
+        </button>
+      </div>
+    <div class="col-md-1">
+      <ng-select id="days" name="days" class="mx-auto"
+        [items]="[{id:0,label:'Lundi',code:'MONDAY'},
+                  {id:1,label:'Mardi',code:'TUESDAY'},
+                  {id:2,label:'Mercredi',code:'WEDNESDAY'},
+                  {id:3,label:'Jeudi',code:'THURSDAY'},
+                  {id:4,label:'Vendredi',code:'FRIDAY'},
+                  {id:5,label:'Samedi',code:'SATURDAY'},
+                  {id:6,label:'Dimanche',code:'SUNDAY'}]"
+        [(ngModel)]="filters.timeSlotDay"
+        [disabled]="!bDataLoaded"
+        (change)="updateTimeSlotId()"
+        bindLabel="label" placeholder="Jour">
+      </ng-select>
+    </div>
+    <div class="col-md-2">
+      <span class="h6" *ngIf="filters.calendarDt">{{filters.calendarDt | date}}</span>
+      <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="filters.timeSlotAMPM"
+          (change)="updateTimeSlotId()" [disabled]="!bDataLoaded">
+        <label ngbButtonLabel class="btn-primary">
+          <input ngbButton type="radio" value="AM"> Aller
+        </label>
+        <label ngbButtonLabel class="btn-primary">
+          <input ngbButton type="radio" value="PM"> Retour
+        </label>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <!-- Average time (driving + waiting) for the routes -->
+      <em *ngIf="routes.list!=undefined && routes.list.length>0">
+        <fa-icon [icon]="faClock" ></fa-icon>
+        {{((routes.list | sum:'duration')*1000 + (routes.list | sum:'waitingDuration'))/routes.list.length | duration}} 
+        /
+        <span *ngIf="HRsCount>0">
+          {{(((routes.list | sum:'duration')*1000 + (routes.list | sum:'waitingDuration'))/HRsCount) | duration}}
+        </span>  
+        <span *ngIf="HRsCount==0">
+          --
+        </span>
+      </em>
+      &#160;
+      <em *ngIf="routes.list!=undefined">
+        <fa-icon [icon]="faEuroSign" ></fa-icon>
+        {{routes.list | sum:'cost' | cost }}&#8364;
+        /        
+        <span *ngIf="HRsCount>0">
+          {{((routes.list | sum:'cost') / HRsCount) | cost}}&#8364;
+        </span>  
+        <span *ngIf="HRsCount==0">
+          --
+        </span>        
+      </em>
+      &#160;
+      <em *ngIf="routes.list!=undefined">
+        <fa-icon [icon]="faLeaf" ></fa-icon>
+        {{(routes.list | sum:'co2')/1000 | cost }}kg
+        /        
+        <span *ngIf="HRsCount>0">
+          {{((routes.list | sum:'co2') / (HRsCount*1000)) | cost}}kg
+        </span>  
+        <span *ngIf="HRsCount==0">
+          --
+        </span>        
+      </em>
+      &#160;
+      <fa-layers>
+        <fa-icon [icon]="faWheelchair" class="fa-fw"></fa-icon>
+        <fa-layers-counter
+          content="{{POIs.list | count:'transport_mode_code':'FAUTEUIL'}}"> </fa-layers-counter>
+      </fa-layers>
+      &#160;
+      <fa-layers>
+        <fa-icon [icon]="faChild" class="fa-fw"></fa-icon>
+        <fa-layers-counter
+          content="{{POIs.list | count:'transport_mode_code':'MARCHANT'}}"> </fa-layers-counter>
+      </fa-layers>    
+    </div>
+  </div>
+  <div class="row" *ngIf="bDataLoaded">
+    <div class="col sidebar">
+      <alert-component></alert-component>
+      <div class="alert alert-warning" *ngIf="POIs.list.length==0">
+        <em id="no-poi-alert">
+          Aucune demande de transport n'a été trouvée.
+        </em>
+      </div>
+      <div class="alert alert-warning" *ngIf="startDt>filters.calendarDt || endDt<filters.calendarDt">
+        <em >
+          La journée sélectionnée n'appartient pas à la plage de dates définie pour le scénario.
+        </em>
+      </div>
+      <div id="routes" *ngIf="POIs.list.length>0 && startDt<=filters.calendarDt && endDt>=filters.calendarDt">
+        <div>
+          <button id="save-routes-btn" class="btn btn-link " (click)="saveRoutes()"
+                  [aclShow]="'/route/save'" [aclShowMode]="'display'" [aclShowDisplay]="'inline'"
+                  [disabled]='!routes.hasChanged(false) || routes.bLoading'>
+            <fa-icon [icon]="faSave"></fa-icon>&nbsp;Enregistrer
+          </button>
+          <button id="restore-routes-btn" class="btn btn-link " (click)="resetRoutes()"
+                  [aclShow]="'/route/restore'" [aclShowMode]="'display'" [aclShowDisplay]="'inline'"
+                  [disabled]='optims.length==0 || routes.bLoading'>
+            <fa-icon [icon]="faRedo"></fa-icon>&nbsp;Restaurer
+          </button>
+          <button id="new-route-btn" class="btn btn-link " (click)="newRoute()"
+                  [aclShow]="'/route/save'"
+                  [aclShowMode]="'display'" [aclShowDisplay]="'inline'"
+                  [disabled]='routes.availableColors.length==0 || routes.bLoading'>
+            <fa-icon [icon]="faPlus"></fa-icon>&nbsp; <span class="d-none d-sm-inline">Nouvelle tournée</span>
+          </button>
+          <button id="delete-all-route-btn" class="btn btn-link " (click)="deleteAllRoutes()"
+                  [aclShow]="'/route/mark-as-removed'"
+                  [aclShowMode]="'display'" [aclShowDisplay]="'inline'"
+                  [disabled]='routes.availableColors.length==0 || routes.bLoading'>
+            <fa-icon [icon]="faTimes"></fa-icon>&nbsp; <span class="d-none d-sm-inline">Tout supprimer</span>
+          </button>          
+        </div>
+        <div class="routes-list">
+          <route-list
+            [filters]="filters"
+            [bOptimized]="false"
+            [routes]="routes"
+            [bSandbox]="false"
+            [involvedInstitutions]="institutions"
+            (routeChange)="updateMap()"
+            (routeDisplayToggle)="displayRoutes()"
+            (routeDelete)="onRouteDelete()"
+            (routeEdit)="editRouteModal($event.value,false)"
+            (routePOIsChange)="updateMap()"
+          ></route-list>
+        </div>
+
+        <div class="alert alert-info" *ngIf="bRestoreInProgress">
+          <em>
+            <fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Restauration en cours...
+          </em>
+        </div>        
+        
+        <ng-container *ngIf="!bRestoreInProgress">
+          <optim-player
+            [enabled]="POIs.list.length>0"
+            [optimResultId]="optimResultId"
+            [filters]="filters"
+            (optimizedRoutesAvailable)="onOptimizedRoutesAvailable($event.routes,$event.bOverwrite)"
+          ></optim-player>
+        </ng-container>          
+      </div>
+    </div>
+    <!-- Open a Leaflet map and provided it with the list of POIs -->
+    <div class="col p-0">
+      <route-map
+        [timeSlotId]="filters.timeSlotId"
+        [institutions]="institutions"
+        [transporters]="transporters"
+        [routes]="routes"
+        [POIs]="POIs"
+        [POISelectionEnabled]="true"
+        [updateMapCount]="updateMapCount"
+        [updateMapWithRecenteringCount]="updateMapWithRecenteringCount"
+        [routesDisplayCount]="routesDisplayCount"
+        [toolbarEnabled]="true"
+        (routePOIsChange)="updateHRsCount()"
+      ></route-map>
+    </div>
+  </div>
+</div>

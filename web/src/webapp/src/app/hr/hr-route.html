@@ -1,0 +1,14 @@
+<table class="table">
+    <tr>
+        <th>Date</th>
+        <th>Trajet</th>
+        <th>Heure de départ</th>
+    </tr>
+    <ng-container *ngFor="let transportPOI of transportPOIs">
+      <tr>
+        <td>{{transportPOI.date_dt | date}}</td>
+        <td>{{transportPOI.addr1}} ({{transportPOI.city}}) <fa-icon [icon]="faArrowRight"></fa-icon>  {{transportPOI.label}} </td>
+        <td>{{transportPOI.target_hr | utcTime}}</td>
+      </tr>
+    </ng-container>
+</table>

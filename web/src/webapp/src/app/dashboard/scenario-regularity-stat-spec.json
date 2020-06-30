@@ -1,0 +1,186 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A top-k bar chart ranking film regularity by revenue.",
+  "width": 500,
+  "padding": 5,
+  "autosize": "fit",
+
+  "title": {
+    "text": "Regularité",
+    "anchor": "start",
+    "frame": "group"
+  },  
+
+  "signals": [
+    { "name": "plotWidth", "value": 50 },
+    { "name": "bandwidth", "value": 0},
+    {
+      "name": "tooltip",
+      "value": "",
+      "on": [
+        {"events": "click", "update": "datum"},
+        {"events": "mouseout",  "update": "{}"}
+      ]
+    }      
+
+  ],
+
+  "data": [
+    {
+      "name": "regularity",
+      "values": []
+    },
+    {
+      "name":"stats",
+      "source":"regularity",
+      "transform": [
+        {"type": "filter", "expr": "datum.value > 0"},
+        {
+          "type": "aggregate",
+          "groupby":["name"],
+          "ops":["min","max","q1", "median", "q3"],
+          "fields": ["value","value","value","value","value"],
+          "as":["min","max","q1", "median", "q3"]
+        },
+        {
+          "type": "collect",
+          "sort": {"field": "name"}
+        }
+      ]      
+    },
+    {
+      "name": "density",
+      "source": "regularity",
+      "transform": [
+        {
+          "type": "kde",
+          "field": "value",
+          "groupby": ["name"],
+          "bandwidth": {"signal": "bandwidth"}
+        }
+      ]
+    }    
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+      "from": {
+        "facet": {
+          "data": "density",
+          "name": "violin",
+          "groupby": "name"
+        }
+      },
+
+      "encode": {
+        "enter": {
+          "yc": {"scale": "y", "field": "organ", "band": 0.5},
+          "height": {"signal": "plotWidth"},
+          "width": {"signal": "width"}
+        }
+      },
+
+      "marks": [        
+        {
+          "type": "rect",
+          "from": {"data": "stats"},
+          "encode": {
+            "enter": {
+              "tooltip": {"signal": "tooltip"},
+              "fill": {"value": "black"},
+              "height": {"value": 1}
+            },        
+            "update": {
+              "x": {"scale": "x", "field": "min"},
+              "x2": {"scale": "x", "field": "max"},
+              "yc": {"scale": "y", "field": "name","offset": {"signal": "plotWidth/2"}}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "from": {"data": "stats"},
+          "encode": {
+            "enter": {
+              "tooltip": {"signal": "tooltip"},
+              "fill": {"value": "black"},
+              "width": {"value": 2},
+              "height": {"value": 8}
+            },
+            "update": {
+              "x": {"scale": "x", "field": "median"},
+              "yc": {"scale": "y", "field": "name","offset": {"signal": "plotWidth/2"}}
+            }
+          }
+        },
+        {
+          "type": "area",
+          "from": {"data": "violin"},
+          "encode": {
+            "enter": {
+              "tooltip": {"signal": "tooltip"},
+              "fill": {"value": "rgb(116,183,178)"}
+            },
+            "update": {
+              "x": {"scale": "x", "field": "value"},
+              "yc": {"scale": "y", "field": "name","offset": {"signal": "plotWidth/2"}},
+              "height": {"scale": "hscale", "field": "density"}
+            }
+          }
+        }               
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "time",
+      "domain": {"data": "stats", "fields": ["min","max"]},
+      "range": "width"
+    },
+    {
+      "name": "y",
+      "type": "band",
+      "domain": {
+        "data": "stats", "field": "name"
+      },
+      "range": "height"
+    },
+    {
+      "name": "hscale",
+      "type": "linear",
+      "range": [0, {"signal": "plotWidth"}],
+      "domain": {"data": "density", "field": "density"}
+    } 
+  ],
+
+  "axes": [
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "encode":{
+        "labels": {
+          "update": {
+            "text": {"signal": "utchours(datum.value) + ':' + minutes(datum.value)"}
+          }
+        }
+      }      
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "labelColor" : "rgb(19,125,252)",
+      "encode":{      
+        "labels": {
+          "interactive": true,
+          "update": {
+            "tooltip": {"signal": "datum.label"}
+          }          
+        }
+      },
+      "bandPosition":1
+    }
+  ]
+}

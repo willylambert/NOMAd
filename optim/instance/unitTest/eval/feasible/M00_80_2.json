@@ -1,0 +1,33 @@
+{
+    "routes": [
+        {
+            "idVehicle": 10,
+            "nodes": [
+                {
+                    "idUser": 12345,
+                    "type": "+"
+                },
+                {
+                    "idUser": 15,
+                    "type": "p"
+                },
+                {
+                    "idUser": 22,
+                    "type": "p"
+                },
+                {
+                    "idUser": 22,
+                    "type": "d"
+                },
+                {
+                    "idUser": 15,
+                    "type": "d"
+                },
+                {
+                    "idUser": 12345,
+                    "type": "-"
+                }
+            ]
+        }
+    ]
+}

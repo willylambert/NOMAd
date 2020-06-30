@@ -1,0 +1,19 @@
+$icons-path: "~ag-grid-community/src/styles/icons/";
+
+$row-height: 30px;
+$header-height: 30px;
+
+@import '~ag-grid-community/src/styles/ag-grid.scss';
+@import '~ag-grid-community/src/styles/ag-theme-material.scss';
+
+
+.ag-theme-material .ag-header{
+  font-size:14px;
+  font-weight: bold;
+  color:black;
+}
+
+.ag-header-cell{
+  border-top: 1px solid #dee2e6;
+  border-bottom: 2px solid #dee2e6;
+}

@@ -1,0 +1,52 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<!-- New Scenario Modal -->
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">
+    <span *ngIf="editMode=='add'">
+      <span *ngIf="inputScenario.id!=undefined">Dupliquer le scénario {{inputScenario.label}}</span>
+      <span *ngIf="inputScenario.id==undefined">Nouveau scénario</span>
+    </span>
+    <span *ngIf="editMode!='add'">Scénario {{currentRecord.label}}</span>
+  </h4>
+  <span class='pull-right'>
+    <button type="button" class="btn btn-default" (click)="activeModal.close()">Annuler</button>
+    <button type="button" class="btn btn-success btn-sm" (click)="validate()"
+            [disabled]="!scenarioEditForm.form.valid">Valider</button>
+  </span>
+</div>
+<div class="modal-body">
+  <form #scenarioEditForm="ngForm">
+    <div class="form-group row">
+      <label for="label" class="col-lg-4 col-form-label">
+        <span *ngIf="editMode=='add' && inputScenario.id!=undefined">Nouveau libellé</span>
+        <span *ngIf="editMode=='edit' || inputScenario.id==undefined">Libellé</span>
+      </label>
+      <div class="col-lg-8">
+        <input type="text" class="form-control" name="label"
+               [(ngModel)]="currentRecord.label" required/>
+      </div>
+    </div>
+  </form>
+</div>

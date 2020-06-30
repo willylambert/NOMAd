@@ -1,0 +1,83 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="container-fluid">
+  <div class="row" fillHeight>
+    <!-- Users List -->
+    <div class="col-sm border acl-users">
+      <div class="text-center">
+        <h4>Utilisateurs</h4>
+      </div>
+      <ag-grid-angular
+          class="ag-theme-material ag-acl"
+          [gridOptions]="gridOptionsUsers"
+          [rowData]="users"
+          [columnDefs]="userColumnDefs"
+          [enableFilter]="true"
+          rowSelection="single"
+          (selectionChanged)="userSelected($event)"
+          (gridSizeChanged)="onGridResized($event)"
+          >
+      </ag-grid-angular>
+    </div>
+
+    <!-- Role List -->
+    <div class="col-sm border acl-roles">
+      <div class="text-center">
+        <h4>Rôles</h4>
+        <button type="button" id="btn-add-role" class="btn btn-success btn-sm float-right"
+            [aclShow]="'/aclrole/save'"
+            *ngIf="aclActions" (click)="openRole(null)">Nouveau rôle</button>
+      </div>
+      <ag-grid-angular
+          class="ag-theme-material ag-acl"
+          [gridOptions]="gridOptionsRoles"
+          [rowData]="aclRoles"
+          [columnDefs]="roleColumnDefs"
+          [enableFilter]="true"
+          rowSelection="multiple"
+          (selectionChanged)="roleSelected($event)"
+          (gridSizeChanged)="onGridResized($event)"
+          >
+      </ag-grid-angular>
+    </div>
+
+    <!-- Actions List -->
+    <div class="col-sm border acl-actions">
+      <div class="text-center">
+        <h4>Actions</h4>
+      </div>
+      <ag-grid-angular
+          class="ag-theme-material ag-acl"
+          [gridOptions]="gridOptionsActions"
+          [rowData]="aclActions"
+          [columnDefs]="actionColumnDefs"
+          [enableFilter]="true"
+          rowSelection="multiple"
+          (gridReady)="onGridResized($event)"
+          (gridSizeChanged)="onGridResized($event)"
+          >
+      </ag-grid-angular>
+    </div>
+  </div>
+</div>

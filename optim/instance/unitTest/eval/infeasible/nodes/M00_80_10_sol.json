@@ -1,0 +1,31 @@
+{
+  "cost": 0,
+  "errors": {
+    "capacityDepotError": [],
+    "positionNodeError": [
+      [
+        12,
+        1
+      ],
+      [
+        -1,
+        1
+      ],
+      [
+        12,
+        2
+      ],
+      [
+        -1,
+        2
+      ]
+    ],
+    "userNotFoundError": [],
+    "vehicleTypeError": []
+  },
+  "feasible": false,
+  "irregularity": 0,
+  "name": "M00_80",
+  "nbUsers": "0",
+  "objectiveValue": 0
+}

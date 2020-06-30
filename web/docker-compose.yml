@@ -1,0 +1,66 @@
+#
+# Copyright (c) 2020 INSA Lyon, Ressourcial, GIHP, ODO Smart Systems
+#
+# This file is part of NOMAd.
+#
+# NOMAd is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# NOMAd is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+#
+version: "3"
+services:
+  webapp:
+    build: containers/webapp
+    volumes:
+      # source code
+      - ./src/webapp:/var/www/docs
+      # logs
+      - ./data/logs:/var/www/data/logs
+      # user configuration
+      - ./config:/var/www/config
+    environment:
+      - HOSTNAME=${USER}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWD=${DB_PASSWD}
+      - MAPBOX_KEY=${MAPBOX_KEY}
+      - TOMTOM_KEY=${TOMTOM_KEY}
+      - NOMINATIM_URL=${NOMINATIM_URL}
+      - SNS_AWS_KEY=${SNS_AWS_KEY}
+      - SNS_AWS_SECRET=${SNS_AWS_SECRET}
+      - SNS_AWS_REGION=${SNS_AWS_REGION}
+      - OPTIM_HOST_URL=${OPTIM_HOST_URL}
+      - OPTIM_PORT=${OPTIM_PORT}
+      - GRAYLOG_SERVER=${GRAYLOG_SERVER}
+      - GRAYLOG_UDP_PORT=${GRAYLOG_UDP_PORT}
+    working_dir: /var/www/docs
+    links:
+      - database
+    ports:
+      - 4949:80
+  #Postgresql database
+  database:
+    build: containers/database
+    command: /start.sh
+    ports:
+      - "5434:5434"
+    expose:
+      - "5434"
+
+  # Build Tool - use it from host command line : docker-compose up docs
+  docs:
+    build: containers/asciidoctor
+    command: /opt/builddocs.sh
+    volumes:
+      - ./docs:/var/docs

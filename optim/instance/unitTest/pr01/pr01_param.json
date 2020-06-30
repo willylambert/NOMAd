@@ -1,0 +1,14 @@
+{
+"nbIterations": 146,
+"nbIterationsSCP": 146,
+"nbReplica": 0,
+"multiplier": 100000,
+"pathOutput": "./output/unitTest/",
+"timeLimit": 60,
+"checkAll": true,
+"verbosite": true,
+"writeFilesSol": false,
+"displayTitle": false,
+"poolOfRoutes": false,
+"inst_type": "(Cordeau&Laporte,2003)"
+}

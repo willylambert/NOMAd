@@ -1,0 +1,62 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div [ngClass]="{'toolbar-in-map':!options.inRouteMap,'toolbar-in-route-map':options.inRouteMap}"
+     route-toolbar-position
+     [aclShow]="'/route/save'">
+  <div class="toolbar-fold" [hidden]="options.show">
+    <fa-icon [icon]="faWrench" (click)="options.show=!options.show"></fa-icon>
+  </div>
+  <div class="card" [hidden]="!options.show" style="width: 220px;margin-top:-120px">
+  <div class="card-body" >
+    <h5 class="card-title" >Outils de sélection
+        <fa-icon class='btn' [icon]="faWrench" (click)="options.show=!options.show"></fa-icon>
+    </h5>
+
+    <div class="btn-group btn-group-toggle" ngbRadioGroup
+               [(ngModel)]="options.multipleSelect" (change)="toggleMultipleSelect()">
+      <label ngbButtonLabel class="btn-lg" [ngClass]="{'btn-success':options.multipleSelect,'btn-outline-secondary':!options.multipleSelect}">
+        <input ngbButton type="radio" [value]="true" /><fa-icon class='btn' [icon]="faDrawPolygon"></fa-icon>
+      </label>
+      <label ngbButtonLabel class="btn-lg" [ngClass]="{'btn-success':!options.multipleSelect,'btn-outline-secondary':options.multipleSelect}">
+        <input ngbButton type="radio" [value]="false" /><fa-icon class='btn' [icon]="faHandPointer"></fa-icon>
+      </label>
+    </div>
+    <div>&nbsp;</div>
+
+    <div [hidden]="!options.multipleSelect">
+      <button class="btn btn-sm" (click)="options.select=!options.select"
+                [ngClass]="{'btn-info':options.select,'btn-outline-secondary':!options.select}"
+                [hidden]="!options.multipleSelect">
+        <span>Sélection</span>
+      </button>
+      <button class="btn btn-sm" (click)="options.unselect=!options.unselect"
+                [ngClass]="{'btn-info':options.unselect,'btn-outline-secondary':!options.unselect}"
+                [hidden]="!options.multipleSelect">
+        <span>Déselection</span>
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+

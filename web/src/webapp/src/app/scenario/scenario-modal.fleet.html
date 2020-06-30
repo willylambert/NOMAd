@@ -1,0 +1,105 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<!-- Modal for picking some vehicle categories for a scenario -->
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">
+    Flotte de véhicules pour le scenario {{currentRecord.code}}
+  </h4>
+  <span class='pull-right'>
+    <button type="button" class="btn btn-default" (click)="activeModal.close()">Annuler</button>
+    <button [disabled]="!fleetForm.form.valid" type="button" class="btn btn-success btn-sm" (click)="validate()">Valider</button>
+  </span>
+</div>
+<div class="modal-body">
+  <div class='row'>
+    <div class="col-md-6">
+      <span *ngIf="vehicleCategories">
+        <div *ngIf="vehicleCategories.length==0">
+          <em>Aucune catégorie de véhicules trouvé</em>
+        </div>
+        <div class="form-group" fillHeight="350" [hidden]="vehicleCategories.length==0">
+          <ag-grid-angular
+            style="height: 100%;"
+            class="ag-theme-material"
+            [gridOptions]="gridOptions"
+            [rowData]="vehicleCategories"
+            [enableFilter]="true"
+            rowSelection="multiple"
+            (rowSelected)="onSelected()"
+            (gridReady)="gridReady($event)">
+          </ag-grid-angular>
+        </div>
+      </span>
+    </div>
+    <div class="col-md-6">
+      <form #fleetForm="ngForm" novalidate="true" autocomplete="off">
+        <div *ngIf="fleet.length==0">
+          <em>Aucune catégorie de véhicules sélectionnée</em>
+        </div>
+        <div *ngIf="fleet.length>0">
+          <h5>Catégories sélectionnées</h5>
+          <table id="vehicle-category-table" class="table table-sm table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Référence</th>
+                <th>Libellé</th>
+                <th>Configurations</th>
+                <th>Quantité</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let fleetItem of fleet ; let i = index">
+                <td >{{fleetItem.data.code}}</td>
+                <td >{{fleetItem.data.label}}</td>
+                <td>
+                  <div *ngFor="let configuration of fleetItem.data.configurations" class="badge badge-info ml-3">
+                    <span *ngFor="let capacity of configuration.capacities">
+                      <span *ngIf="capacity.transported_code=='FAUTEUIL'">{{capacity.quantity}} <fa-icon [icon]="faWheelchair"></fa-icon></span>
+                      <span *ngIf="capacity.transported_code=='MARCHANT'">{{capacity.quantity}} <fa-icon [icon]="faChild"></fa-icon></span>
+                    </span>
+                  </div>
+                </td>
+                <td>
+                  <ng-container *ngFor="let depot of fleetItem.data.vehicle_category_site_quantity">
+                    <div class="row" *ngIf="depot.site_main_id">
+                      <!--
+                        <input name="quantity_{{i}}" *ngIf="!fleetItem.unlimited" class="form-control" [(ngModel)]="fleetItem.quantity" required="true" pattern="[0-9]+" />
+                        <input name="unlimited_{{i}}" class="fleet-checkbox" type="checkbox" [(ngModel)]="fleetItem.unlimited" />&nbsp;illimité
+                      -->
+                      <div class="col">{{depot.site_main_label}}</div>
+                      <div class="col">
+                        <input name="quantity_{{i}}" *ngIf="!depot.unlimited" class="form-control" [(ngModel)]="depot.quantity" required="true" pattern="[0-9]+" />
+                        <input name="unlimited_{{i}}" class="fleet-checkbox" type="checkbox" [(ngModel)]="depot.unlimited" />&nbsp;illimité                  
+                      </div>
+                    </div>
+                  </ng-container>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

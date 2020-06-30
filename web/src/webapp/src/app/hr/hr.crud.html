@@ -1,0 +1,475 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="container-fluid">
+  <div class="row" fillHeight>
+    <div class="col-sm">
+
+      <!-- Main formular -->
+      <form #hrForm="ngForm" novalidate="true" autocomplete="off" *ngIf="currentRecord">
+
+        <!-- Has to be included within the formular so that crud-navbar component is aware of hrForm variable -->
+        <crud-navbar
+          [editMode]="editMode"
+          [valid]="hrForm.form.valid"
+          [pristine]="hrForm.form.pristine && !bChanges"
+          (editModeChange)="editModeChange($event)"
+          (saveEvent)="save()"
+          (markAsRemovedEvent)="markAsRemoved()"
+          (deleteEvent)="delete()"
+          [title]="(currentRecord.id?'Usager '+currentRecord.firstname+' '+currentRecord.lastname
+                   :'Nouvel usager')"
+          [aclObject]="'hr'"
+          [recordId]="currentRecord.id">
+        </crud-navbar>
+
+        <!-- Last name -->
+        <div class="form-group row">
+          <label for="hrLastName" class="col-md-3  col-form-label" >Nom</label>
+          <div class="col-md-4">
+            <input type="text" class="form-control" name="hrLastName"
+              [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+              [(ngModel)]="currentRecord.lastname"
+              [required]="editMode!='view'"
+              [readonly]="editMode=='view'" />
+          </div>
+        </div>
+
+        <!-- First name -->
+        <div class="form-group row">
+          <label for="hrFirstName" class="col-md-3  col-form-label" >Prénom</label>
+          <div class="col-md-4">
+            <input type="text" class="form-control" name="hrFirstName"
+              [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+              [(ngModel)]="currentRecord.firstname"
+              [required]="editMode!='view'"
+              [readonly]="editMode=='view'" />
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="hrBirthday" class="col-md-3  col-form-label" >Date de naissance</label>
+          <div class="col-md-4">
+            <div class="input-group">
+              <input [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+                     name="hrBirthday" [(ngModel)]="birthdayDate" ngbDatepicker #d="ngbDatepicker"
+                     [readonly]="true"
+                     [minDate]="hundreadYearsAgo"
+                     [maxDate]="nextYear"/>
+              <div class="input-group-append" [hidden]="editMode=='view'">
+                <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
+                    &#160;<fa-icon [icon]="faCalendar"></fa-icon>&#160;
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gender -->
+        <div class='form-group row'>
+          <label for="hrGender" class='col-md-3 col-form-label'>Sexe </label>
+          <div class='col-md-4'>
+              <ng-select name="hrGender" [items]="th('HR_MAIN_GENDER') | async" bindLabel="label" bindValue="id"
+                  [(ngModel)]="currentRecord.gender_th"
+              [disabled]="editMode=='view'">
+          </ng-select>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class='form-group row'>
+          <label for="hrStatus" class='col-md-3 col-form-label'>Statut </label>
+          <div class='col-md-4'>
+            <ng-select name="hrStatus" [items]="th('HR_MAIN_STATUS') | async" bindLabel="label" bindValue="id"
+              [(ngModel)]="currentRecord.status_th"
+              [disabled]="editMode=='view'"
+              [required]="editMode!='view'">
+            </ng-select>
+          </div>
+        </div>
+
+        <!-- Transport Mode -->
+        <div class='form-group row'>
+          <label for="transportMode" class='col-md-3 col-form-label'>Mode de transport </label>
+          <div class='col-md-4'>
+            <ng-select name="transportMode" [items]="th('HR_MAIN_TRANSPORTMODE') | async" bindLabel="label" bindValue="id"
+              [(ngModel)]="currentRecord.transportmode_th"
+              [disabled]="editMode=='view'"
+              [required]="editMode!='view'"
+              (change)="setDefaultPickupDeliveryDurations()">
+            </ng-select>
+          </div>
+        </div>
+
+        <!-- Crisis Risk -->
+        <div class="form-group row">
+          <label for="crisisRisk" class="col-md-3 col-form-label" >Risque de crise</label>
+          <div class="col-md-4">
+            <div class="input-group" >
+              <textarea type="text" class="form-control" name="crisisRisk"
+                [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+                [(ngModel)]="currentRecord.crisis_risk"
+                [readonly]="editMode=='view'"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Specific arrangements -->
+        <div class="form-group row">
+          <label for="specificArrangement" class="col-md-3 col-form-label" >Aménagements spécifiques</label>
+          <div class="col-md-4">
+            <div class="input-group">
+              <textarea type="text" class="form-control" name="specificArrangement"
+                [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+                [(ngModel)]="currentRecord.specific_arrangement"
+                [readonly]="editMode=='view'"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pickup duration -->
+        <div class="form-group row">
+          <label for="pickupDuration" class="col-md-3  col-form-label" >Durée de montée</label>
+          <div class="col-md-4" *ngIf="editMode!='view'">
+            <div class="input-group" >
+              <input type="text" class="form-control" name="pickupDuration" [(ngModel)]="pickupDurationSeconds"
+                     pattern="(0|[1-9]+[0-9]*)"
+                     required="true"/>
+              <div class="input-group-append">
+                <span class="input-group-text">secondes</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2" *ngIf="editMode=='view'">
+            <input type="text" class="form-control-plaintext" name="pickupDuration"
+              [(ngModel)]="pickupDurationSeconds"
+              [readonly]="true" />
+          </div>
+          <div class="col-md-2" *ngIf="editMode=='view'">
+            secondes
+          </div>
+        </div>
+
+        <!-- Delivery duration -->
+        <div class="form-group row">
+          <label for="deliveryDuration" class="col-md-3  col-form-label" >Durée de descente</label>
+          <div class="col-md-4" *ngIf="editMode!='view'">
+            <div class="input-group" >
+              <input type="text" class="form-control" name="deliveryDuration" [(ngModel)]="deliveryDurationSeconds"
+                     pattern="(0|[1-9]+[0-9]*)"
+                     required="true"/>
+              <div class="input-group-append">
+                <span class="input-group-text">secondes</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2" *ngIf="editMode=='view'">
+            <input type="text" class="form-control-plaintext" name="deliveryDuration"
+              [(ngModel)]="deliveryDurationSeconds"
+              [readonly]="true" />
+          </div>
+          <div class="col-md-2" *ngIf="editMode=='view'">
+            secondes
+          </div>
+        </div>
+
+        <!-- Notification settings -->
+        <div class="card mt-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm">
+                <h5 class="card-title">Alertes par SMS</h5>
+              </div>
+              <div class="col-sm">
+                <div class="float-right" id="action-bar">
+                  <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" 
+                       [(ngModel)]="currentRecord.notify_yn" *ngIf="editMode!='view'">
+                    <label ngbButtonLabel [ngClass]="{'btn-success':currentRecord.notify_yn=='Y','btn-light':currentRecord.notify_yn!='Y'}">
+                      <input ngbButton type="radio" [value]="'Y'"> Oui
+                    </label>
+                    <label ngbButtonLabel [ngClass]="{'btn-success':currentRecord.notify_yn!='Y','btn-light':currentRecord.notify_yn=='Y'}">
+                      <input ngbButton type="radio" [value]="'N'"> Non
+                    </label>
+                  </div>
+                  <div *ngIf="editMode=='view'">
+                    <span *ngIf="currentRecord.notify_yn=='N'" class='badge badge-secondary'>Désactivé</span>
+                    <span *ngIf="currentRecord.notify_yn=='Y'" class='badge badge-success'>Activé</span>
+                  </div>
+                </div>
+              </div>              
+            </div>
+            <div *ngIf="currentRecord.notify_yn=='Y'">
+
+              <!-- Phone number -->
+              <div class='form-group row'>
+                <label for="phonenumber" class='col-md-3 col-form-label'>Téléphone </label>
+                <div class='col-md-4'>
+                  <input type="text" 
+                      [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+                      name="phonenumber" 
+                      [(ngModel)]="currentRecord.phonenumber" pattern="0[0-9]{9}"
+                      [required]="editMode!='view'"
+                      [readonly]="editMode=='view'"
+                    />
+                </div>
+              </div>
+
+              <!-- Delay before expected arrival time -->
+              <div class='form-group row'>
+                <label for="noticedelay" class='col-md-3 col-form-label'>Heure d'envoi</label>
+                <div class='col-md-7' *ngIf="editMode!='view'">
+                  <div class="input-group" >
+                    <input type="text" class="form-control" name="noticedelay" [(ngModel)]="noticeDelayInMinutes"
+                           pattern="(0|[1-9]+[0-9]*)"
+                           required="true"/>
+                    <div class="input-group-append">
+                      <span class="input-group-text">minutes avant l'heure de passage estimée</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-2" *ngIf="editMode=='view'">
+                  <input type="text" class="form-control-plaintext" name="noticedelay"
+                         [(ngModel)]="noticeDelayInMinutes"
+                         [readonly]="true" />
+                </div>
+                <div class="col-md-7" *ngIf="editMode=='view'">
+                  minutes avant l'heure de passage estimée
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- On Going routes -->
+        <div class="card mt-3" *ngIf="routes && routes.length>0">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm">
+                <h5 class="card-title">{{routes.length}} tournée<span *ngIf="routes.length>1">s</span> en cours</h5>
+              </div>
+            </div>            
+            <div class="row" *ngFor="let route of routes">
+              <div *ngFor="let POI of route.POIs" [hidden]="POI.hr_id!=currentRecord.id">
+                <span class="col-md" *ngIf="!route.bMorning">{{POI.institution_label}} <fa-icon [icon]="faArrowRight"></fa-icon> {{POI.home_poi_label}}</span>
+                <span class="col-md" *ngIf="route.bMorning">{{POI.home_poi_label}} <fa-icon [icon]="faArrowRight"></fa-icon> {{POI.institution_label}}</span>
+                <span class="col-md" *ngIf="(POI.visited_dt!=null && POI.visited_dt!=undefined) || 
+                (POI.arrival_dt!=null && POI.arrival_dt!=undefined && POI.arrival_duration >=0)"
+                >                  
+                  <fa-icon [icon]="faCheck"></fa-icon>&#160;
+                  <span  *ngIf="route.bMorning">Pris en charge il y a</span>
+                  <span  *ngIf="!route.bMorning">Arrivé il y a</span>
+                  <span  *ngIf="POI.visited_duration!=null && POI.visited_duration!=undefined">{{POI.visited_duration | duration}}</span>
+                  <span *ngIf="POI.visited_duration==null && POI.visited_duration==undefined">
+                    <span *ngIf="POI.arrival_duration!=null && POI.arrival_duration!=undefined">{{POI.arrival_duration | duration}}</span>
+                  </span>
+                  <span  *ngIf="POI.visited_dt!=null && POI.visited_dt!=undefined">({{POI.visited_dt | time}})</span>
+                  <span  *ngIf="POI.visited_dt==null || POI.visited_dt==undefined">
+                    <span *ngIf="POI.arrival_dt!=null && POI.arrival_dt!=undefined">({{POI.arrival_dt | time}})</span>
+                  </span>              
+                </span>
+                <span class="col-md" *ngIf="(POI.visited_dt==null || POI.visited_dt==undefined ) && 
+                              (POI.arrival_dt==null || POI.arrival_dt==undefined || POI.arrival_duration < 0)">
+                  <fa-icon [icon]="faClock"></fa-icon>&#160;
+                  Arrivée du véhicule dans
+                  <span  *ngIf="POI.arrival_duration!=null && POI.arrival_duration!=undefined">{{-1*POI.arrival_duration | duration}}</span>
+                  <span  *ngIf="POI.arrival_dt!=null && POI.arrival_dt!=undefined">({{POI.arrival_dt | time}})</span>
+              </span>
+              </div>
+            </div>
+          </div>    
+        </div>
+
+        <!-- List of institutions -->
+        <div class="card mt-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm">
+                <h5 class="card-title">Etablissements</h5>
+              </div>
+              <div class="col-sm">
+                <div class="float-right" id="action-bar">
+                  <button *ngIf="editMode!='view'" type="button" id="btn-update-establishment"
+                          class="btn btn-link btn-sm"
+                          (click)="updateEstablishment()" >
+                    Ajouter/Supprimer
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="currentRecord.institutions.length==0">
+              <em>Aucun site rattaché à l'usager</em>
+            </div>
+            <div *ngIf="currentRecord.institutions.length>0">
+              <table id="site-table" class="table table-sm table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>Référence</th>
+                    <th>Libellé</th>
+                    <th>Statut</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let site of currentRecord.institutions ; let i = index">
+                    <td>
+                      <ng-template #popContent >
+                        <!-- It seems that ng-template do not accept events, so we have to put them on an inner div -->
+                        <div (mouseenter)="onPopoverMouseEnter(p)" (mouseleave)="onPopoverMouseLeave(p)"
+                        class="hoverable-popover-area">
+                        <div>{{site.type_label}}</div>
+                        <div>{{site.status_label}}</div>
+                        <div>Adresse :
+                          {{site.addr1}}
+                          <span *ngIf="site.addr1 || site.addr2"> </span>
+                          {{site.addr2}}
+                          <span *ngIf="(site.addr1 || site.addr2) && (site.postcode || site.city)">, </span>
+                          {{site.postcode}}
+                          <span *ngIf="site.postcode || site.city"> </span>
+                          {{site.city}}
+                        </div>
+                      </div>
+                      </ng-template>
+                      <ng-template #popTitle>
+                        <!-- It seems that ng-template do not accept events, so we have to put them on an inner div -->
+                        <div (mouseenter)="onPopoverMouseEnter(p)" (mouseleave)="onPopoverMouseLeave(p)"
+                          class="hoverable-popover-area">
+                          <div *ngIf="editMode=='view'"><a [routerLink]="['/data/site/crud',site.id]">{{site.label}}</a></div>
+                          <div *ngIf="editMode!='view'">{{site.label}}</div>
+                        </div>
+                      </ng-template>
+                      <button type="button" class="btn btn-link btn-sm" placement="right"
+                         [ngbPopover]="popContent" [popoverTitle]="popTitle" #p="ngbPopover"
+                         (click)="viewInstitution(site)" (mouseenter)="p.open()" (mouseleave)="onLinkMouseLeave(p)"
+                         >{{site.code}}
+                      </button>
+                    </td>
+                    <td>{{site.label}}</td>
+                    <td>{{site.status_label}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- List of POIs -->
+        <div class="card mt-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm">
+                <h5 class="card-title">Points de prise en charge</h5>
+              </div>
+              <div class="col-sm">
+                <div class="float-right" id="action-bar">
+                  <button *ngIf="editMode!='view'" type="button" id="btn-add-POI"
+                          class="btn btn-link btn-sm"
+                          (click)="addPOI()" >
+                    Ajouter
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!currentRecord.home.POIs || currentRecord.home.POIs.length==0">
+              <em>Aucun point rattaché à l'usager</em>
+            </div>
+            <div *ngIf="currentRecord.home.POIs && currentRecord.home.POIs.length>0">
+              <table id="POIs-table" class="table table-sm table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>Libellé</th>
+                    <th>Adresse</th>
+                    <th>Temps de service</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let POI of currentRecord.home.POIs ; let i = index" [attr.data-index]="i">
+                    <td>
+                      <button class="btn btn-link" (click)="launchPOIModal(POI,i)">{{POI.label}}</button>
+                    </td>
+                    <td>
+                      {{POI.addr1}}
+                      <span *ngIf="POI.addr1 && POI.addr2"> - </span>
+                      {{POI.addr2}}
+                      <span *ngIf="POI.addr2 && POI.postcode"> </span>
+                      {{POI.postcode}}
+                      <span *ngIf="POI.postcode && POI.city"> </span>
+                      {{POI.city}}
+                    </td>
+                    <td>
+                      <span *ngIf="POI.service_duration!=undefined">{{POI.service_duration | duration}}</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- List of demands -->
+        <div class="card mt-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm">
+                <h5 class="card-title">Demandes de transport</h5>
+              </div>
+            </div>
+            <div *ngIf="currentRecord.demands && currentRecord.demands.length==0">
+              <em>Aucune demande rattachée à l'usager</em>
+            </div>
+            <div *ngIf="currentRecord.demands && currentRecord.demands.length>0">
+              <table id="site-table" class="table table-sm table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>Etablissement</th>
+                    <th>Début</th>
+                    <th>Fin</th>
+                    <th>Créneaux</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let demand of currentRecord.demands">
+                    <td>{{demand.institutionPOI.site_main_label}}</td>
+                    <td>{{demand.start_dt | date}}</td>
+                    <td>{{demand.end_dt | date}}</td>
+                    <td>{{demand.timeslots | timeSlots}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Open a Leaflet map and provided it with the list of POIs-->
+    <div class="col-sm p-0">
+      <map-leaflet
+        [editMode]="editMode"
+        [POIs]="POIs" [changeInPOIs]="changeInPOIs" [noAOI]="true"
+        (newPOI)="newPOI($event)"></map-leaflet>
+    </div>
+  </div>
+</div>

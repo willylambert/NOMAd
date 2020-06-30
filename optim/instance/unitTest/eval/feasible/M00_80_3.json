@@ -1,0 +1,33 @@
+{
+    "routes": [
+        {
+           
+            "nodes": [
+                {
+                    "idUser": 12345,
+                    "type": "2"
+                },
+                {
+                    "idUser": 15,
+                    "type": "0"
+                },
+                {
+                    "idUser": 22,
+                    "type": "0"
+                },
+                {
+                    "idUser": 22,
+                    "type": "1"
+                },
+                {
+                    "idUser": 15,
+                    "type": "1"
+                },
+                {
+                    "idUser": 12345,
+                    "type": "3"
+                }
+            ]
+        }
+    ]
+}

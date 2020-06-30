@@ -1,0 +1,10 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.odovia.nomad_mobile_driver">
+    <meta-data android:name="com.mapbox.token" android:value="pk.eyJ1Ijoid2lsbHlsYW1iZXJ0IiwiYSI6InZnaWRIS0EifQ.rVG3h6-GRZdYfSB8z7hLqQ" />
+    <!-- Flutter needs it to communicate with the running application
+         to allow setting breakpoints, to provide hot reload, etc.
+    -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>    
+</manifest>

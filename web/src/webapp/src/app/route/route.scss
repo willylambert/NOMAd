@@ -1,0 +1,171 @@
+/*
+ * Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+ *
+ * This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+ * We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+ * The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ *
+ * This file is part of NOMAd.
+ *
+ * NOMAd is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * NOMAd is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#mapid { height: 100%; }
+.sidebar {
+    -ms-flex: 0 0 550px;
+    flex: 0 0 550px;
+};
+
+.route-step{
+  border: 1px solid #e0d1a8;
+  border-radius: 1px;
+}
+
+.route-step .btn-link{
+  color:#212529;
+  font-style: underline;
+}
+
+.card{
+  margin-bottom:10px;
+}
+
+.card-header{
+  cursor:pointer;
+  padding:0.5rem;
+}
+
+.card-body{
+  padding:10px;
+}
+
+.route-step-institution{
+  background-color: #e9dfc2;
+}
+
+.route-step-home{
+
+}
+
+.step-label{
+  position: absolute;
+  margin-top: 6px;
+  white-space: nowrap;overflow: hidden;text-overflow: ellipsis;
+}
+
+.step-info{
+  margin-left:-55px;
+}
+
+.route-step-time{
+  position: absolute;
+  margin-top:17px;
+  margin-left:-3px;
+}
+
+.between-step-info{
+  margin-left:22px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.between-step-dot{
+  margin-left:28px;
+  border-left-width:5px;
+  border-left-color:#e0d1a8;
+  border-left-style: dotted;
+  color:rgba(138, 109, 59, 0.78);
+}
+
+.step-actions{
+  padding: 2px;
+  line-height: 1em;
+}
+
+.progress-bar-area{
+  width:200px;
+}
+
+.grab{
+  cursor: grab;
+}
+
+.grab:active{
+  cursor: grabbing;
+}
+
+.card-header .btn-sm{
+  padding-top:0px;
+  position:relative;
+}
+
+.card-body .btn-sm{
+  padding-top:2px;
+  padding-bottom:2px;
+  position:relative;
+  left:15px;
+}
+
+/** style for the route edit modal **/
+.copy-title-area{
+  margin-top:45px;
+  padding-top:10px;
+  margin-bottom:25px;
+  border-top:solid;
+  border-top-color:#e6e6e6;
+  border-top-width:1px;
+}
+
+.row-filter{
+  background: #517390c7;
+  color:white;
+}
+
+h5{
+  color:white;
+}
+
+.optim-result-title{
+  margin-top:10px;
+  color:#212529;
+}
+
+.btn.btn-primary{
+  background-color:#999;
+}
+
+.btn.btn-primary:hover{
+  cursor:pointer;
+}
+
+.btn.btn-primary.active,
+.btn.btn-primary:active{
+  background-color:#27a744;
+}
+
+.optim-valid-btn{
+  float:right;
+}
+
+.optim-solution-detail{
+  line-height:16px;
+  padding-left:20px;
+}
+
+.routes-list{
+  max-height:650px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  margin-bottom:10px;
+}

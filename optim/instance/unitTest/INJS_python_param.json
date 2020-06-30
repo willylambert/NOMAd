@@ -1,0 +1,21 @@
+{
+"python":true,
+"nbIterations": 15,
+"nbIterationsSCP": 5,
+"nbReplica": 0,
+"timeLimit": 600,
+"timeLimitSCP": 60,
+"python": true,
+"multiplier": 1,
+"checkAll": true,
+"verbosite": 0,
+"displayTitle": true,
+"SCP": true,
+"allOperators":true,
+"displayLogFrequency":1,
+"GDARP_instance":false,
+"tightenTW":false,
+"capacity_on_points":false,
+"path_export_best_sol":"",
+"path_stop_file":"./instance/unitTest/stopping/stop"
+}

@@ -1,0 +1,88 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="container-fluid">
+  <fieldset>
+    <legend>
+      <div class="row">
+        <div class="col-4">
+          Import depuis un fichier CSV
+        </div>
+        <div class="col-4 align-self-center"></div>
+        <div class="col-4">
+          <div class="float-right" id="action-bar">
+          <button type="button" id="btn-details" class="btn btn-sm"
+              (click)="options.bWithInstructions=!options.bWithInstructions">Aide</button>
+          <button type="button" id="btn-import" class="btn btn-success btn-sm"
+                  [aclShow]="'/import/csv'" (click)="import()"
+                  [disabled]="!importForm.form.valid || !file"  >Importer</button>
+          </div>
+        </div>
+      </div>
+    </legend>
+  </fieldset>
+
+  <!-- Will display the invalid input file alerts -->
+  <alert-component></alert-component>
+
+
+  <form #importForm="ngForm" novalidate="true" autocomplete="off">
+    <!-- Institution -->
+    <div class="form-group row" *ngIf="sites">
+      <label for="site" class="col-md-3  col-form-label" >Etablissement</label>
+      <div class="col-md-6">
+        <ng-select [required]="true" name="institution" [items]="sites" bindLabel="label" [(ngModel)]="site"></ng-select>
+      </div>
+    </div>
+
+    <!-- File -->
+    <div class="form-group row" *ngIf="sites">
+      <label for="site" class="col-md-3  col-form-label" >Fichier</label>
+      <div class="col-md-6">
+        <input type="file" ngf [(file)]="file" [required]="true"/>
+      </div>
+    </div>
+
+    <em *ngIf="options.bWithInstructions">
+      <small>
+        <strong>Format du fichier CSV</strong>
+        <div>Séparateur de champs : point-virgule</div>
+        <div>Champs (28 champs): nom ; prénom ; genre ; mode de transport ; libellé du point domicile ; adresse du point domicile ; complément d’adresse du point domicile ; code postal; ville ; latitude ; longitude ; libellé du point de prise en charge ; adresse du point de prise en charge ; complément d’adresse du point de prise en charge ; code postal ; ville ; latitude ; longitude ; transport demandé le lundi matin ; lundi soir ; ... ; vendredi soir</div>
+        <div>Détails :</div>
+        <div>&nbsp;- Le genre est un code (M/F)</div>
+        <div>&nbsp;- Le mode de transport est un code (M/FNT)</div>
+        <div>&nbsp;- Les latitudes et longitudes sont données sans unités, sous la forme 47.85212 par exemple</div>
+        <div>&nbsp;- Codes postaux sur 4 ou 5 caractères</div>
+        <div>&nbsp;- Pour les demandes de transport: 1 s’il y a une demande de transport sur la demi-journée, chaine vide sinon</div>
+        <div>&nbsp;- Encodage : UTF8</div>
+        <div>&nbsp;- Ne pas utiliser de retours à la ligne ni de points-virgule dans les noms, prénoms, libellés, adresses et compléments d'adresse</div>
+        <div>&nbsp;- La version actuelle de l'outil ne gère pas les homonymes</div>
+      </small>
+    </em>
+
+    <!-- Display of the results : they must now be checked by an administrator-->
+    <em *ngIf="sql">Code SQL à appliquer :</em>
+    <textarea class="form-control sql-textarea" id="sql" name="sql" [(ngModel)]="sql" readonly="true" *ngIf="sql"></textarea>
+
+  </form>
+</div>

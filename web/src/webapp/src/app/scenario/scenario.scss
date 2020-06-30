@@ -1,0 +1,223 @@
+/*
+ * Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+ *
+ * This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+ * We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+ * The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ *
+ * This file is part of NOMAd.
+ *
+ * NOMAd is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * NOMAd is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/** Scenario bar **/
+.left {
+  top: 0px;
+  float: left;
+  background: #517390c7;
+  color:white;
+  display: inline-block;
+  white-space: nowrap;
+  width: 10px;
+  transition: width .5s;
+}
+
+/** On scenario bar click we elarge the scenario bar and add a top border **/
+.left-unfolded {
+  width:110px;
+  border-top:solid;
+  border-top-color:#9bb1c3;
+  border-top-width:2px;
+}
+
+/** Scenario in the scenario bar **/
+.item {
+  height: 40px;
+  overflow: hidden;
+  padding-left:10px;
+  padding-top:10px;
+}
+
+/** Highlight the scenario item that is being hovered **/
+.item:hover {
+  background-color: #ff8888;
+  text-overflow: ellipsis;
+  cursor:pointer;
+}
+
+/** Style for the title of the scenario bar **/
+.title-item {
+  height: 40px;
+  overflow: hidden;
+  margin-top:30px;
+  cursor:pointer;
+}
+
+/** Hightlight for the scenario that was last selected, only present when scenario bar is unfolded **/
+.left-unfolded .selected-item{
+  height: 70px;
+  background-color: #26a743;
+}
+
+/** Lower separation between 2 areas of the scenario bar, only present when scenario bar is unfolded **/
+.left-unfolded .last-item{
+  border-bottom:solid;
+  border-bottom-color:#ffdddd;
+  border-bottom-width:1px;
+}
+
+/** Upper separation between 2 areas of the scenario bar, only present when scenario bar is unfolded **/
+.left-unfolded .btn-new-scenario{
+  border-top:solid;
+  border-top-color:#9bb1c3;
+  border-top-width:2px;
+  text-align:center;
+  padding:10px;
+}
+
+/**
+ Style for minimap
+ **/
+.minimap-demands{
+  padding-bottom:4px
+}
+.minimap-row{
+  height:16px;
+  line-height:16px;
+  padding-bottom:2px;
+  border-bottom: #09529138 0.5px solid;
+}
+.weekday-title{
+  height:16px;
+  padding:0px;
+  text-align:center;
+  width:63px;
+}
+.weekday-content{
+  height:14px;
+  padding:0px;
+  font-size: 12px;
+}
+.institution-title{
+  font-size: 12px;
+  width:150px;
+  height:16px;
+  padding:0px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding-left:4px;
+}
+.institution-content{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.half-day-title{
+  height:16px;
+  padding-bottom: 3px;
+  text-align:center;
+  width:63px;
+}
+.half-day-content{
+  height:14px;
+  padding:0px;
+}
+.half-day-link{
+  height:14px;
+  padding-right:2px;
+  padding-left:1px;
+  padding-top:0px;
+  padding-bottom:0px;
+  border:0px;
+  font-size: 12px;
+}
+.minimap-frame{
+  background-color:#eeeeee;
+  border-radius:3px;
+  border-width:1px;
+  border-style:solid;
+  border-color:#dddddd;
+  margin-top:10px;
+  color:#095291;
+}
+
+.minimap-frame h6{
+  border-bottom: #095291 1px solid;
+}
+
+#mapId { height : 500px;}
+
+.fleet-checkbox{
+  vertical-align:middle;
+  margin-bottom:2px;
+}
+
+.btn.btn-primary{
+  background-color:#999;
+}
+
+.btn.btn-primary:hover{
+  cursor:pointer;
+}
+
+.btn.btn-primary.active,
+.btn.btn-primary:active{
+  background-color:#27a744;
+}
+
+.btn.btn-primary.active-by-default{
+  background-color:#27a744;
+}
+
+.crud-navbar{
+  display: block;
+  border-bottom: 1px solid #dee2e6;
+  margin-bottom: 8px;
+}
+
+.week-badge{
+  border-radius:10px;
+  height: 12px;
+  padding-top: 2px;
+}
+
+.week-selected{
+  border-color: #28a745 !important;
+  border: solid;
+  border-width: 2px;
+  margin-left: -4px;
+  padding-left: 2px;
+}
+
+.btn-select-week{
+  display:block;
+}
+
+
+@keyframes check {0% {height: 0;width: 0;}
+25% {height: 0;width: 10px;}
+50% {height: 20px;width: 10px;}
+}
+.checkbox{background-color:#fff;display:inline-block;height:28px;margin:0 .25em;width:28px;border-radius:4px;border:1px solid #ccc;float:right}
+.checkbox span{display:block;height:28px;position:relative;width:28px;padding:0}
+.checkbox span:after{-moz-transform:scaleX(-1) rotate(135deg);-ms-transform:scaleX(-1) rotate(135deg);-webkit-transform:scaleX(-1) rotate(135deg);transform:scaleX(-1) rotate(135deg);-moz-transform-origin:left top;-ms-transform-origin:left top;-webkit-transform-origin:left top;transform-origin:left top;border-right:4px solid #fff;border-top:4px solid #fff;content:'';display:block;height:20px;left:3px;position:absolute;top:15px;width:10px}
+.checkbox span:hover:after{border-color:#999}
+.checkbox input{display:none}
+.checkbox input:checked + span:after{-webkit-animation:check .8s;-moz-animation:check .8s;-o-animation:check .8s;animation:check .8s;border-color:#555}
+.checkbox input:checked + .default:after{border-color:#444}
+.checkbox input:checked + .primary:after{border-color:#2196F3}
+.checkbox input:checked + .success:after{border-color:#8bc34a}
+.checkbox input:checked + .info:after{border-color:#3de0f5}
+.checkbox input:checked + .warning:after{border-color:#FFC107}
+.checkbox input:checked + .danger:after{border-color:#f44336}

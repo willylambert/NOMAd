@@ -1,0 +1,20 @@
+{
+"MPDARP":true,
+"minConsistency":true,
+"regularityToleranceSeconds":600,
+"nbParetoPoints":0,
+"nbIterations": 20,
+"nbIterationsSCP": 10000,
+"nbReplica": 0,
+"timeLimit": 3000,
+"timeLimitSCP": 60,
+"multiplier": 1,
+"checkAll": true,
+"verbosite": 0,
+"displayTitle": false,
+"SCP": false,
+"displayLogFrequency":1,
+"GDARP_instance":false,
+"path_final_results":"instance/unitTest/testMPDARP/INJS3100_p1m0_00_solT1.json",
+"tightenTW":false
+}

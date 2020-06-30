@@ -1,0 +1,107 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="card mt-5">
+  <div class='card-header'>
+    <div class='row'>
+      <div class="col">
+        <form class="form-inline d-inline-flex">
+          <label>Scénario : </label>
+          <ng-select name="scenario" class="select-scenario ml-2" [items]="scenarios" bindLabel="label" [searchFn]="customSearchFn"
+            [(ngModel)]="selectedScenario" (change)="scenarioSelected(selectedScenario)">
+            <ng-template ng-label-tmp let-item="item">
+              <span>{{ item.code }} - {{ item.label }}</span>
+            </ng-template>
+
+            <ng-template ng-option-tmp let-item="item" let-search="searchTerm" let-index="index">
+              <span>{{ item.code }} - {{ item.label }}</span>
+            </ng-template>            
+          </ng-select>
+        </form>
+        <span class="align-middle float-right">
+          <button class="btn btn-info mt-2" (click)="close()" *ngIf="dismissable"> <fa-icon [icon]="faTimes"></fa-icon> </button>
+        </span>
+      </div>
+    </div>
+    <div class="row mt-2">
+      <div class="col">
+        <form class="form-inline d-inline-flex">
+          <label >Du : </label>
+          <div class="input-group">
+            <input class="form-control ml-2" [(ngModel)]="startDt"
+                    placeholder="yyyy-mm-dd" name="startDt"
+                    ngbDatepicker #startDtPicker="ngbDatepicker" readonly="true" [required]="true">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary calendar" (click)="startDtPicker.toggle()" type="button">
+                &nbsp;<fa-icon [icon]="faCalendar"></fa-icon>&nbsp;
+              </button>
+            </div>
+          </div>
+          <label class="ml-2">Au : </label>
+          <div class="input-group ml-2">
+            <input class="form-control" [(ngModel)]="endDt"
+                    placeholder="yyyy-mm-dd" name="endDt"
+                    ngbDatepicker #endDtPicker="ngbDatepicker" readonly="true" [required]="true">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary calendar" (click)="endDtPicker.toggle()" type="button">
+                &nbsp;<fa-icon [icon]="faCalendar"></fa-icon>&nbsp;
+              </button>
+            </div>
+          </div>
+          <button class="btn btn-info ml-2" (click)="updateDashboard(selectedScenario,startDt,endDt)" >
+            <span *ngIf="!bLoading">Afficher</span>
+            <fa-icon *ngIf="bLoading" [icon]="faSpinner" [spin]="true"></fa-icon>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="card-body" #charts>     
+    <div id="durationChart{{index}}"></div>
+    <div id="distanceChart{{index}}"></div>
+    <div id="costChart{{index}}"></div>
+    <div id="co2Chart{{index}}"></div>
+    <div id="regularityKPIChart{{index}}"></div>
+    <div id="regularityAMChart{{index}}"></div>
+    <div class="row" *ngIf='tblPickups.name'>
+      <div class="col"><h5>Horaires de prise en charge de {{tblPickups.name}}</h5></div>
+    </div>
+    <div class="row">
+      <div class="col" *ngFor="let pickup of tblPickups.details">
+        <div class="row"><div class="col regularity-dt border">{{pickup.dt | smallDate}}</div></div>
+        <div class="row"><div class="col text-center regularity-time border"><small>{{pickup.value | utcTime}}</small></div></div>
+      </div>
+    </div>
+
+    <div id="regularityPMChart{{index}}"></div>
+    <div class="row" *ngIf='tblDeliveries.name'>
+      <div class="col"><h5>Horaires de retour de {{tblDeliveries.name}}</h5></div>
+    </div>
+    <div class="row">
+      <div class="col" *ngFor="let delivery of tblDeliveries.details">
+        <div class="row"><div class="col regularity-dt border">{{delivery.dt | smallDate}}</div></div>
+        <div class="row"><div class="col text-center regularity-time border"><small>{{delivery.value | utcTime}}</small></div></div>
+      </div>
+    </div>
+  </div>
+</div>

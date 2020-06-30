@@ -1,0 +1,45 @@
+$font-size-base:              0.9rem;
+
+$spacer: 0.5rem;
+
+$input-btn-padding-y:         .1rem;
+$input-btn-padding-x:         .1rem;
+
+$form-group-margin-bottom: $spacer;
+
+@import
+  '~bootstrap/scss/functions',
+  '~bootstrap/scss/variables',
+  '~bootstrap/scss/mixins',
+  '~bootstrap/scss/root',
+  '~bootstrap/scss/reboot',
+  '~bootstrap/scss/type',
+  '~bootstrap/scss/images',
+  '~bootstrap/scss/code',
+  '~bootstrap/scss/grid',
+  '~bootstrap/scss/tables',
+  '~bootstrap/scss/forms',
+  '~bootstrap/scss/buttons',
+  '~bootstrap/scss/transitions',
+  '~bootstrap/scss/dropdown',
+  '~bootstrap/scss/button-group',
+  '~bootstrap/scss/input-group',
+  '~bootstrap/scss/custom-forms',
+  '~bootstrap/scss/nav',
+  '~bootstrap/scss/navbar',
+  '~bootstrap/scss/card',
+  '~bootstrap/scss/breadcrumb',
+  '~bootstrap/scss/pagination',
+  '~bootstrap/scss/badge',
+  '~bootstrap/scss/jumbotron',
+  '~bootstrap/scss/alert',
+  '~bootstrap/scss/progress',
+  '~bootstrap/scss/media',
+  '~bootstrap/scss/list-group',
+  '~bootstrap/scss/close',
+  '~bootstrap/scss/modal',
+  '~bootstrap/scss/tooltip',
+  '~bootstrap/scss/popover',
+  '~bootstrap/scss/carousel',
+  '~bootstrap/scss/utilities',
+  '~bootstrap/scss/print';

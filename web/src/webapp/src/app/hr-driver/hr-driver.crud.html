@@ -1,0 +1,202 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="container-fluid">
+  <div class="row" fillHeight>
+    <div class="col-sm">
+
+      <!-- Main formular -->
+      <form #hrForm="ngForm" novalidate="true" autocomplete="off" *ngIf="currentRecord">
+
+        <!-- Has to be included within the formular so that crud-navbar component is aware of hrForm variable -->
+        <crud-navbar
+          [editMode]="editMode"
+          [valid]="hrForm.form.valid"
+          [pristine]="hrForm.form.pristine && !bChanges"
+          (editModeChange)="editModeChange($event)"
+          (saveEvent)="save()"
+          (markAsRemovedEvent)="markAsRemoved()"
+          (deleteEvent)="delete()"
+          [title]="(currentRecord.id?'Conducteur '+currentRecord.firstname+' '+currentRecord.lastname
+                   :'Nouveau conducteur')"
+          [aclObject]="'hr'"
+          [recordId]="currentRecord.id">
+        </crud-navbar>
+
+        <!-- Last name -->
+        <div class="form-group row">
+          <label for="hrLastName" class="col-md-3  col-form-label" >Nom</label>
+          <div class="col-md-4">
+            <input type="text" class="form-control" name="hrLastName"
+              [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+              [(ngModel)]="currentRecord.lastname"
+              [required]="editMode!='view'"
+              [readonly]="editMode=='view'" />
+          </div>
+        </div>
+
+        <!-- First name -->
+        <div class="form-group row">
+          <label for="hrFirstName" class="col-md-3  col-form-label" >Prénom</label>
+          <div class="col-md-4">
+            <input type="text" class="form-control" name="hrFirstName"
+              [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+              [(ngModel)]="currentRecord.firstname"
+              [required]="editMode!='view'"
+              [readonly]="editMode=='view'" />
+          </div>
+        </div>
+
+        <!-- Gender -->
+        <div class='form-group row'>
+          <label for="hrGender" class='col-md-3 col-form-label'>Sexe </label>
+          <div class='col-md-4'>
+              <ng-select name="hrGender" [items]="th('HR_MAIN_GENDER') | async" bindLabel="label" bindValue="id"
+                  [(ngModel)]="currentRecord.gender_th"
+              [disabled]="editMode=='view'">
+          </ng-select>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class='form-group row'>
+          <label for="hrStatus" class='col-md-3 col-form-label'>Statut </label>
+          <div class='col-md-4'>
+            <ng-select name="hrStatus" [items]="th('HR_MAIN_STATUS') | async" bindLabel="label" bindValue="id"
+              [(ngModel)]="currentRecord.status_th"
+              [disabled]="editMode=='view'"
+              [required]="editMode!='view'">
+            </ng-select>
+          </div>
+        </div>
+
+
+        <!-- List of transporters -->
+        <div class="card mt-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm">
+                <h5 class="card-title">Transporteurs</h5>
+              </div>
+              <div class="col-sm">
+                <div class="float-right" id="action-bar">
+                  <button *ngIf="editMode!='view'" type="button" id="btn-update-transporter"
+                          class="btn btn-link btn-sm"
+                          (click)="updateTransporter()" >
+                    Ajouter/Supprimer
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="currentRecord.transporters.length==0">
+              <em>Aucun transporteur rattaché au conducteur</em>
+            </div>
+            <div *ngIf="currentRecord.transporters.length>0">
+              <table id="site-table" class="table table-sm table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>Référence</th>
+                    <th>Libellé</th>
+                    <th>Statut</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let site of currentRecord.transporters ; let i = index">
+                    <td>
+                      <ng-template #popContent >
+                        <!-- It seems that ng-template do not accept events, so we have to put them on an inner div -->
+                        <div (mouseenter)="onPopoverMouseEnter(p)" (mouseleave)="onPopoverMouseLeave(p)"
+                        class="hoverable-popover-area">
+                        <div>{{site.type_label}}</div>
+                        <div>{{site.status_label}}</div>
+                        <div>Adresse :
+                          {{site.addr1}}
+                          <span *ngIf="site.addr1 || site.addr2"> </span>
+                          {{site.addr2}}
+                          <span *ngIf="(site.addr1 || site.addr2) && (site.postcode || site.city)">, </span>
+                          {{site.postcode}}
+                          <span *ngIf="site.postcode || site.city"> </span>
+                          {{site.city}}
+                        </div>
+                      </div>
+                      </ng-template>
+                      <ng-template #popTitle>
+                        <!-- It seems that ng-template do not accept events, so we have to put them on an inner div -->
+                        <div (mouseenter)="onPopoverMouseEnter(p)" (mouseleave)="onPopoverMouseLeave(p)"
+                          class="hoverable-popover-area">
+                          <div *ngIf="editMode=='view'"><a [routerLink]="['/data/site/crud',site.id]">{{site.label}}</a></div>
+                          <div *ngIf="editMode!='view'">{{site.label}}</div>
+                        </div>
+                      </ng-template>
+                      <button type="button" class="btn btn-link btn-sm" placement="right"
+                         [ngbPopover]="popContent" [popoverTitle]="popTitle" #p="ngbPopover"
+                         (click)="viewTransporter(site)" (mouseenter)="p.open()" (mouseleave)="onLinkMouseLeave(p)"
+                         >{{site.code}}
+                      </button>
+                    </td>
+                    <td>{{site.label}}</td>
+                    <td>{{site.status_label}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- List of transporters -->
+        <div class="card mt-3" *ngIf="currentRecord && currentRecord.routes">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm">
+                <h5 class="card-title">Tournées affectées</h5>
+              </div>
+            </div>
+            <div *ngIf="currentRecord.routes.length==0">
+              <em>Aucune tournée rattachée au conducteur</em>
+            </div>
+            <div *ngIf="currentRecord.routes.length>0">
+              <table id="site-table" class="table table-sm table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>Libellé</th>
+                    <th>Date</th>
+                    <th>Distance</th>
+                    <th>Véhicule</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let route of currentRecord.routes ; let i = index">
+                    <td> <a [routerLink]="['/logistics/route/crud/',route.scenario_main_id,route.date_dt,route.timeslot_th]">{{route.label}}</a></td>
+                    <td>{{route.date_dt | date}}</td>
+                    <td>{{route.distance | distancePrecise}}</td>
+                    <td>{{route.vehicle_category_label}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

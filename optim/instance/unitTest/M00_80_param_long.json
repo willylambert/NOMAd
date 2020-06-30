@@ -1,0 +1,18 @@
+{
+"nbIterations": 2000,
+"nbIterationsSCP": 1000,
+"nbReplica": 0,
+"timeLimit": 600,
+"multiplier": 1,
+"checkAll": false,
+"verbosite": 1,
+"displayTitle": false,
+"SCP": true,
+"allOperators":true,
+"displayLogFrequency":200,
+"GDARP_instance":false,
+"tightenTW":false,
+"capacity_on_points":false,
+"path_export_best_sol":"./instance/unitTest/exports/last_best_sol.json",
+"path_stop_file":"./instance/unitTest/stopping/stop"
+}

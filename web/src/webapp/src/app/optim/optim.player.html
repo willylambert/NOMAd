@@ -1,0 +1,150 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<div class="card">
+  <div class="card-header">           
+    <div class="row">
+      <div class="col text-center">
+        <h5>Optimisation - <span *ngIf="optimResult!=undefined && (optimResult.status_code=='WAITING' || optimResult.status_code=='RUNNING')">{{optimElapsedTime | durationPrecise}}</span></h5>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col text-center">
+        <button class="btn btn-info optim-player-btn"
+                [aclShow]="'/optim/from-routes'"
+                (click)="launchOptim()"
+                *ngIf="optimResult==undefined">
+        Lancer l'optimisation
+        </button>
+      </div>
+    </div>
+    <div class="row">
+       <div class="col-md-4">
+        <button class="btn btn-danger optim-player-btn"
+                [aclShow]="'/optim/stop'"
+                (click)="stopOptim()"
+                *ngIf="optimResult!=undefined && (optimResult.status_code=='WAITING' || optimResult.status_code=='RUNNING' || optimResult.status_code=='PAUSED') && (stopInProgress==false && optimResult.status_code=='RUNNING')">
+          Arrêter
+        </button>
+      </div>
+      <div class="col-md-8" *ngIf="optimResult && optimResult.id" >
+        <span *ngIf="optimResult.status_code=='WAITING' || optimResult.status_code=='RUNNING'">
+          <fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> 
+          <em *ngIf="optimResult.instance && optimResult.instance.timeMatrix && optimResult.instance.distanceMatrix && optimResult.status_code=='WAITING'">
+            En attente...
+          </em>
+          <em *ngIf="optimResult.instance && (!optimResult.instance.timeMatrix || !optimResult.instance.distanceMatrix) && optimResult.status_code=='WAITING'">
+            Calcul de matrice en cours... {{getMatrixComputeProgressionLabel(optimResult)}}
+          </em>
+          <em *ngIf="stopInProgress">
+            Arrêt en cours...
+          </em>          
+        </span>
+        <span *ngIf="optimResult.status_code=='RUNNING' && !stopInProgress">Optimisation en cours...</span>
+        <span *ngIf="optimResult.status_code=='FINISHED'">Optimisation terminée</span>
+        <span *ngIf="optimResult.status_code=='PAUSED'">Optimisation en pause</span>
+        <!-- In case the optimization information can not be retrieved on optimization server -->
+        <span class="badge badge-danger" *ngIf="optimResult.status_code=='LOST'">Serveur d'optimisation injoignable</span>        
+        <span class="badge badge-danger" 
+              *ngIf="optimResult.real_errors!=undefined && optimResult.real_errors!=null  && optimResult.real_errors.length>0">
+          L'optimisation a échoué !
+        </span>
+        <span class="optim-valid-btn btn-display-solution">
+          <button class="btn btn-link btn-display-solution" (click)="displayOptimFailure()"
+                  *ngIf="optimResult.real_errors!=undefined && optimResult.real_errors!=null  && optimResult.real_errors.length>0">Erreurs</button>
+          <button class="btn btn-link btn-display-solution" (click)="viewOptim(optimResult.id)" >Détails</button>
+        </span>
+      </div>
+  </div>
+</div>
+
+
+
+ 
+  <div class="col-md-12"
+       *ngIf="selectedOptimResult && selectedOptimResult.id && selectedOptimResult.solution!=undefined && selectedOptimResult.solution !=null">    
+    <br />
+    <div class="row" >
+      <div class="col-md-6" > 
+        <div class="card">
+          <div class="card-header">           
+            <div class="row">
+              <div class="col-md-8">Solution retenue</div>
+              <div class="col-md-4">
+                <button class="btn btn-link btn-sm btn-display-solution"
+                        (click)="displaySolution(false)" [aclShow]="'/optim/to-routes/{optimId}'">
+                  Afficher
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div>
+              <small>Temps de calcul : {{selectedOptimResult.solution.execTime*1000 | durationPrecise}}</small>
+            </div>
+            <div>
+              <small>Coût : {{selectedOptimResult.solution.cost | cost}}&#8364;</small>
+            </div>
+            <div>
+              <small>Nombre de tournées : {{selectedOptimResult.solution.routes.length}}</small>
+            </div>
+            <div>
+              <small>Usagers non insérés : {{selectedOptimResult.solution.nonInsertedUsers.length}}</small>
+            </div>
+          </div>        
+        </div>        
+      </div>
+      <div class="col-md-1" *ngIf="optimResult && optimResult.id && optimResult.solution!=undefined && optimResult.solution !=null && optimResult.status_code!='FINISHED' && optimResult.last_solution_dt > selectedOptimResult.last_solution_dt" > 
+        <button (click)="selectSolution()" class="btn btn-sm btn-secondary no-new-solution">
+          <fa-icon [icon]="faArrowLeft"></fa-icon>
+        </button>
+      </div>
+      <div class="col-md-5" *ngIf="optimResult && optimResult.id && optimResult.solution!=undefined && optimResult.solution !=null && optimResult.status_code!='FINISHED' && optimResult.last_solution_dt > selectedOptimResult.last_solution_dt">
+        <div class="card">
+          <div class="card-header">           
+            <div>Solution disponible</div>
+          </div>
+          <div class="card-body">        
+            <div>
+              <small>Temps de calcul : {{optimResult.solution.execTime*1000 | durationPrecise}}</small>
+            </div>
+            <div>
+              <small>Coût : {{optimResult.solution.cost | cost}}&#8364;</small>
+            </div>
+            <div>
+              <small>Nombre de tournées : {{optimResult.solution.routes.length}}</small>
+            </div>
+            <div>
+              <small>Usagers non insérés : {{optimResult.solution.nonInsertedUsers.length}}</small>
+            </div>
+          </div>        
+        </div>        
+      </div> 
+      <div class="col-md-6" *ngIf="optimResult && optimResult.id && optimResult.solution!=undefined && optimResult.solution !=null && optimResult.status_code!='FINISHED' && optimResult.last_solution_dt <= selectedOptimResult.last_solution_dt">
+        <em><div class="no-new-solution">Aucune nouvelle solution disponible</div></em>
+      </div>           
+    </div>    
+  </div>
+
+</div>

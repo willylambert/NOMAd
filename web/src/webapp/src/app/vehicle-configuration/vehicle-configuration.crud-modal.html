@@ -1,0 +1,69 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<!-- New Configuration Modal -->
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title" *ngIf="editMode=='add'">Nouvelle configuration</h4>
+  <h4 class="modal-title" id="modal-basic-title" *ngIf="editMode=='edit'">Configuration {{currentRecord.code}}</h4>
+  <span class='pull-right'>
+    <button type="button" class="btn btn-success btn-sm" (click)="save()"
+      [disabled]="!configurationForm.form.valid">Valider</button>
+    <button *ngIf="editMode=='edit'" type="button" class="btn btn-danger btn-sm" (click)="delete()">Supprimer</button>
+    <button type="button" class="btn btn-default btn-sm" (click)="activeModal.close(null)">Annuler</button>
+  </span>
+</div>
+<div class="modal-body">
+  <form #configurationForm="ngForm">
+    <div class="form-group row">
+      <label for="code" class="col-lg-3 col-form-label">Référence </label>
+      <div class="col-lg-9">
+        <input type="text" class="form-control" name="code"
+               [(ngModel)]="currentRecord.code" required/>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="label" class="col-lg-3 col-form-label">Description </label>
+      <div class="col-lg-9">
+        <input type="text" class="form-control" name="label"
+               [(ngModel)]="currentRecord.label" required/>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class='card-header'>
+        <h5>Nombre de places</h5>
+      </div>
+      <div class="card-body">
+        <div class="form-group row" *ngFor="let capacity of currentRecord.capacities" >
+          <label for="{{capacity.transported_code}}" class="col-lg-4 col-form-label">{{capacity.transported_label}} </label>
+          <div class="col-lg-4">
+            <input type="text" class="form-control" name="{{capacity.transported_code}}"
+                   [(ngModel)]="capacity.quantity"
+                   pattern="(0|[1-9][0-9]{0,2})"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>

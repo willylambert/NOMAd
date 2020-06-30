@@ -1,0 +1,2247 @@
+{
+  "nbUserTypes": 2,
+  "name": "Scenario aOscar 20190912_12_24_50",
+  "nbReconfigurations": 0,
+  "period": "AM",
+  "unitTime": "second",
+  "unitDist": "meter",
+  "points": [
+    {
+      "id": 0,
+      "tempId": "23be0cc6-8841-11e9-af14-0e12ebe8412a",
+      "name": "INJS Chambery",
+      "address": "33 Rue de l'Epine  73160 Cognin",
+      "gps": [
+        45.562283,
+        5.895399
+      ],
+      "stimeFixe": 60,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 1,
+      "tempId": "c80cdbfe-8841-11e9-a92d-0e12ebe8412a",
+      "name": "Quentin CHAPEAU",
+      "address": "560 LE MARTEREY  73100 LE MONTCEL",
+      "gps": [
+        45.719686,
+        5.991399
+      ],
+      "stimeFixe": 120,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 2,
+      "tempId": "c80ce2ac-8841-11e9-a92e-0e12ebe8412a",
+      "name": "Ornella CHARRIERE ARNAUD",
+      "address": "33 Chemin du Champ Jacquoud  74540 MURES",
+      "gps": [
+        45.800648,
+        6.05032
+      ],
+      "stimeFixe": 120,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 3,
+      "tempId": "c80d0bd8-8841-11e9-a934-0e12ebe8412a",
+      "name": "Jenny COURTOIS-WANT",
+      "address": "9 Route du Clergeon Appt 14 74150 RUMILLY",
+      "gps": [
+        45.867833,
+        5.934517
+      ],
+      "stimeFixe": 120,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 4,
+      "tempId": "c80d21b8-8841-11e9-a937-0e12ebe8412a",
+      "name": "Shana DELAUNAY",
+      "address": "6 Chemin de Cologny  74330 LA BALME DE SILLINGY",
+      "gps": [
+        45.967902,
+        6.019905
+      ],
+      "stimeFixe": 120,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 5,
+      "tempId": "c80d3d42-8841-11e9-a93b-0e12ebe8412a",
+      "name": "Tom FOURRIER",
+      "address": "Barouchat  73390 Bourgneuf",
+      "gps": [
+        45.555272,
+        6.280926
+      ],
+      "stimeFixe": 120,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 6,
+      "tempId": "c80d5eda-8841-11e9-a940-0e12ebe8412a",
+      "name": "Lily Rose GODIN",
+      "address": "81 Avenue du Noiret  74300 CLUSES",
+      "gps": [
+        46.068444,
+        6.578782
+      ],
+      "stimeFixe": 120,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 7,
+      "tempId": "c80d73fc-8841-11e9-a943-0e12ebe8412a",
+      "name": "Kiyane GUERMASSI",
+      "address": "235 Rue de la Tarentaise  73100 AIX LES BAINS",
+      "gps": [
+        45.675096,
+        5.911536
+      ],
+      "stimeFixe": 120,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 8,
+      "tempId": "c80cfe36-8841-11e9-a932-0e12ebe8412a",
+      "name": "Niel COLLOMB-PATTON",
+      "address": "3 Rue Champ du Roy  74000 ANNECY",
+      "gps": [
+        45.91526,
+        6.136622
+      ],
+      "stimeFixe": 60,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 9,
+      "tempId": "c80d9878-8841-11e9-a948-0e12ebe8412a",
+      "name": "Aya KTITA",
+      "address": "48 Rue Félix Chautemps 73200 ALBERTVILLE",
+      "gps": [
+        45.677051,
+        6.385025
+      ],
+      "stimeFixe": 120,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 10,
+      "tempId": "c80d9f44-8841-11e9-a949-0e12ebe8412a",
+      "name": "Alaa KTITA",
+      "address": "48 Rue Félix Chautemps  73200 ALBERTVILLE",
+      "gps": [
+        45.677051,
+        6.385025
+      ],
+      "stimeFixe": 120,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 11,
+      "tempId": "c80dd14e-8841-11e9-a950-0e12ebe8412a",
+      "name": "Rachel LY",
+      "address": "83 Rue du Nant des Canards  74300 CLUSES",
+      "gps": [
+        46.069547,
+        6.5753
+      ],
+      "stimeFixe": 120,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 12,
+      "tempId": "c80df340-8841-11e9-a955-0e12ebe8412a",
+      "name": "Abdesamad MIHOUBI",
+      "address": "11 Rue Edouard Herriot  74300 CLUSES",
+      "gps": [
+        46.069494,
+        6.569938
+      ],
+      "stimeFixe": 120,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 13,
+      "tempId": "c80e150a-8841-11e9-a95a-0e12ebe8412a",
+      "name": "Emir OKANOVIC",
+      "address": "3 Rue des Iles  74130 BONNEVILLE",
+      "gps": [
+        46.083702,
+        6.401783
+      ],
+      "stimeFixe": 120,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 14,
+      "tempId": "c80e68ca-8841-11e9-a966-0e12ebe8412a",
+      "name": "Marilou ROLLIN",
+      "address": "44 Rue des Clefs  74230 Thônes",
+      "gps": [
+        45.904556,
+        6.363439
+      ],
+      "stimeFixe": 120,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 15,
+      "tempId": "c80eb262-8841-11e9-a970-0e12ebe8412a",
+      "name": "David SOUSA MARTINS",
+      "address": "220 Rue du Docteur Laffin Appt 10 R/C 74700 SALLANCHES",
+      "gps": [
+        45.943397,
+        6.632744
+      ],
+      "stimeFixe": 120,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 16,
+      "tempId": "c80e6212-8841-11e9-a965-0e12ebe8412a",
+      "name": "Timothée RIJAN",
+      "address": "19 Chemin de la Touvière  38580 ALLEVARD",
+      "gps": [
+        45.403714,
+        6.079562
+      ],
+      "stimeFixe": 120,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 17,
+      "tempId": "c80d7ad2-8841-11e9-a944-0e12ebe8412a",
+      "name": "Nezha GUERMASSI",
+      "address": "235 Rue de la Tarentaise  73100 AIX LES BAINS",
+      "gps": [
+        45.675096,
+        5.911536
+      ],
+      "stimeFixe": 60,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 18,
+      "tempId": "c80ddf0e-8841-11e9-a952-0e12ebe8412a",
+      "name": "Timéo MAUNOIR",
+      "address": "1 Rue de la Savoyarde  73800 LES MARCHES",
+      "gps": [
+        45.505669,
+        6.001173
+      ],
+      "stimeFixe": 120,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 19,
+      "tempId": "c80eaba0-8841-11e9-a96f-0e12ebe8412a",
+      "name": "Axel SOULE",
+      "address": "1 Rue Marcoz d'Ecle  74150 RUMILLY",
+      "gps": [
+        45.862746,
+        5.941589
+      ],
+      "stimeFixe": 60,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 20,
+      "tempId": "c80dd81a-8841-11e9-a951-0e12ebe8412a",
+      "name": "Rhéma MALU",
+      "address": "2 Chemin des Sises 2 Chemin des Sises 74150 RUMILLY",
+      "gps": [
+        45.852126,
+        5.951918
+      ],
+      "stimeFixe": 60,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 21,
+      "tempId": "c80e00a6-8841-11e9-a957-0e12ebe8412a",
+      "name": "Loulou MMADI",
+      "address": "8 Rue des Cols Verts (Annecy-le-Vieux)  74940 ANNECY LE VIEUX",
+      "gps": [
+        45.910432,
+        6.146984
+      ],
+      "stimeFixe": 60,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    },
+    {
+      "id": 22,
+      "tempId": "c80ce9aa-8841-11e9-a92f-0e12ebe8412a",
+      "name": "Elvis CHARRIERE ARNAUD",
+      "address": "33 Chemin du Champ Jacquoud  74540 MURES",
+      "gps": [
+        45.800648,
+        6.05032
+      ],
+      "stimeFixe": 60,
+      "capa_user": 0,
+      "capa_vehi": 180,
+      "unitTime": "second"
+    }
+  ],
+  "users": [
+    {
+      "id": 0,
+      "tempId": "396d5d60-8841-11e9-a5c4-0e12ebe8412a",
+      "name": "Quentin CHAPEAU",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c41f66-8841-11e9-a98e-0e12ebe8412a",
+          "pickupPointId": 1,
+          "deliveryPointId": 0,
+          "maxRT": 7200,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 1,
+      "tempId": "396d667a-8841-11e9-a5c5-0e12ebe8412a",
+      "name": "Ornella CHARRIERE ARNAUD",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c43528-8841-11e9-a98f-0e12ebe8412a",
+          "pickupPointId": 2,
+          "deliveryPointId": 0,
+          "maxRT": 3600,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 2,
+      "tempId": "396d9c44-8841-11e9-a5cb-0e12ebe8412a",
+      "name": "Jenny COURTOIS-WANT",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c4bc50-8841-11e9-a995-0e12ebe8412a",
+          "pickupPointId": 3,
+          "deliveryPointId": 0,
+          "maxRT": 3600,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 3,
+      "tempId": "396db6e8-8841-11e9-a5ce-0e12ebe8412a",
+      "name": "Shana DELAUNAY",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c502f0-8841-11e9-a998-0e12ebe8412a",
+          "pickupPointId": 4,
+          "deliveryPointId": 0,
+          "maxRT": 4500,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 4,
+      "tempId": "396de050-8841-11e9-a5d2-0e12ebe8412a",
+      "name": "Tom FOURRIER",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c55d18-8841-11e9-a99c-0e12ebe8412a",
+          "pickupPointId": 5,
+          "deliveryPointId": 0,
+          "maxRT": 3600,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 5,
+      "tempId": "396e0ca6-8841-11e9-a5d7-0e12ebe8412a",
+      "name": "Lily Rose GODIN",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c5d89c-8841-11e9-a9a1-0e12ebe8412a",
+          "pickupPointId": 6,
+          "deliveryPointId": 0,
+          "maxRT": 5400,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 6,
+      "tempId": "396e27b8-8841-11e9-a5da-0e12ebe8412a",
+      "name": "Kiyane GUERMASSI",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c62248-8841-11e9-a9a4-0e12ebe8412a",
+          "pickupPointId": 7,
+          "deliveryPointId": 0,
+          "maxRT": 2700,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 7,
+      "tempId": "396d8948-8841-11e9-a5c9-0e12ebe8412a",
+      "name": "Niel COLLOMB-PATTON",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c48ec4-8841-11e9-a993-0e12ebe8412a",
+          "pickupPointId": 8,
+          "deliveryPointId": 0,
+          "maxRT": 3600,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 8,
+      "tempId": "396e53b4-8841-11e9-a5df-0e12ebe8412a",
+      "name": "Aya KTITA",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c69ebc-8841-11e9-a9a9-0e12ebe8412a",
+          "pickupPointId": 9,
+          "deliveryPointId": 0,
+          "maxRT": 4500,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 9,
+      "tempId": "396e5c56-8841-11e9-a5e0-0e12ebe8412a",
+      "name": "Alaa KTITA",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c6b73a-8841-11e9-a9aa-0e12ebe8412a",
+          "pickupPointId": 10,
+          "deliveryPointId": 0,
+          "maxRT": 4500,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 10,
+      "tempId": "396e9bd0-8841-11e9-a5e7-0e12ebe8412a",
+      "name": "Rachel LY",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c78d40-8841-11e9-a9b1-0e12ebe8412a",
+          "pickupPointId": 11,
+          "deliveryPointId": 0,
+          "maxRT": 6300,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 11,
+      "tempId": "396ede9c-8841-11e9-a5ec-0e12ebe8412a",
+      "name": "Abdesamad MIHOUBI",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c80a68-8841-11e9-a9b6-0e12ebe8412a",
+          "pickupPointId": 12,
+          "deliveryPointId": 0,
+          "maxRT": 5400,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 12,
+      "tempId": "396f4c42-8841-11e9-a5f1-0e12ebe8412a",
+      "name": "Emir OKANOVIC",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c885f6-8841-11e9-a9bb-0e12ebe8412a",
+          "pickupPointId": 13,
+          "deliveryPointId": 0,
+          "maxRT": 5400,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 13,
+      "tempId": "396fbcb8-8841-11e9-a5fd-0e12ebe8412a",
+      "name": "Marilou ROLLIN",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c9bcd2-8841-11e9-a9c7-0e12ebe8412a",
+          "pickupPointId": 14,
+          "deliveryPointId": 0,
+          "maxRT": 5400,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 14,
+      "tempId": "39701550-8841-11e9-a607-0e12ebe8412a",
+      "name": "David SOUSA MARTINS",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3cac23a-8841-11e9-a9d1-0e12ebe8412a",
+          "pickupPointId": 15,
+          "deliveryPointId": 0,
+          "maxRT": 7200,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 15,
+      "tempId": "396fb3b2-8841-11e9-a5fc-0e12ebe8412a",
+      "name": "Timothée RIJAN",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c9a468-8841-11e9-a9c6-0e12ebe8412a",
+          "pickupPointId": 16,
+          "deliveryPointId": 0,
+          "maxRT": 4800,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 60,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 16,
+      "tempId": "396e3078-8841-11e9-a5db-0e12ebe8412a",
+      "name": "Nezha GUERMASSI",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c63bb6-8841-11e9-a9a5-0e12ebe8412a",
+          "pickupPointId": 17,
+          "deliveryPointId": 0,
+          "maxRT": 2700,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 17,
+      "tempId": "396ec36c-8841-11e9-a5e9-0e12ebe8412a",
+      "name": "Timéo MAUNOIR",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c7bf2c-8841-11e9-a9b3-0e12ebe8412a",
+          "pickupPointId": 18,
+          "deliveryPointId": 0,
+          "maxRT": 4800,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 60,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 18,
+      "tempId": "39700c86-8841-11e9-a606-0e12ebe8412a",
+      "name": "Axel SOULE",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3caa9da-8841-11e9-a9d0-0e12ebe8412a",
+          "pickupPointId": 19,
+          "deliveryPointId": 0,
+          "maxRT": 3600,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 19,
+      "tempId": "396eb98a-8841-11e9-a5e8-0e12ebe8412a",
+      "name": "Rhéma MALU",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c7a6b8-8841-11e9-a9b2-0e12ebe8412a",
+          "pickupPointId": 20,
+          "deliveryPointId": 0,
+          "maxRT": 3600,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 20,
+      "tempId": "396ef346-8841-11e9-a5ee-0e12ebe8412a",
+      "name": "Loulou MMADI",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c83be6-8841-11e9-a9b8-0e12ebe8412a",
+          "pickupPointId": 21,
+          "deliveryPointId": 0,
+          "maxRT": 3600,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 45,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": 21,
+      "tempId": "396d6f1c-8841-11e9-a5c6-0e12ebe8412a",
+      "name": "Elvis CHARRIERE ARNAUD",
+      "itineraries": [
+        {
+          "id": 0,
+          "tempId": "d3c44b26-8841-11e9-a990-0e12ebe8412a",
+          "pickupPointId": 22,
+          "deliveryPointId": 0,
+          "maxRT": 3600,
+          "twPickup": [
+            0,
+            30300
+          ],
+          "twDelivery": [
+            29700,
+            30300
+          ],
+          "type": "home",
+          "stimePickup": 60,
+          "stimeDelivery": 45,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        1,
+        0
+      ]
+    }
+  ],
+  "vehicleTypes": [
+    {
+      "id": 0,
+      "tempId": "08b0cc14-6cc3-11e9-b05d-0e12ebe8412a",
+      "name": "Renault Traffic ",
+      "cost_fixed": 39.73,
+      "cost_time": 0.007608333333333333,
+      "cost_distance": 0.00020999999999999998,
+      "nbVehicles":"1",
+      "idDepot": 0,
+      "capacity": {
+        "c1": [
+          8,
+          0
+        ],
+        "c2": [
+          7,
+          0
+        ]
+      },
+      "unitDist": "meter",
+      "unitTime": "second"
+    },
+    {
+      "id": 1,
+      "tempId": "08b0cc14-6cc3-11e9-b05d-0e12ebe8412b",
+      "name": "Renault Traffic 2",
+      "cost_fixed": 50,
+      "cost_time": 0.007608333333333333,
+      "cost_distance": 0.00020999999999999998,
+      "nbVehicles":"unlimited",
+      "capacity": {
+        "c1": [
+          8,
+          0
+        ],
+        "c2": [
+          7,
+          0
+        ]
+      },
+      "unitDist": "meter",
+      "unitTime": "second"
+    }
+  ],
+  "depots": [
+    {
+      "id": 0,
+      "tempId": "23be0cc6-8841-11e9-af14-0e12ebe8412a",
+      "name": "INJS Chambery",
+      "itineraries": [
+        {
+          "id": 0,
+          "pickupPointId": 0,
+          "deliveryPointId": 0,
+          "maxRT": 61200,
+          "twPickup": [
+            18000,
+            79200
+          ],
+          "twDelivery": [
+            18000,
+            79200
+          ],
+          "type": "depot",
+          "stimePickup": 60,
+          "stimeDelivery": 60,
+          "unitTime": "second"
+        }
+      ],
+      "demands": [],
+      "load": [
+        0,
+        0
+      ]
+    }
+  ],
+  "timeMatrix": [
+    [
+      0,
+      2085.5,
+      2368.8,
+      2406.2,
+      2916.2,
+      2203.2,
+      4447.7,
+      1184,
+      2515.4,
+      2650.1,
+      2650.1,
+      4510.4,
+      4387,
+      3940.1,
+      3761.1,
+      4944.2,
+      2698.3,
+      1184,
+      1055.1,
+      2272.7,
+      2128.8,
+      2587.6,
+      2368.8
+    ],
+    [
+      2061.6,
+      0,
+      1738.2,
+      2390.9,
+      2900.9,
+      3542.6,
+      4432.4,
+      1227.5,
+      2500.1,
+      3989.5,
+      3989.5,
+      4495.1,
+      4371.7,
+      3924.8,
+      3745.8,
+      4928.9,
+      4037.7,
+      1227.5,
+      2394.5,
+      2257.4,
+      2113.5,
+      2572.3,
+      1738.2
+    ],
+    [
+      2393.7,
+      1738.2,
+      0,
+      1505.2,
+      1826.8,
+      3874.7,
+      3358.3,
+      1945.2,
+      1426,
+      4321.6,
+      4321.6,
+      3421,
+      3297.6,
+      2850.7,
+      2671.7,
+      3854.8,
+      4369.8,
+      1945.2,
+      2726.6,
+      1371.7,
+      1227.8,
+      1498.2,
+      0
+    ],
+    [
+      2426.3,
+      2380.8,
+      1487.1,
+      0,
+      2231.6,
+      3907.3,
+      3763.1,
+      1977.8,
+      1830.8,
+      4354.2,
+      4354.2,
+      3825.8,
+      3702.4,
+      3255.5,
+      3076.5,
+      4259.6,
+      4402.4,
+      1977.8,
+      2759.2,
+      263.8,
+      291.3,
+      1903,
+      1487.1
+    ],
+    [
+      2871.5,
+      2826,
+      1799.5,
+      2223,
+      0,
+      4352.5,
+      3151.5,
+      2423,
+      1085.2,
+      4799.4,
+      4799.4,
+      3214.2,
+      3090.8,
+      2643.9,
+      2323.7,
+      3648,
+      4847.6,
+      2423,
+      3204.4,
+      2089.5,
+      1945.6,
+      1157.4,
+      1799.5
+    ],
+    [
+      2211.5,
+      3520.5,
+      3803.8,
+      3841.2,
+      4351.2,
+      0,
+      5882.7,
+      2619,
+      3950.4,
+      1436.2,
+      1436.2,
+      5945.4,
+      5822,
+      5375.1,
+      5196.1,
+      6379.2,
+      2813.4,
+      2619,
+      1379.9,
+      3707.7,
+      3563.8,
+      4022.6,
+      3803.8
+    ],
+    [
+      4499,
+      4453.5,
+      3427,
+      3850.5,
+      3221.3,
+      5980,
+      0,
+      4050.5,
+      2730.7,
+      6426.9,
+      6426.9,
+      67.1,
+      151.9,
+      914.3,
+      3976.4,
+      958.7,
+      6475.1,
+      4050.5,
+      4831.9,
+      3717,
+      3573.1,
+      2802.9,
+      3427
+    ],
+    [
+      1165,
+      1227.8,
+      1957.2,
+      1994.6,
+      2504.6,
+      2646,
+      4036.1,
+      0,
+      2103.8,
+      3092.9,
+      3092.9,
+      4098.8,
+      3975.4,
+      3528.5,
+      3349.5,
+      4532.6,
+      3141.1,
+      0,
+      1497.9,
+      1861.1,
+      1717.2,
+      2176,
+      1957.2
+    ],
+    [
+      2396.1,
+      2350.6,
+      1324.1,
+      1747.6,
+      1086.5,
+      3877.1,
+      2662.1,
+      1947.6,
+      0,
+      4324,
+      4324,
+      2724.8,
+      2601.4,
+      2154.5,
+      1798.2,
+      3158.6,
+      4372.2,
+      1947.6,
+      2729,
+      1614.1,
+      1470.2,
+      167.4,
+      1324.1
+    ],
+    [
+      2650.5,
+      3959.5,
+      4242.8,
+      4280.2,
+      4790.2,
+      1489.6,
+      6321.7,
+      3058,
+      4389.4,
+      0,
+      0,
+      6384.4,
+      6261,
+      5814.1,
+      3177.4,
+      6818.2,
+      3252.4,
+      3058,
+      1818.9,
+      4146.7,
+      4002.8,
+      4461.6,
+      4242.8
+    ],
+    [
+      2650.5,
+      3959.5,
+      4242.8,
+      4280.2,
+      4790.2,
+      1489.6,
+      6321.7,
+      3058,
+      4389.4,
+      0,
+      0,
+      6384.4,
+      6261,
+      5814.1,
+      3177.4,
+      6818.2,
+      3252.4,
+      3058,
+      1818.9,
+      4146.7,
+      4002.8,
+      4461.6,
+      4242.8
+    ],
+    [
+      4542.8,
+      4497.3,
+      3470.8,
+      3894.3,
+      3265.1,
+      6023.8,
+      60.8,
+      4094.3,
+      2774.5,
+      6470.7,
+      6470.7,
+      0,
+      212.7,
+      958.1,
+      4020.2,
+      1019.5,
+      6518.9,
+      4094.3,
+      4875.7,
+      3760.8,
+      3616.9,
+      2846.7,
+      3470.8
+    ],
+    [
+      4418.1,
+      4372.6,
+      3346.1,
+      3769.6,
+      3140.4,
+      5899.1,
+      156.1,
+      3969.6,
+      2649.8,
+      6346,
+      6346,
+      223.2,
+      0,
+      833.4,
+      3895.5,
+      1083,
+      6394.2,
+      3969.6,
+      4751,
+      3636.1,
+      3492.2,
+      2722,
+      3346.1
+    ],
+    [
+      3925.9,
+      3880.4,
+      2853.9,
+      3277.4,
+      2648.2,
+      5406.9,
+      924.9,
+      3477.4,
+      2157.6,
+      5853.8,
+      5853.8,
+      987.6,
+      864.2,
+      0,
+      3403.3,
+      1421.4,
+      5902,
+      3477.4,
+      4258.8,
+      3143.9,
+      3000,
+      2229.8,
+      2853.9
+    ],
+    [
+      3772.9,
+      3727.4,
+      2700.9,
+      3124.4,
+      2330.3,
+      5253.9,
+      3876.4,
+      3324.4,
+      1857.6,
+      3251.1,
+      3251.1,
+      3939.1,
+      3815.7,
+      3368.8,
+      0,
+      4372.9,
+      5749,
+      3324.4,
+      4105.8,
+      2990.9,
+      2847,
+      1658.7,
+      2700.9
+    ],
+    [
+      4968.9,
+      4923.4,
+      3896.9,
+      4320.4,
+      3691.2,
+      6449.9,
+      923,
+      4520.4,
+      3200.6,
+      6896.8,
+      6896.8,
+      990.1,
+      1051.9,
+      1384.2,
+      4446.3,
+      0,
+      6945,
+      4520.4,
+      5301.8,
+      4186.9,
+      4043,
+      3272.8,
+      3896.9
+    ],
+    [
+      2709.6,
+      4018.6,
+      4301.9,
+      4339.3,
+      4849.3,
+      2803,
+      6380.8,
+      3117.1,
+      4448.5,
+      3249.9,
+      3249.9,
+      6443.5,
+      6320.1,
+      5873.2,
+      5694.2,
+      6877.3,
+      0,
+      3117.1,
+      1878,
+      4205.8,
+      4061.9,
+      4520.7,
+      4301.9
+    ],
+    [
+      1165,
+      1227.8,
+      1957.2,
+      1994.6,
+      2504.6,
+      2646,
+      4036.1,
+      0,
+      2103.8,
+      3092.9,
+      3092.9,
+      4098.8,
+      3975.4,
+      3528.5,
+      3349.5,
+      4532.6,
+      3141.1,
+      0,
+      1497.9,
+      1861.1,
+      1717.2,
+      2176,
+      1957.2
+    ],
+    [
+      1025.3,
+      2334.3,
+      2617.6,
+      2655,
+      3165,
+      1351,
+      4696.5,
+      1432.8,
+      2764.2,
+      1797.9,
+      1797.9,
+      4759.2,
+      4635.8,
+      4188.9,
+      4009.9,
+      5193,
+      1846.1,
+      1432.8,
+      0,
+      2521.5,
+      2377.6,
+      2836.4,
+      2617.6
+    ],
+    [
+      2356.5,
+      2311,
+      1417.3,
+      143.7,
+      2161.8,
+      3837.5,
+      3693.3,
+      1908,
+      1761,
+      4284.4,
+      4284.4,
+      3756,
+      3632.6,
+      3185.7,
+      3006.7,
+      4189.8,
+      4332.6,
+      1908,
+      2689.4,
+      0,
+      221.5,
+      1833.2,
+      1417.3
+    ],
+    [
+      2173.7,
+      2128.2,
+      1234.5,
+      322.6,
+      1979,
+      3654.7,
+      3510.5,
+      1725.2,
+      1578.2,
+      4101.6,
+      4101.6,
+      3573.2,
+      3449.8,
+      3002.9,
+      2823.9,
+      4007,
+      4149.8,
+      1725.2,
+      2506.6,
+      189.1,
+      0,
+      1650.4,
+      1234.5
+    ],
+    [
+      2479.5,
+      2434,
+      1407.5,
+      1831,
+      1169.9,
+      3960.5,
+      2745.5,
+      2031,
+      171.9,
+      4407.4,
+      4407.4,
+      2808.2,
+      2684.8,
+      2237.9,
+      1651.8,
+      3242,
+      4455.6,
+      2031,
+      2812.4,
+      1697.5,
+      1553.6,
+      0,
+      1407.5
+    ],
+    [
+      2393.7,
+      1738.2,
+      0,
+      1505.2,
+      1826.8,
+      3874.7,
+      3358.3,
+      1945.2,
+      1426,
+      4321.6,
+      4321.6,
+      3421,
+      3297.6,
+      2850.7,
+      2671.7,
+      3854.8,
+      4369.8,
+      1945.2,
+      2726.6,
+      1371.7,
+      1227.8,
+      1498.2,
+      0
+    ]
+  ],
+  "distanceMatrix": [
+    [
+      0,
+      31951,
+      47388.2,
+      44262.1,
+      60284.8,
+      45457.5,
+      107115.5,
+      17920.3,
+      56753.9,
+      58381.8,
+      58381.8,
+      107979.6,
+      106393.1,
+      93947.1,
+      77344.6,
+      121074.1,
+      49853.7,
+      17920.3,
+      17478.7,
+      43331.2,
+      41853.5,
+      57519.3,
+      47388.2
+    ],
+    [
+      31194.7,
+      0,
+      16850.2,
+      33961.8,
+      49984.4,
+      68963.4,
+      96815.2,
+      12156.2,
+      46453.6,
+      81887.7,
+      81887.7,
+      97679.3,
+      96092.8,
+      83646.8,
+      67044.3,
+      110773.8,
+      73359.7,
+      12156.2,
+      40984.7,
+      33030.9,
+      31553.2,
+      47218.9,
+      16850.2
+    ],
+    [
+      47518.4,
+      16527.3,
+      0,
+      17455.5,
+      26471.3,
+      85287.2,
+      73302,
+      37743.3,
+      22940.5,
+      98211.5,
+      98211.5,
+      74166.1,
+      72579.7,
+      60133.7,
+      43531.2,
+      87260.6,
+      89683.4,
+      37743.3,
+      57308.4,
+      16524.5,
+      15046.9,
+      23705.8,
+      0
+    ],
+    [
+      44501.6,
+      34348.8,
+      13781.7,
+      0,
+      34378.8,
+      82270.4,
+      81209.5,
+      34726.5,
+      30847.9,
+      95194.7,
+      95194.7,
+      82073.6,
+      80487.1,
+      68041.1,
+      51438.7,
+      95168.1,
+      86666.7,
+      34726.5,
+      54291.6,
+      2102.3,
+      2530.2,
+      31613.3,
+      13781.7
+    ],
+    [
+      59439.5,
+      49286.7,
+      26185.9,
+      33963,
+      0,
+      97208.3,
+      66629.1,
+      49664.4,
+      14875.5,
+      110132.6,
+      110132.6,
+      67493.1,
+      65906.7,
+      53460.7,
+      35498.8,
+      80587.7,
+      101604.6,
+      49664.4,
+      69229.5,
+      33032,
+      31554.4,
+      15640.8,
+      26185.9
+    ],
+    [
+      45217.4,
+      68906.6,
+      84343.9,
+      81217.8,
+      97240.4,
+      0,
+      144071.1,
+      54876,
+      93709.5,
+      26927.4,
+      26927.4,
+      144935.2,
+      143348.7,
+      130902.8,
+      114300.3,
+      158029.7,
+      56178.3,
+      54876,
+      30124.8,
+      80286.8,
+      78809.2,
+      94474.9,
+      84343.9
+    ],
+    [
+      107079.2,
+      96926.4,
+      73825.6,
+      81602.6,
+      67005.6,
+      144848,
+      0,
+      97304,
+      60361.4,
+      157772.3,
+      157772.3,
+      426.8,
+      1266.4,
+      16058,
+      80952.2,
+      16206,
+      149244.2,
+      97304,
+      116869.2,
+      80671.7,
+      79194,
+      61126.8,
+      73825.6
+    ],
+    [
+      17350.6,
+      12107.8,
+      37700.2,
+      34574.1,
+      50596.8,
+      55119.4,
+      97427.5,
+      0,
+      47065.9,
+      68043.7,
+      68043.7,
+      98291.6,
+      96705.1,
+      84259.1,
+      67656.7,
+      111386.1,
+      59515.6,
+      0,
+      27140.6,
+      33643.2,
+      32165.5,
+      47831.3,
+      37700.2
+    ],
+    [
+      51550.4,
+      41397.6,
+      18296.9,
+      26073.9,
+      15003,
+      89319.2,
+      60020.1,
+      41775.3,
+      0,
+      102243.5,
+      102243.5,
+      60884.2,
+      59297.7,
+      46851.7,
+      27313.4,
+      73978.7,
+      93715.5,
+      41775.3,
+      61340.4,
+      25143,
+      23665.3,
+      1103.6,
+      18296.9
+    ],
+    [
+      58322.9,
+      82012.2,
+      97449.4,
+      94323.3,
+      110345.9,
+      28360,
+      157176.7,
+      67981.5,
+      106815.1,
+      0,
+      0,
+      158040.7,
+      156454.3,
+      144008.3,
+      40571.2,
+      171135.3,
+      69283.8,
+      67981.5,
+      43230.4,
+      93392.4,
+      91914.7,
+      107580.4,
+      97449.4
+    ],
+    [
+      58322.9,
+      82012.2,
+      97449.4,
+      94323.3,
+      110345.9,
+      28360,
+      157176.7,
+      67981.5,
+      106815.1,
+      0,
+      0,
+      158040.7,
+      156454.3,
+      144008.3,
+      40571.2,
+      171135.3,
+      69283.8,
+      67981.5,
+      43230.4,
+      93392.4,
+      91914.7,
+      107580.4,
+      97449.4
+    ],
+    [
+      107739.9,
+      97587.1,
+      74486.3,
+      82263.4,
+      67666.3,
+      145508.7,
+      378.2,
+      97964.8,
+      61022.1,
+      158433,
+      158433,
+      0,
+      1644.7,
+      16718.7,
+      81612.9,
+      16584.2,
+      149904.9,
+      97964.8,
+      117529.9,
+      81332.4,
+      79854.7,
+      61787.5,
+      74486.3
+    ],
+    [
+      106234.8,
+      96082,
+      72981.2,
+      80758.3,
+      66161.2,
+      144003.6,
+      1299.7,
+      96459.7,
+      59517,
+      156927.9,
+      156927.9,
+      1726.5,
+      0,
+      15213.6,
+      80107.8,
+      16973.4,
+      148399.8,
+      96459.7,
+      116024.8,
+      79827.3,
+      78349.6,
+      60282.4,
+      72981.2
+    ],
+    [
+      93282.7,
+      83129.9,
+      60029.1,
+      67806.2,
+      53209.1,
+      131051.5,
+      16388.1,
+      83507.6,
+      46565,
+      143975.8,
+      143975.8,
+      17252.2,
+      15665.8,
+      0,
+      67155.7,
+      30346.7,
+      135447.7,
+      83507.6,
+      103072.7,
+      66875.2,
+      65397.5,
+      47330.3,
+      60029.1
+    ],
+    [
+      77172.1,
+      67019.3,
+      43918.5,
+      51695.5,
+      35458.4,
+      114940.9,
+      80120.8,
+      67396.9,
+      28884.4,
+      41122.1,
+      41122.1,
+      80984.9,
+      79398.5,
+      66952.5,
+      0,
+      94079.4,
+      119337.1,
+      67396.9,
+      86962.1,
+      50764.6,
+      49286.9,
+      22461.7,
+      43918.5
+    ],
+    [
+      120957.1,
+      110804.3,
+      87703.6,
+      95480.6,
+      80883.6,
+      158725.9,
+      15825.3,
+      111182,
+      74239.4,
+      171650.2,
+      171650.2,
+      16252.1,
+      16592.8,
+      29935.9,
+      94830.1,
+      0,
+      163122.2,
+      111182,
+      130747.1,
+      94549.7,
+      93072,
+      75004.8,
+      87703.6
+    ],
+    [
+      50284.1,
+      73973.4,
+      89410.6,
+      86284.5,
+      102307.1,
+      56651.9,
+      149137.9,
+      59942.7,
+      98776.3,
+      69576.2,
+      69576.2,
+      150001.9,
+      148415.5,
+      135969.5,
+      119367,
+      163096.5,
+      0,
+      59942.7,
+      35191.5,
+      85353.6,
+      83875.9,
+      99541.6,
+      89410.6
+    ],
+    [
+      17350.6,
+      12107.8,
+      37700.2,
+      34574.1,
+      50596.8,
+      55119.4,
+      97427.5,
+      0,
+      47065.9,
+      68043.7,
+      68043.7,
+      98291.6,
+      96705.1,
+      84259.1,
+      67656.7,
+      111386.1,
+      59515.6,
+      0,
+      27140.6,
+      33643.2,
+      32165.5,
+      47831.3,
+      37700.2
+    ],
+    [
+      17006.6,
+      40695.9,
+      56133.1,
+      53007.1,
+      69029.7,
+      30012.8,
+      115860.4,
+      26665.3,
+      65498.8,
+      42937.1,
+      42937.1,
+      116724.5,
+      115138,
+      102692,
+      86089.6,
+      129819,
+      34409,
+      26665.3,
+      0,
+      52076.1,
+      50598.4,
+      66264.2,
+      56133.1
+    ],
+    [
+      43936.1,
+      33783.3,
+      13216.2,
+      970,
+      33813.3,
+      81704.9,
+      80644,
+      34161,
+      30282.4,
+      94629.2,
+      94629.2,
+      81508.1,
+      79921.6,
+      67475.7,
+      50873.2,
+      94602.6,
+      86101.2,
+      34161,
+      53726.1,
+      0,
+      1964.7,
+      31047.8,
+      13216.2
+    ],
+    [
+      42093.7,
+      31940.8,
+      11373.7,
+      2530.9,
+      31970.8,
+      79862.4,
+      78801.6,
+      32318.5,
+      28440,
+      92786.7,
+      92786.7,
+      79665.6,
+      78079.2,
+      65633.2,
+      49030.7,
+      92760.2,
+      84258.7,
+      32318.5,
+      51883.7,
+      1599.9,
+      0,
+      29205.3,
+      11373.7
+    ],
+    [
+      52257.7,
+      42104.8,
+      19004.1,
+      26781.1,
+      15710.2,
+      90026.4,
+      60727.3,
+      42482.5,
+      1103.4,
+      102950.7,
+      102950.7,
+      61591.4,
+      60005,
+      47559,
+      22369,
+      74685.9,
+      94422.7,
+      42482.5,
+      62047.7,
+      25850.2,
+      24372.5,
+      0,
+      19004.1
+    ],
+    [
+      47518.4,
+      16527.3,
+      0,
+      17455.5,
+      26471.3,
+      85287.2,
+      73302,
+      37743.3,
+      22940.5,
+      98211.5,
+      98211.5,
+      74166.1,
+      72579.7,
+      60133.7,
+      43531.2,
+      87260.6,
+      89683.4,
+      37743.3,
+      57308.4,
+      16524.5,
+      15046.9,
+      23705.8,
+      0
+    ]
+  ]
+}

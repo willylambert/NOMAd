@@ -1,0 +1,322 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<!-- Scenario calendar Modal -->
+<div class="modal-header">
+  <h4 class="col-md-6 modal-title" id="modal-basic-title">
+    Modifier le calendrier du scenario {{inputScenario.label}}     
+  </h4>
+  <h4 class="col-md-4 modal-title" id="modal-basic-subtitle">
+    {{selectedDayLabel}} {{calendarDt | date}}
+    <span *ngIf="selectedAMPM=='PM'">(Retour)</span>
+    <span *ngIf="selectedAMPM=='AM'">(Aller)</span>
+  </h4>    
+  <div class="col-md-2 pull-right">
+    <button type="button" class="btn btn-default" (click)="activeModal.close()">Annuler</button>
+    <button type="button" class="btn btn-success btn-sm" (click)="validate()"
+        [disabled]="selectedDays.length==0 || selectedRouteIDs.length==0">Valider</button>
+  </div>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-md-6">
+      <!-- Routes Picker -->
+      <div class="alert alert-warning" *ngIf="selectableRoutes.length==0">
+        Aucune tournée pour cette journée et cette direction.
+      </div>
+      <div *ngIf="selectableRoutes.length>0" class="card mt-3">
+        <div class="card-body">
+          <div class="row">
+            <h5 class="card-title" >Tournées à dupliquer&nbsp;&nbsp;&nbsp;
+              <button class="btn" (click)="toggleRoutesFolding()">
+                 <span *ngIf="bFoldRoutes" >...</span>
+                 <fa-icon *ngIf="!bFoldRoutes" [icon]="faChevronDown"></fa-icon>
+              </button>              
+            </h5>   
+          </div>
+          <div class="row" *ngIf="!bFoldRoutes">
+            <div class="col-sm">
+              <table id="routes-table" class="table table-sm table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Libellé</th>
+                    <th>Distance</th>
+                    <th>Véhicule</th>
+                    <th>Chauffeur</th>
+                  </tr>
+
+                </thead>
+                <tbody>
+                  <tr *ngFor="let route of selectableRoutes" [ngClass]="{'bg-success':route.selected}" (click)="selectRoute(route)">
+                    <td><input type="checkbox" [(ngModel)]="route.selected"></td>
+                    <td>{{route.label}}</td>
+                    <td>{{route.distance | distancePrecise}}</td>
+                    <td>{{route.vehicleCategory.label}}</td>
+                    <td>
+                      <span *ngIf="route.driver && route.driver.id">{{route.driver.firstname}} {{route.driver.lastname}}</span>
+                      <span *ngIf="!route.driver || !route.driver.id"></span>
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
+          </div>     
+        </div>        
+      </div>
+      <!-- Formular to filter dates -->
+      <div *ngIf="selectedRouteIDs.length>0" class="card mt-3">
+        <div class="card-body">
+          <div class="row">
+            <h5 class="card-title">Filtres pour le choix de dates</h5>              
+          </div>
+          <div class="row">     
+            <form #scenarioCalendarForm="ngForm"  class="col-md-12">      
+              <div class="form-group row">
+                <label for="direction" class="col-md-3 col-form-label" >Date de référence</label>
+                <div class="col-md-6">
+                  <div class="form-control-plaintext">
+                    {{selectedDayLabel}}
+                    {{calendarDt | date}}
+                    <span *ngIf="selectedAMPM=='PM'">(Retour)</span>
+                    <span *ngIf="selectedAMPM=='AM'">(Aller)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="direction" class="col-md-3 col-form-label" >Vue</label>
+                <div class="col-md-2">
+                  <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="bWorkPerWeek"
+                      (change)="updateSelections()">
+                    <label ngbButtonLabel [ngClass]="{'btn-success':bWorkPerWeek,'btn-light':!bWorkPerWeek}">
+                      <input ngbButton type="radio" [value]="true"> Semaine
+                    </label>
+                    <label ngbButtonLabel [ngClass]="{'btn-success':!bWorkPerWeek,'btn-light':bWorkPerWeek}">
+                      <input ngbButton type="radio" [value]="false"> Journée
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="direction" class="col-md-3 col-form-label" >Répéter</label>
+                <div class="col-md-2">
+                  <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="bWithRepetition"
+                      (change)="updateSelections()">
+                    <label ngbButtonLabel [ngClass]="{'btn-success':bWithRepetition,'btn-light':!bWithRepetition}">
+                      <input ngbButton type="radio" [value]="true"> Oui
+                    </label>
+                    <label ngbButtonLabel [ngClass]="{'btn-success':!bWithRepetition,'btn-light':bWithRepetition}">
+                      <input ngbButton type="radio" [value]="false"> Non
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row" *ngIf="bWithRepetition && bWorkPerWeek">
+                <label for="periodicityWeeks" class="col-md-3 col-form-label" >Toutes les</label>
+                <div class="col-md-3">
+                  <div class="input-group" >
+                    <input type="text" class="form-control" name="periodicityWeeks" [(ngModel)]="iRepeatPeriodWeek"
+                           pattern="([1-9]+[0-9]*)"
+                           required="true"
+                           (ngModelChange)="updateSelectedDaysByWeek()"/>
+                    <div class="input-group-append">
+                      <span class="input-group-text">semaines</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row" *ngIf="bWithRepetition && !bWorkPerWeek">
+                <label for="periodicityDays" class="col-md-3 col-form-label" >Tous les</label>
+                <div class="col-md-3">
+                  <div class="input-group" >
+                    <input type="text" class="form-control" name="periodicityDays" [(ngModel)]="iRepeatPeriodDay"
+                           pattern="([1-9]+[0-9]*)"
+                           required="true"
+                           (ngModelChange)="updateSelectedDays()"/>
+                    <div class="input-group-append">
+                      <span class="input-group-text">jours</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="calendarStartDt" class="col-md-3 col-form-label" >Date de début</label>
+                <div class="col-md-4">
+                  <div class="input-group">
+                    <input class="form-control" placeholder="yyyy-mm-dd"
+                          [(ngModel)]="startDt" ngbDatepicker #dStart="ngbDatepicker"
+                          (dateSelect)="updateSelections()" [showWeekNumbers]="true" name="calendarStartDt"
+                          required="true" readonly="true"
+                          [minDate]="inputScenario.startDt"
+                          [maxDate]="inputScenario.endDt">
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary calendar" (click)="dStart.toggle()" type="button">
+                        &nbsp;<fa-icon [icon]="faCalendar"></fa-icon>&nbsp;
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div> 
+              <div class="form-group row">
+                <label for="calendarEndDt" class="col-md-3 col-form-label" >Date de fin</label>
+                <div class="col-md-4">
+                  <div class="input-group">
+                    <input class="form-control" placeholder="yyyy-mm-dd"
+                          [(ngModel)]="endDt" ngbDatepicker #dEnd="ngbDatepicker"
+                          (dateSelect)="updateSelections()" [showWeekNumbers]="true" name="calendarEndDt"
+                          required="true" readonly="true"
+                          [minDate]="inputScenario.startDt"
+                          [maxDate]="inputScenario.endDt">
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary calendar" (click)="dEnd.toggle()" type="button">
+                        &nbsp;<fa-icon [icon]="faCalendar"></fa-icon>&nbsp;
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div> 
+              <span *ngIf="!bWorkPerWeek">
+                <div class="form-group row">
+                  <label for="direction" class="col-md-3 col-form-label" >Jours</label>
+                  <div class="col-md-2">
+                    <div class="btn-group btn-group-toggle">
+                      <label [ngClass]="{'btn-success':weekDay.selected,'btn-light':!weekDay.selected}"
+                             ngbButtonLabel *ngFor="let weekDay of weekDays">
+                        <input (change)="updateSelections()" type="checkbox" ngbButton
+                               [(ngModel)]="weekDay.selected" name="{{weekDay.label}}">{{weekDay.label}}
+                      </label>
+                    </div>
+                  </div>
+                </div>            
+              </span>           
+            </form>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="selectedRouteIDs.length>0" class="card mt-3">
+        <div class="card-body">
+          <div class="row">
+            <h5 class="card-title">Options de propagation</h5>              
+          </div>
+          <div class="row"> 
+            <form #scenarioCalendarPropagationForm="ngForm"  class="col-md-12">      
+              <div class="form-group row">
+                <label for="direction" class="col-md-3 col-form-label" >Mode de recopie</label>
+                <div class="col-md-2">
+                  <div class="btn-group btn-group-toggle"  ngbRadioGroup name="radioBasic" [(ngModel)]="selectedCopyMode">
+                    <label [ngClass]="{'btn-success':copyMode.code==selectedCopyMode.code,'btn-light':copyMode.code!=selectedCopyMode.code}"
+                           ngbButtonLabel type="radio" *ngFor="let copyMode of copyModes">
+                      <input type="radio" ngbButton
+                             name="{{copyMode.label}}" [value]="copyMode">{{copyMode.label}}
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="alert alert-info">
+                <span *ngIf="selectedCopyMode.code=='APPEND'">Les tournées créées seront ajoutées aux tournées existantes sur chaque demi-journée sélectionnée</span>
+                <span *ngIf="selectedCopyMode.code=='OVERWRITE'">Si des tournées existent déjà sur une demi-journée sélectionnée, elles seront effacées</span>
+              </div>
+              <div class="alert alert-info">
+                En cliquant sur le bouton "Valider", les tournées du scénario 
+                <strong>{{inputScenario.label}}</strong>
+                du
+                <em>
+                  {{calendarDt|date}}
+                  <span *ngIf="selectedAMPM=='PM'">(Retour)</span>
+                  <span *ngIf="selectedAMPM=='AM'">(Aller)</span>
+                </em>
+                seront recopiées vers les dates sélectionnées.
+              </div>              
+            </form>
+          </div>
+        </div>          
+      </div>   
+    </div>
+    <div class="col-md-6">
+      <!-- Message in case no route is selected -->
+      <div class="alert alert-info" *ngIf="selectedRouteIDs.length==0">
+        Veuillez sélectionnez les tournées à dupliquer en cliquant dans la liste
+      </div>
+      <!-- List of selected days / days picker -->
+      <span *ngIf="selectedRouteIDs.length>0">
+        <span *ngIf="bWithRepetition">
+          <em *ngIf="selectedDays.length==0">
+            Aucune date sélectionnée.
+          </em>
+          <span *ngIf="selectedDays.length>0">
+            <h5>Dates sélectionnées</h5>
+            <table id="selected-days-table" class="table table-sm table-striped table-hover" >
+              <thead>
+                <tr>
+                  <th>Jour</th>
+                  <th>Jour</th>
+                  <th>Mois</th>
+                  <th>Année</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let day of selectedDays | orderBy:'timestamp'">
+                  <td>{{day.weekDay}}</td>
+                  <td>{{day.data.day}}</td>
+                  <td>{{day.month}}</td>
+                  <td>{{day.data.year}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </span>          
+        </span>
+        <span *ngIf="!bWithRepetition">
+          <em *ngIf="days.length==0">
+            Aucun date disponible.
+          </em>
+          <span *ngIf="days.length>0">
+            <h5>Dates disponibles</h5>
+            Sélectionnez en cliquant dans la liste
+            <table id="days-table" class="table table-sm table-striped table-hover" >
+              <thead>
+                <tr>
+                  <th></th>                  
+                  <th>Jour</th>
+                  <th>Jour</th>
+                  <th>Mois</th>
+                  <th>Année</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let day of days | orderBy:'timestamp'" (click)="toggleDaySelection(day)"
+                    [ngClass]="{'bg-success':day.selected}">
+                  <td><input type="checkbox" [(ngModel)]="day.selected"></td>
+                  <td>{{day.weekDay}}</td>
+                  <td>{{day.data.day}}</td>
+                  <td>{{day.month}}</td>
+                  <td>{{day.data.year}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </span>    
+        </span>
+      </span>
+    </div>
+  </div>
+</div>

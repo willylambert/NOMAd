@@ -1,0 +1,87 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <h4>Actions</h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <!-- ADMIN actions -->
+      <p *ngIf="userTypeCode=='ADMIN'">
+        <button type="button" class="btn btn-primary btn-lg" role="button" [routerLink]="['data/user/crud']">Nouvel utilisateur</button>
+      </p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <!-- TRANSPORT_ORGANIZER actions -->
+      <p *ngIf="userTypeCode=='TRANSPORT_ORGANIZER'">
+        <button type="button" class="btn btn-primary btn-lg" role="button" [aclShow]="'/menu/logistics/groups'" [routerLink]="['logistics/group/list']">Groupe de demandes</button>
+        <button type="button" class="btn btn-primary btn-lg" role="button" [aclShow]="'/menu/logistics/scenario'" [routerLink]="['logistics/scenario/list']">Scénarios</button>
+      </p>      
+    </div>
+  </div>
+  <ng-container *ngIf="userTypeCode!=='ADMIN' && userTypeCode!=='CLIENT'">
+    <div class="row">
+      <div class="col">
+        <h4>Informations</h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <dashboard-route-list></dashboard-route-list>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <h4>Tableaux de bord</h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <dashboard-scenario [index]="1" [dismissable]="false"></dashboard-scenario>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="userTypeCode=='CLIENT'">
+    <!-- User could have several hr -->
+    <div class='form-group row'>
+      <label for="hr" class='col-md-3 col-form-label'>Usager </label>
+      <div class='col-md-4'>
+        <ng-select name="hr" [items]="hrs" bindValue="id"
+          [(ngModel)]="hrMainId">
+          <ng-template ng-label-tmp let-item="item">
+            <span>{{ item.firstname + ' ' + item.lastname }}</span>
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+            <span>{{ item.firstname + ' ' + item.lastname }}</span>
+        </ng-template>
+        </ng-select>
+      </div>
+    </div>
+    <hr-route [hrMainId]="hrMainId"></hr-route>
+  </ng-container>
+</div>

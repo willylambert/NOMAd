@@ -1,0 +1,227 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="container-fluid">
+  <div class="row" fillHeight>
+    <div class="col-sm">
+
+  <!-- Main formular -->
+  <form #vehicleCategoryForm="ngForm" novalidate="true" autocomplete="off">
+
+    <crud-navbar
+      [editMode]="editMode"
+      [valid]="vehicleCategoryForm.form.valid"
+      [pristine]="vehicleCategoryForm.form.pristine && !bChanges"
+      (editModeChange)="editModeChange($event)"
+      (saveEvent)="save()"
+      (markAsRemovedEvent)="markAsRemoved()"
+      (deleteEvent)="delete()"
+      [title]="(currentRecord.id ? 'Catégorie de véhicule ' + currentRecord.code : 'Nouvelle catégorie de vehicule')"
+      [aclObject]="'vehiclecategory'"
+      [recordId]="currentRecord.id">
+    </crud-navbar>
+
+    <!-- Code -->
+    <div class="form-group row">
+      <label for="code" class="col-md-2 col-form-label" >Référence</label>
+      <div class="col-md-4">
+        <input type="text" class="form-control" name="code"
+               [(ngModel)]="currentRecord.code" pattern="[A-Za-z0-9_\.-]{1,20}"
+               [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+               [readonly]="editMode=='view'" [required]="editMode!='view'" />
+      </div>
+    </div>
+
+    <!-- Description of the vehicle category -->
+    <div class="form-group row">
+      <label for="label" class="col-md-2 col-form-label">Description </label>
+      <div class="col-md-10">
+        <input type="text" class="form-control" name="label"
+               [(ngModel)]="currentRecord.label"
+               [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+               [readonly]="editMode=='view'" [required]="editMode!='view'"/>
+      </div>
+    </div>
+
+    <!-- Number of axles -->
+    <div class="form-group row">
+      <label for="axles_count" class="col-md-2 col-form-label">Nombre d'essieux </label>
+      <div class="col-md-2">
+        <input type="text" class="form-control" name="axles_count"
+               [(ngModel)]="currentRecord.axles_count" pattern="[2-9]{1}"
+               [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+               [readonly]="editMode=='view'"/>
+      </div>
+    </div>
+
+    <!-- Fuel consumption -->
+    <div class="form-group row">
+      <label for="fuel_consumption" class="col-md-2 col-form-label">Consommation </label>
+      <div class="col-md-2">
+        <div class="input-group" *ngIf="editMode!='view'">
+          <input type="text" class="form-control" name="fuel_consumption"
+               [(ngModel)]="currentRecord.fuel_consumption" pattern="(0|([1-9][0-9]*))([.][0-9]{1,4})?"
+               [readonly]="editMode=='view'"/>
+          <div class="input-group-append">
+            <span class="input-group-text">L/100km</span>
+          </div>
+        </div>
+        <div class="form-control-plaintext" *ngIf="editMode=='view'">
+          <span *ngIf="currentRecord.fuel_consumption!=undefined">{{currentRecord.fuel_consumption}} L/100km</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily cost -->
+    <div class="form-group row">
+      <label for="daily_cost" class="col-md-2 col-form-label">Coût/jour </label>
+      <div class="col-md-2">
+        <div class="input-group" *ngIf="editMode!='view'">
+          <input type="text" class="form-control" name="daily_cost"
+               [(ngModel)]="currentRecord.daily_cost" pattern="(0|([1-9][0-9]*))([.][0-9]{1,4})?"
+               [readonly]="editMode=='view'"/>
+          <div class="input-group-append">
+            <span class="input-group-text">&#8364;/jour</span>
+          </div>
+        </div>
+        <div class="form-control-plaintext" *ngIf="editMode=='view'">
+          <span *ngIf="currentRecord.daily_cost!=undefined">{{currentRecord.daily_cost}} &#8364;/jour</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hourly cost -->
+    <div class="form-group row">
+      <label for="hourly_cost" class="col-md-2 col-form-label">Coût/heure </label>
+      <div class="col-md-2">
+        <div class="input-group" *ngIf="editMode!='view'">
+          <input type="text" class="form-control" name="hourly_cost"
+               [(ngModel)]="currentRecord.hourly_cost" pattern="(0|([1-9][0-9]*))([.][0-9]{1,4})?"
+               [readonly]="editMode=='view'"/>
+          <div class="input-group-append">
+            <span class="input-group-text">&#8364;/heure</span>
+          </div>
+        </div>
+        <div class="form-control-plaintext" *ngIf="editMode=='view'">
+          <span *ngIf="currentRecord.hourly_cost!=undefined">{{currentRecord.hourly_cost}} &#8364;/heure</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kilometric cost -->
+    <div class="form-group row">
+      <label for="kilometric_cost" class="col-md-2 col-form-label">Coût/kilomètre </label>
+      <div class="col-md-2">
+        <div class="input-group" *ngIf="editMode!='view'">
+          <input type="text" class="form-control" name="kilometric_cost"
+               [(ngModel)]="currentRecord.kilometric_cost" pattern="(0|([1-9][0-9]*))([.][0-9]{1,4})?"
+               [readonly]="editMode=='view'"/>
+          <div class="input-group-append">
+            <span class="input-group-text">&#8364;/km</span>
+          </div>
+        </div>
+        <div class="form-control-plaintext" *ngIf="editMode=='view'">
+          <span *ngIf="currentRecord.kilometric_cost!=undefined">{{currentRecord.kilometric_cost}} &#8364;/km</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emitted CO2 quantity, assumed to be in gram / traveled kilometer
+         Notice that for material transport, the C02 quantity is usually expressed with the following
+         units : gram / (transported ton . traveled kilometer)  -->
+    <div class="form-group row">
+      <label for="co2_quantity" class="col-md-2 col-form-label">Emissions CO<sub>2</sub> </label>
+      <div class="col-md-2">
+        <div class="input-group" *ngIf="editMode!='view'">
+          <input type="text" class="form-control" name="co2_quantity"
+               [(ngModel)]="currentRecord.co2_quantity" pattern="(0|([1-9][0-9]*))([.][0-9]{1,4})?"
+               [readonly]="editMode=='view'"/>
+          <div class="input-group-append">
+            <span class="input-group-text">&#8364;g/km</span>
+          </div>
+        </div>
+        <div class="form-control-plaintext" *ngIf="editMode=='view'">
+          <span *ngIf="currentRecord.co2_quantity!=undefined">{{currentRecord.co2_quantity}} g/km</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- List of Configurations -->
+    <div class="card mt-3">
+        <div class="card-body">
+    <div class="row">
+      <div class="col-sm">
+        <h5 class="card-title">Configurations possibles</h5>
+      </div>
+      <div class="col-sm" >
+        <div class="float-right" id="action-bar">
+          <button *ngIf="editMode!='view'" type="button" id="btn-add-configuration"
+                  class="btn btn-link btn-sm"
+                  (click)="addConfiguration()" >
+            Ajouter
+          </button>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="!currentRecord.configurations || currentRecord.configurations.length==0">
+      <em >Aucune configuration rattachée à la catégorie de véhicule</em>
+    </div>
+    <div *ngIf="currentRecord.configurations && currentRecord.configurations.length>0">
+      <table id="configurations-table" class="table table-sm table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Référence</th>
+            <th>Libellé</th>
+            <th>Capacité</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let configuration of currentRecord.configurations ; let i = index" [attr.data-index]="i">
+            <td>
+              <button *ngIf="editMode!='view'" class="btn btn-link" (click)="editConfiguration(configuration,i)">
+                <span *ngIf="configuration.code">{{configuration.code}}</span>
+                <span *ngIf="!configuration.code"><em>définir une référence</em></span>
+              </button>
+              <span *ngIf="editMode=='view'">{{configuration.code}}</span>
+            </td>
+            <td>
+              {{configuration.label}}
+            </td>
+            <td>
+              <div class="badge badge-info ml-3">
+                <span *ngFor="let capacity of configuration.capacities">
+                  <span *ngIf="capacity.transported_code=='FAUTEUIL'">{{capacity.quantity}} <fa-icon [icon]="faWheelchair"></fa-icon></span>
+                  <span *ngIf="capacity.transported_code=='MARCHANT'">{{capacity.quantity}} <fa-icon [icon]="faChild"></fa-icon></span>
+                </span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+  </form>
+</div>
+</div>
+</div>

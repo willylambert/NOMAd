@@ -1,0 +1,197 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<!-- New Route Modal -->
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">
+    <span *ngIf="title">{{title}}</span>
+    <span *ngIf="!title">Tournée {{label}}</span>
+  </h4>
+  <span class='pull-right'>
+    <button type="button" class="btn btn-default" (click)="activeModal.close()">Annuler</button>
+    <button type="button" class="btn btn-success btn-sm" (click)="validate()"
+            [disabled]="!routeEditForm.form.valid || (withStartTime && withEndTime)
+            || (withStartTime&&(!startTime||this.startTime.hour==undefined||this.startTime.minute==undefined))
+            || (withEndTime&&(!endTime||this.endTime.hour==undefined||this.endTime.minute==undefined))
+            ">Valider</button>
+  </span>
+</div>
+<div class="modal-body">
+  <form #routeEditForm="ngForm">
+    <div class="form-group row">
+      <label for="label" class="col-lg-4 col-form-label">Description </label>
+      <div class="col-lg-8">
+        <input type="text" class="form-control" name="label"
+               [(ngModel)]="label" />
+      </div>
+    </div>
+    <div class="form-group row">
+        <label for="depot" class="col-lg-4 col-form-label">Dépôt </label>
+        <div class="col-lg-8">
+          <ng-select name="depot" class="mx-auto"
+            [items]="depots"
+            bindLabel="label"
+            [(ngModel)]="depot"
+            (change)="onDepotChange()">
+          </ng-select>
+        </div>
+      </div>
+    <!-- Template for the following typeahead -->
+    <ng-template #rt let-r="result" let-t="term">
+      <ngb-highlight [result]="r.code" [term]="t"></ngb-highlight>
+      <ngb-highlight [result]="r.label" [term]="t"></ngb-highlight>
+    </ng-template>
+    <!-- Vehicle category -->
+    <div class="form-group row">
+      <label for="vehicleCat" class="col-md-4 col-form-label" >Type de véhicule</label>
+      <div class="col-md-8">
+        <ng-select name="vehicleCat" class="mx-auto"
+          [items]="vehicleCategories"
+          bindLabel="label"
+          [(ngModel)]="vehicleCategory"
+          (change)="checkVehicleCapacities()">
+          <ng-template ng-label-tmp let-item="item">
+            <strong>{{item.label}}</strong>
+            <div *ngFor="let configuration of item.configurations" class="badge badge-info ml-3">
+              <span *ngFor="let capacity of configuration.capacities">
+                <span *ngIf="capacity.transported_code=='FAUTEUIL'">
+                  {{capacity.quantity}} <fa-icon [icon]="faWheelchair"></fa-icon>
+                </span>
+                <span *ngIf="capacity.transported_code=='MARCHANT'">
+                  {{capacity.quantity}} <fa-icon [icon]="faChild"></fa-icon>
+                </span>
+              </span>
+            </div>
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item" let-index="index">
+            <strong>{{item.label}}</strong>
+            <div *ngFor="let configuration of item.configurations" class="badge badge-info ml-3">
+              <span *ngFor="let capacity of configuration.capacities">
+                <span *ngIf="capacity.transported_code=='FAUTEUIL'">
+                  {{capacity.quantity}} <fa-icon [icon]="faWheelchair"></fa-icon>
+                </span>
+                <span *ngIf="capacity.transported_code=='MARCHANT'">
+                  {{capacity.quantity}} <fa-icon [icon]="faChild"></fa-icon>
+                </span>
+              </span>
+            </div>
+          </ng-template>
+        </ng-select>
+      </div>
+    </div>
+    <div *ngIf="vehicleCategory!=undefined && !bValidVehicleType">
+      <div class="alert alert-warning">Des passagers ne peuvent pas être pris en charge avec ce type de véhicule</div>
+    </div>
+    <!-- Time constraints -->
+    <div class="form-group row">
+      <label for="times" class="col-md-4 col-form-label" >Horaires</label>
+      <div class="col-md-8">
+        <button class="btn btn-default" [ngClass]="{'btn-success':!withStartTime&&!withEndTime}"
+               (click)="toggleTime()">Aucun</button>
+        <button class="btn btn-default" [ngClass]="{'btn-success':withStartTime}"
+               (click)="toggleStartTime()">Heure de départ</button>
+        <button class="btn btn-default" [ngClass]="{'btn-success':withEndTime}"
+               (click)="toggleEndTime()">Heure d'arrivée</button>
+      </div>
+    </div>
+    <!-- Start Time -->
+    <div class="form-group row" *ngIf="withStartTime">
+      <label for="startTime" class="col-md-4 col-form-label" >Heure de départ</label>
+      <div class="col-md-8">
+        <ngb-timepicker name="startTime" [(ngModel)]="startTime" [spinners]="false"></ngb-timepicker>
+      </div>
+    </div>
+    <!-- End Time -->
+    <div class="form-group row" *ngIf="withEndTime">
+      <label for="endTime" class="col-md-4 col-form-label" >Heure d'arrivée</label>
+      <div class="col-md-8">
+        <ngb-timepicker name="endTime" [(ngModel)]="endTime" [spinners]="false"></ngb-timepicker>
+      </div>
+    </div>
+    <!-- Alert on the route hours -->
+    <div *ngIf="route.bMorning">
+      <div *ngIf="openingHours.end_hr">
+        <div *ngIf="withEndTime">
+          <div class="alert alert-warning" *ngIf="endTime.hour*3600000+endTime.minute*60000+endTime.second*1000>openingHours.end_hr">Arrivée après la fermeture du dernier établissement</div>
+        </div>
+        <div *ngIf="withStartTime">
+          <div class="alert alert-warning" *ngIf="startTime.hour*3600000+startTime.minute*60000+startTime.second*1000>openingHours.end_hr">Arrivée après la fermeture du dernier établissement</div>
+        </div>
+      </div>
+      <div *ngIf="openingHours.end_hr == undefined && bMissingOpeningHours">
+        <div class="alert alert-warning">Pas d'horaires de dépose sur le dernier établissement de la tournée</div>
+      </div>
+    </div>
+    <div *ngIf="!route.bMorning">
+      <div *ngIf="openingHours.start_hr">
+        <div *ngIf="withEndTime">
+          <div class="alert alert-warning" *ngIf="endTime.hour*3600000+endTime.minute*60000+endTime.second*1000<openingHours.start_hr">Départ avant l'ouverture du premier établissement</div>
+        </div>
+        <div *ngIf="withStartTime">
+          <div class="alert alert-warning" *ngIf="startTime.hour*3600000+startTime.minute*60000+startTime.second*1000<openingHours.start_hr">Départ avant l'ouverture du premier établissement</div>
+        </div>
+      </div>
+      <div *ngIf="openingHours.start_hr == undefined && bMissingOpeningHours">
+        <div class="alert alert-warning">Pas d'horaires de prise en charge sur le premier établissement de la tournée</div>
+      </div>
+    </div>
+    <!-- Scenario -->
+    <div class="form-group row">
+      <label for="scenario-label" class="col-md-4 col-form-label disabled-select-label">Scénario</label>
+      <div class="col-md-8">
+          <input type="text" class="form-control-plaintext" name="scenario-label"
+          [(ngModel)]="scenarioLabel"
+          [required]="false"
+          [readonly]="true"/>
+      </div>
+    </div>
+  </form>
+  <!-- Additional functionnality to copy a route from the current scenario into another scenario-->
+  <span *ngIf="scenarios.length>0 && route.id!=undefined">
+    <legend class="copy-title-area">
+      <h5 id="modal-copy-title">Copier la route dans un autre scénario</h5>
+    </legend>
+    <form #routeCopyForm="ngForm">
+      <div class="form-group row">
+        <label for="scenario-label" class="col-md-4 col-form-label">Vers le scénario</label>
+        <div class="col-md-6">
+          <ng-select name="scenario-label" class="mx-auto"
+              [items]="scenarios"
+              bindLabel="label"
+              [(ngModel)]="newScenario">
+          </ng-select>
+        </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-success btn-sm" (click)="copy()"
+                  [disabled]=" newScenario == undefined || newScenario.id == undefined ||newScenario.id == '' ||
+                               newScenario.id == route.scenario_main_id ">
+            Copier
+          </button>
+        </div>
+      </div>
+      <p *ngFor="let alert of alerts">
+        <ngb-alert [type]="alert.type" (close)="closeAlert(alert)">{{ alert.message }}</ngb-alert>
+      </p>
+    </form>
+  </span>
+</div>

@@ -1,0 +1,280 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="card" *ngFor="let route of routes.list ; let i = index "
+              [attr.data-index]="i"
+              [ngStyle]="{'border-color':(route.routeId==routes.currentRouteId?route.color:'')}"
+              (click)="changeRoute(route)">
+  <ng-container *ngIf="route.bHide!=true">
+    <!-- Route Header-->
+    <div class='card-header'>
+      <!-- Route Header first row-->
+      <div class='row align-items-center'>
+        <div class='col'>
+          <button class="btn btn-light">
+            <fa-icon [icon]="faRoute" class="fa-fw" [ngStyle]="{'color':route.color}" size="2x" ></fa-icon>
+          </button>
+          <span *ngIf="!route.label">Tournée {{i+1}}</span>
+          <span *ngIf="route.label">{{route.label}}</span>
+        </div>
+        <div class='col'>
+          <span *ngIf="route.driver.id">
+            Chauffeur : {{route.driver.firstname}} {{route.driver.lastname}}
+          </span>
+        </div>  
+        <div class='col'>  
+          <span *ngIf="route.start_driver_dt !=undefined && route.start_driver_dt !=null">
+            Tournée démarrée le {{route.start_driver_dt | date}} à {{route.start_driver_dt | time }} / il y a {{route.start_driver_duration | duration}}
+          </span>
+        </div>  
+      </div>
+        <!-- Details on route -->
+      <div class='row'>
+        <div class='col'>
+          <div class="float-right">
+            <span *ngIf="route.duration && route.distance">
+              <fa-icon [icon]="faRoad"></fa-icon>
+              {{route.duration*1000 | duration}}
+              &#160;
+              <em>{{route.distance | distancePrecise}}</em>
+              &#160;
+              <span *ngIf="route.cost!=undefined">
+                &#160;
+                <fa-icon [icon]="faEuroSign" ></fa-icon> 
+                <em >{{route.cost | cost}}&#8364;</em>
+              </span>
+              <span *ngIf="route.co2!=undefined">
+                &#160;
+                <fa-icon [icon]="faLeaf" ></fa-icon> 
+                <em >{{route.co2/1000 | cost}}kg</em>
+              </span>   
+            </span>
+            <span *ngIf="route.vehicleCategory && route.vehicleCategory.label">
+              &#160;
+              <fa-icon [icon]="faShuttleVan"></fa-icon>
+              {{route.vehicleCategory.label}}
+            </span>
+            &#160;
+            <fa-layers>
+              <fa-icon [icon]="faWheelchair" class="fa-fw"></fa-icon>
+              <fa-layers-counter
+                content="{{route.POIs | count:'transport_mode_code':'FAUTEUIL'}}"> </fa-layers-counter>
+            </fa-layers>
+            &#160;
+            <fa-layers>
+              <fa-icon [icon]="faChild" class="fa-fw"></fa-icon>
+              <fa-layers-counter
+                content="{{route.POIs | count:'transport_mode_code':'MARCHANT'}}"> </fa-layers-counter>
+            </fa-layers>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Route body (visible only when the route is selected) -->
+    <div class="card-body" [hidden]="route.routeId!=routes.currentRouteId">
+      <!-- first line, always the same-->
+      <div class="row served-step">
+        <span class="col-md-2"><fa-icon [icon]="faCheck" class="fa-fw"></fa-icon></span>
+        <span class="col-md-6 text-disabled">Circuit démarré</span>
+        <span class="col-md-4">{{route.start_driver_dt | time}}</span>
+      </div>
+
+      <span *ngFor="let POI of route.POIs ; let j = index" [attr.data-index]="j" >
+        <!-- already served stops -->
+        <div class="row served-step" *ngIf="(POI.visited_dt!=null && POI.visited_dt!=undefined) || 
+                    (POI.arrival_dt!=null && POI.arrival_dt!=undefined && POI.arrival_duration >=0)">
+          <span class="col-md-2"><fa-icon [icon]="faCheck" class="fa-fw"></fa-icon></span>
+          <span class="col-md-6 text-disabled">
+            <span *ngIf="POI.site_type_code=='HOME'">{{POI.hr_firstname}} {{POI.hr_lastname}}</span>
+            <span *ngIf="POI.site_type_code=='INSTITUTION'">{{POI.label}}</span>
+            <span *ngIf="POI.site_type_code=='TRANSPORTER'">{{POI.label}}</span>
+          </span>
+          <span class="col-md-4">
+            <span *ngIf="POI.visited_dt!=null && POI.visited_dt!=undefined">{{POI.visited_dt | time}}</span>
+            <span *ngIf="POI.visited_dt==null || POI.visited_dt==undefined">
+              <span *ngIf="POI.arrival_dt!=null && POI.arrival_dt!=undefined">{{POI.arrival_dt | time}}</span>
+            </span>
+          </span>
+        </div>
+        <!-- next stop -->
+        <div class="row next-step" *ngIf="(POI.visited_dt==null || POI.visited_dt==undefined ) && 
+                                (POI.arrival_dt==null || POI.arrival_dt==undefined || POI.arrival_duration < 0) && POI.bIsNextPOI">
+          <span class="col-md-2">Prochain arrêt</span>
+          <span class="col-md-10" >&nbsp;</span>
+          <span class="col-md-2">
+            <span *ngIf="POI.site_type_code=='HOME'">
+              <span *ngIf="POI.transport_mode_code=='FAUTEUIL'">
+                <fa-icon [icon]="faWheelchair"></fa-icon>
+              </span>
+              <span *ngIf="POI.transport_mode_code=='MARCHANT'">
+                <fa-icon [icon]="faChild"></fa-icon>
+              </span>
+            </span>
+            <span *ngIf="POI.site_type_code=='INSTITUTION'">
+              <fa-icon [icon]="faHospital"></fa-icon>
+            </span>  
+            <span *ngIf="POI.site_type_code=='TRANSPORTER'">
+              <fa-icon [icon]="faShuttleVan"></fa-icon>
+            </span>  
+          </span>
+          <span class="col-md-6">
+            <div><strong>
+              <span *ngIf="POI.site_type_code=='HOME'">{{POI.hr_firstname}} {{POI.hr_lastname}}</span>
+              <span *ngIf="POI.site_type_code=='INSTITUTION'">{{POI.label}}</span>
+              <span *ngIf="POI.site_type_code=='TRANSPORTER'">{{POI.label}}</span>
+            </strong></div>
+            <small>
+              {{POI.addr1}}
+            </small>
+          </span>
+          <span class="col-md-4">
+            <div><strong *ngIf="POI.arrival_duration!=null && POI.arrival_duration!=undefined">{{-1*POI.arrival_duration | duration}}</strong></div>
+            <div *ngIf="POI.arrival_dt!=null && POI.arrival_dt!=undefined">{{POI.arrival_dt | time}}</div>
+          </span>
+        </div>
+        <!-- future stops -->
+        <div class="row future-step" *ngIf="(POI.visited_dt==null || POI.visited_dt==undefined ) && 
+        (POI.arrival_dt==null || POI.arrival_dt==undefined || POI.arrival_duration < 0) && !POI.bIsNextPOI">
+          <span class="col-md-2">
+            <span *ngIf="POI.site_type_code=='HOME'">
+              <span *ngIf="POI.transport_mode_code=='FAUTEUIL'">
+                <fa-icon [icon]="faWheelchair"></fa-icon>
+              </span>
+              <span *ngIf="POI.transport_mode_code=='MARCHANT'">
+                <fa-icon [icon]="faChild"></fa-icon>
+              </span>
+            </span>
+            <span *ngIf="POI.site_type_code=='INSTITUTION'">
+              <fa-icon [icon]="faHospital"></fa-icon>
+            </span>  
+            <span *ngIf="POI.site_type_code=='TRANSPORTER'">
+              <fa-icon [icon]="faShuttleVan"></fa-icon>
+            </span>  
+          </span>
+          <span class="col-md-6">
+            <div><strong>
+              <span *ngIf="POI.site_type_code=='HOME'">{{POI.hr_firstname}} {{POI.hr_lastname}}</span>
+              <span *ngIf="POI.site_type_code=='INSTITUTION'">{{POI.label}}</span>
+              <span *ngIf="POI.site_type_code=='TRANSPORTER'">{{POI.label}}</span>
+            </strong></div>
+            <small>
+              {{POI.addr1}}
+            </small>
+          </span>
+          <span class="col-md-4">
+            <div><strong *ngIf="POI.arrival_duration!=null && POI.arrival_duration!=undefined">{{-1*POI.arrival_duration | duration}}</strong></div>
+            <div *ngIf="POI.arrival_dt!=null && POI.arrival_dt!=undefined">{{POI.arrival_dt | time}}</div>
+          </span>
+        </div>
+      </span>
+
+      <div class="col-md-12">
+        <div class="float-right mr-1 mt-2">
+          <button class="btn btn-outline-secondary btn-sm" (click)="resetRouteProgression(route)">Réinitialiser</button>
+          <button class="btn btn-outline-secondary btn-sm" (click)="endRoute(route)">Terminer</button>
+        </div>
+      </div>
+
+  <!-- 
+    TODO : Devs in progress
+          The code below was taken from route-list
+          It provides some interesting information but does not higlight enough the route progression
+      <div *ngFor="let POI of route.POIs ; let j = index" [attr.data-index]="j" class="container">
+        <div class="row route-step" ng-class="{'route-step-institution':POI.site_type_code=='INSTITUTION'||POI.site_type_code=='TRANSPORTER','route-step-home':POI.site_type_code=='HOME'}">
+          <div class="col-md-2 route-step-marker">
+            <span class="route-step-time align-middle">
+                <strong>{{POI.target_hr | utcTime}}</strong>
+            </span>
+            <fa-layers>
+              <fa-icon [icon]="faMapMarker" class="fa-fw"
+                [ngStyle]="{'color':(POI.site_type_code=='TRANSPORTER'?'#e9dfc2':'#e9ccc2')}"
+                size="2x"></fa-icon>
+              <fa-layers-text content="{{j+1}}" style="color: white;font-weight: bold"
+                transform="right-5 down-3"></fa-layers-text>
+            </fa-layers>
+          </div>
+          <div class="col-md-10">
+            <div class="container">
+              <div class="row">
+                <div class="col-md-6 px-0">
+                  <div *ngIf="POI.site_type_code=='HOME'" class="step-label">
+                    <span *ngIf="POI.transport_mode_code=='FAUTEUIL'">
+                      <fa-icon [icon]="faWheelchair"></fa-icon>
+                    </span>
+                    <span *ngIf="POI.transport_mode_code=='MARCHANT'">
+                      <fa-icon [icon]="faChild"></fa-icon>
+                    </span>
+                    <span>{{POI.hr_firstname}} {{POI.hr_lastname}}</span>
+                  </div>
+                  <div *ngIf="POI.site_type_code=='INSTITUTION'" class="step-label">
+                    <fa-icon [icon]="faHospital"></fa-icon>
+                    {{POI.label}}
+                  </div>
+                  <div *ngIf="POI.site_type_code=='TRANSPORTER'" class="step-label">
+                    <fa-icon [icon]="faShuttleVan"></fa-icon>
+                    {{POI.label}}
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <small class="step-label">{{POI.city}}</small>
+                </div>
+                <div class="col-md-3">
+
+                  <small *ngIf="POI.visited_dt!=null && POI.visited_dt!=undefined">
+                    Servi à {{POI.visited_dt | time}} / il y a {{ POI.visited_duration | duration}}
+                  </small>
+                  <small *ngIf="POI.visited_dt==null || POI.visited_dt==undefined">                    
+                    <span *ngIf="POI.arrival_dt!=null && POI.arrival_dt!=undefined">
+                    <span *ngIf="POI.arrival_duration < 0">
+                        Arrivée prévue à {{POI.arrival_dt | time }} / dans {{ -1*POI.arrival_duration | duration}}
+                      </span>
+                      <span *ngIf="POI.arrival_duration >= 0">
+                        Arrivé à {{POI.arrival_dt | time }} / il y a {{ POI.arrival_duration | duration}}
+                      </span>                  
+                    </span>                  
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="j!=route.POIs.length-1" class="row">
+          <div class="col-md-2" class="between-step-dot">
+            &#160;
+          </div>
+          <div class="col-lg-10" class="between-step-info">
+            <span *ngIf="POI.routeInfo">
+              <fa-icon [icon]="faRoad"></fa-icon>
+              {{POI.routeInfo.durationAfter*1000 | duration}}
+              &#160;
+              <small>{{POI.routeInfo.distanceAfter | distancePrecise}}</small>
+            </span>
+          </div>
+        </div>
+      </div>
+  -->
+    </div>
+    <!-- End of route body -->
+  </ng-container>
+</div>

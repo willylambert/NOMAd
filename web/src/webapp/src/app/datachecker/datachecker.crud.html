@@ -1,0 +1,138 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm">
+
+      <!-- Main formular -->
+      <form #datacheckerForm="ngForm" novalidate="true" autocomplete="off" *ngIf="currentRecord">
+
+        <!-- Has to be included within the formular so that crud-navbar component is aware of datacheckerForm variable -->
+        <crud-navbar
+          [editMode]="editMode"
+          [valid]="datacheckerForm.form.valid"
+          [pristine]="datacheckerForm.form.pristine"
+          (editModeChange)="editModeChange($event)"
+          (saveEvent)="save()"
+          (markAsRemovedEvent)="markAsRemoved()"
+          (deleteEvent)="delete()"
+          [title]="(currentRecord.id?'Contrôle '+currentRecord.label
+                   :'Nouveau contrôle')"
+          [aclObject]="'datachecker'"
+          [recordId]="currentRecord.id">
+        </crud-navbar>
+
+        <!-- Label -->
+        <div class="form-group row">
+          <label for="datacheckerLabel" class="col-md-3  col-form-label" >Description</label>
+          <div class="col-md-4">
+            <input type="text" class="form-control" name="datacheckerLabel"
+              [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+              [(ngModel)]="currentRecord.label"
+              [required]="editMode!='view'"
+              [readonly]="editMode=='view'" />
+          </div>
+        </div>
+
+        <!-- Label Template -->
+        <div class="form-group row">
+          <label for="datacheckerLabelTpl" class="col-md-3  col-form-label" >Template</label>
+          <div class="col-md-4">
+            <input type="text" class="form-control" name="datacheckerLabelTpl"
+              [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+              [(ngModel)]="currentRecord.label_tpl"
+              [required]="editMode!='view'"
+              [readonly]="editMode=='view'" />
+          </div>
+        </div>
+
+        <!-- Scope -->
+        <div class='form-group row'>
+          <label for="datacheckerScore" class='col-md-3 col-form-label'>Portée </label>
+          <div class='col-md-4'>
+              <ng-select name="datacheckerScore" [items]="th('DATA_CHECKER_MAIN_SCOPE') | async" bindLabel="label" bindValue="id"
+                  [(ngModel)]="currentRecord.scope_th"
+              [disabled]="editMode=='view'">
+          </ng-select>
+          </div>
+        </div>
+
+        <!-- Level -->
+        <div class='form-group row'>
+          <label for="datacheckerLevel" class='col-md-3 col-form-label'>Type </label>
+          <div class='col-md-4'>
+              <ng-select name="datacheckerLevel" [items]="th('DATA_CHECKER_MAIN_LEVEL') | async" bindLabel="label" bindValue="id"
+                  [(ngModel)]="currentRecord.level_th"
+              [disabled]="editMode=='view'">
+          </ng-select>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class='form-group row'>
+          <label for="datacheckerStatus" class='col-md-3 col-form-label'>Statut </label>
+          <div class='col-md-4'>
+            <ng-select name="datacheckerStatus" [items]="th('DATA_CHECKER_MAIN_STATUS') | async" bindLabel="label" bindValue="id"
+              [(ngModel)]="currentRecord.status_th"
+              [disabled]="editMode=='view'"
+              [required]="editMode!='view'">
+            </ng-select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12 text-right">
+            <em *ngIf="bDatacheckerRunning">Exécution en cours...</em>
+            <button class="btn btn-danger" *ngIf="selectedCheckerDetails.length>0" (click)="removeSelectedCheckerDetailsClick()">
+              Supprimer {{selectedCheckerDetails.length}} résultat<span *ngIf="selectedCheckerDetails.length>1">s</span>
+            </button>
+            <button class="btn btn-info" [disabled]="bDatacheckerRunning" (click)="run(currentRecord)">Exécuter le contrôle</button>
+
+          </div>
+        </div>
+
+      </form>
+
+      <list-navbar [title]="'Contrôles'" [searchFilter]="searchText" (searchEvent)="search($event)" [aclObject]="'checkerdetail'"></list-navbar>
+
+      <div fillHeight>
+        <ag-grid-angular
+            style="height: 100%;"
+            class="ag-theme-material"
+            [gridOptions]="gridOptions"
+            [rowData]="checkerdetails"
+            [columnDefs]="columnDefs"
+            [enableFilter]="true"
+            rowSelection="mutiple"
+            [paginationAutoPageSize]="true"
+            [pagination]="true"
+            [enableSorting]="true"
+            (gridReady)="gridReady($event)"
+            (selectionChanged)="gridSelection($event)"
+            >
+        </ag-grid-angular>
+      </div>      
+    </div>
+  </div>
+</div>

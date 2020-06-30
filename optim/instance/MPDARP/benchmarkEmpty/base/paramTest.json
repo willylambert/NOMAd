@@ -1,0 +1,20 @@
+{
+"MPDARP":true,
+"minConsistency":true,
+"nbIterations": 35,
+"nbIterationsSCP": 10000,
+"nbReplica": 0,
+"timeLimit": 30000,
+"timeLimitSCP": 60,
+"multiplier": 1,
+"checkAll": true,
+"verbosite": 1,
+"displayTitle": false,
+"SCP": false,
+"displayLogFrequency":100,
+"GDARP_instance":false,
+"path_final_results":"instance/MPDARP/benchmark/",
+"path_refSol":"",
+"path_export_best_sol":"",
+"tightenTW":false
+}

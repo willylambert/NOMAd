@@ -1,0 +1,91 @@
+{
+  "activeUsers": [
+    15,
+    22
+  ],
+  "cost": 75.9695,
+  "execTime": 0,
+  "feasible": true,
+  "irregularity": 0,
+  "multiplier": 1,
+  "name": "M00_80",
+  "nbIteration": 0,
+  "nbUsers": "2",
+  "nonInsertedUsers": [],
+  "objectiveValue": 75.9695,
+  "routes": [
+    {
+      "cost": 75.9695,
+      "distance": 59480,
+      "duration": 4964,
+      "feasible": true,
+      "feasibleVehicles": [
+        12,
+        10,
+        13,
+        11
+      ],
+      "id": 0,
+      "idVehicle": 12,
+      "irregularity": 0,
+      "nbReconfigurations": 0,
+      "nodes": [
+        {
+          "debug": "id:160, user:0, itin:0, point:79",
+          "idItinerary": 0,
+          "idPoint": 79,
+          "idUser": 12345,
+          "irregularity": 0,
+          "time": 31962,
+          "type": "depotOut"
+        },
+        {
+          "debug": "id:15, user:15, itin:0, point:15",
+          "idItinerary": 0,
+          "idPoint": 15,
+          "idUser": 15,
+          "irregularity": 0,
+          "time": 32400,
+          "type": "pickup"
+        },
+        {
+          "debug": "id:22, user:22, itin:0, point:22",
+          "idItinerary": 0,
+          "idPoint": 22,
+          "idUser": 22,
+          "irregularity": 0,
+          "time": 33949,
+          "type": "pickup"
+        },
+        {
+          "debug": "id:102, user:22, itin:0, point:71",
+          "idItinerary": 0,
+          "idPoint": 71,
+          "idUser": 22,
+          "irregularity": 0,
+          "time": 35100,
+          "type": "delivery"
+        },
+        {
+          "debug": "id:95, user:15, itin:0, point:71",
+          "idItinerary": 0,
+          "idPoint": 71,
+          "idUser": 15,
+          "irregularity": 0,
+          "time": 35160,
+          "type": "delivery"
+        },
+        {
+          "debug": "id:161, user:0, itin:0, point:79",
+          "idItinerary": 0,
+          "idPoint": 79,
+          "idUser": 12345,
+          "irregularity": 0,
+          "time": 36926,
+          "type": "depotIn"
+        }
+      ],
+      "objVal": 75.9695
+    }
+  ]
+}

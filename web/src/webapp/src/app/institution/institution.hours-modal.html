@@ -1,0 +1,99 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<!-- Modal for picking new hours for an establishement -->
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title" >
+    <span *ngIf="!bEdit">Ajouter des horaires</span>
+    <span *ngIf="bEdit">Modifier des horaires</span>
+    <span *ngIf="bPickup"> de prise en charge</span>
+    <span *ngIf="!bPickup"> de dépose</span>
+  </h4>
+  <span class="pull-right" >
+    <button [disabled]="!hoursForm.form.valid || startHour>endHour"
+            type="button" class="btn btn-success btn-sm" (click)="saveModal()" >Valider</button>
+    <button type="button" *ngIf="!bEdit" class="btn btn-default btn-sm" (click)="activeModal.close(null)">Annuler</button>
+    <button type="button" *ngIf="bEdit" class="btn btn-default btn-sm" (click)="delete()">Supprimer</button>
+  </span>
+</div>
+<div class="modal-body">
+  <form #hoursForm="ngForm" novalidate="true" autocomplete="off" >
+
+    <!-- Considered set of days of weeks (for adding a set of dates) -->
+    <div class="form-group row" *ngIf="!bEdit">
+      <label for="days" class="col-md-3  col-form-label" >Jours</label>
+      <div class="col-md-9" >
+        <ng-select id="days" name="days" class="mx-auto"
+        [items]="timeSlots"
+        [multiple]="true"
+        [(ngModel)]="days"
+        bindLabel="label" placeholder="Jour"
+        required="true">
+        </ng-select>
+      </div>
+    </div>
+
+    <!-- Considered day of week (for fixing an opening period) -->
+    <div class="form-group row" *ngIf="bEdit">
+      <label for="days" class="col-md-3  col-form-label" >Jour</label>
+      <div class="col-md-9" >
+        <ng-select id="day" name="day" class="mx-auto"
+        [items]="timeSlots"
+        [(ngModel)]="day"
+        bindLabel="label" placeholder="Jour"
+        required="true">
+        </ng-select>
+      </div>
+    </div>
+
+    <!-- The time bounds for the opening period -->
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label" >Début </label>
+      <label class="col-md-1 col-form-label"  >
+        <div class="form-control-plaintext" required="true" [ngClass]="{'ng-valid':earliest,'ng-invalid':!earliest}">&nbsp;</div>
+        <input type='hidden' name="earliestHidden" [(ngModel)]="earliest" required="true">
+      </label>
+      <div class="col-md-6">
+        <ngb-timepicker name="earliest" [(ngModel)]="earliest" [spinners]="false" (change)="checkTimes()"></ngb-timepicker>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label" >Fin </label>
+      <label class="col-md-1 col-form-label"  >
+        <div class="form-control-plaintext" required="true" [ngClass]="{'ng-valid':latest,'ng-invalid':!latest}">&nbsp;</div>
+        <input type='hidden' name="latestHidden" [(ngModel)]="latest" required="true">
+      </label>
+      <div class="col-md-6">
+        <ngb-timepicker name="latest" [(ngModel)]="latest" [spinners]="false" (change)="checkTimes()"></ngb-timepicker>
+      </div>
+    </div>
+
+    <!-- Alert in case of invalid period -->
+    <div class="form-group row">
+      <div class="col-md-6" >
+        <span class="badge badge-danger" *ngIf="startHour && endHour && startHour>endHour">Fenêtre de temps invalide</span>
+      </div>
+    </div>
+
+  </form>
+</div>

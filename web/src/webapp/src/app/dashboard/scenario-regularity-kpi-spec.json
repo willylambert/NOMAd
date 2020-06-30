@@ -1,0 +1,173 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A top-k bar chart ranking film regularity by revenue.",
+  "width": 500,
+  "padding": 5,
+ 
+  "title": {
+    "text": "Regularité",
+    "subtitle": "Répartition des écarts",
+    "subtitleFontStyle": "italic",
+    "anchor": "start",
+    "frame": "group"
+  },  
+
+  "signals": [
+    { "name": "chartWidth", "value": 250 },
+    { "name": "chartPad", "value": 40 }
+  ],
+
+  "data": [
+    {
+      "name": "regularity",
+      "values": []
+    },
+    {
+      "name": "am",
+      "source": "regularity",
+      "transform": [
+        {
+          "type": "collect",
+          "sort": {"field": "difference"}
+        },        
+        {"type": "filter", "expr": "datum.ampm == 'am'"}
+      ]
+    },
+    {
+      "name": "pm",
+      "source": "regularity",
+      "transform": [
+        {
+          "type": "collect",
+          "sort": {"field": "difference"}
+        },         
+        {"type": "filter", "expr": "datum.ampm == 'pm'"}
+      ]
+    },
+    {
+      "name": "differenceGroups",
+      "source": "regularity",
+      "transform": [
+        { "type": "aggregate", "groupby": ["difference"] }
+      ]
+    }  
+  ],
+
+  "scales": [
+    {
+      "name": "y",
+      "type": "band",
+      "range": [{"signal": "height"}, 0],
+      "round": true,
+      "domain": {"data": "differenceGroups", "field": "difference"}
+    },
+    {
+      "name": "c",
+      "type": "ordinal",
+      "domain": ["am", "pm"],
+      "range": ["#d5855a", "#6c4e97"]
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "text",
+      "interactive": false,
+      "from": {"data": "differenceGroups"},
+      "encode": {
+        "enter": {
+          "x": {"signal": "chartWidth + chartPad / 2"},
+          "y": {"scale": "y", "field": "difference", "band": 1},
+          "baseline": {"value": "middle"},
+          "align": {"value": "center"},
+          "fill": {"value": "#000"}
+        },
+        "update": {
+          "text": {"signal": " '+' + datum.difference + ' min.'"}
+        }           
+      }
+    },
+    {
+      "type": "group",
+
+      "encode": {
+        "update": {
+          "x": {"value": 0},
+          "height": {"signal": "height"}
+        }
+      },
+
+      "scales": [
+        {
+          "name": "x",
+          "type": "linear",
+          "range": [{"signal": "chartWidth"}, 0],
+          "nice": true, "zero": true,
+          "domain": {"data": "regularity", "field": "count"}
+        }
+      ],
+
+      "axes": [
+        {"orient": "bottom", "scale": "x", "format": "s", "title": "Matin"}
+      ],
+
+      "marks": [
+        {
+          "type": "rect",
+          "from": {"data": "am"},
+          "encode": {
+            "enter": {
+              "x": {"scale": "x", "field": "count"},
+              "x2": {"scale": "x", "value": 0},
+              "y": {"scale": "y", "field": "difference"},
+              "height": {"scale": "y", "band": 1, "offset": -1},
+              "fillOpacity": {"value": 0.6},
+              "fill": {"scale": "c", "field": "ampm"}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "group",
+
+      "encode": {
+        "update": {
+          "x": {"signal": "chartWidth + chartPad"},
+          "height": {"signal": "height"}
+        }
+      },
+
+      "scales": [
+        {
+          "name": "x",
+          "type": "linear",
+          "range": [0, {"signal": "chartWidth"}],
+          "nice": true, "zero": true,
+          "domain": {"data": "regularity", "field": "count"}
+        }
+      ],
+
+      "axes": [
+        {"orient": "bottom", "scale": "x", "format": "s", "title": "Après-midi"}
+      ],
+
+      "marks": [
+        {
+          "type": "rect",
+          "from": {"data": "pm"},
+          "encode": {
+            "enter": {
+              "x": {"scale": "x", "field": "count"},
+              "x2": {"scale": "x", "value": 0},
+              "y": {"scale": "y", "field": "difference"},
+              "height": {"scale": "y", "band": 1, "offset": -1},
+              "fillOpacity": {"value": 0.6},
+              "fill": {"scale": "c", "field": "ampm"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+##
+# You should look at the following URL's in order to grasp a solid understanding
+# of Nginx configuration files in order to fully unleash the power of Nginx.
+# http://wiki.nginx.org/Pitfalls
+# http://wiki.nginx.org/QuickStart
+# http://wiki.nginx.org/Configuration
+#
+# Generally, you will want to move this file somewhere, and start with a clean
+# file but keep this around for reference. Or just disable in sites-enabled.
+#
+# Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
+##
+
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server ipv6only=on;
+
+    # Handle let's encrypt http challenge
+    location /.well-known/acme-challenge/ {
+      root /var/www/letsencrypt;
+    }
+
+    sendfile off;
+
+    root /var/www/docs;
+    index index.php index.html;
+
+    server_name nomad.odo-via.com;
+
+    location / {
+        # Angular route configuration - handle deep link
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /rest {
+        #Slim Framework configuration
+        try_files $uri $uri/ /rest/index.php?$args;
+    }
+
+    error_page 404 /404.html;
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /usr/share/nginx/html;
+    }
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass unix:/run/php/php7.2-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}
+
+server {
+    listen 443 ssl;
+    ssl on;
+
+    ssl_certificate certs/live/nomad.odo-via.com/fullchain.pem;
+    ssl_certificate_key certs/live/nomad.odo-via.com/privkey.pem;
+
+    sendfile off;
+
+    root /var/www/docs;
+    index index.php index.html;
+
+    server_name nomad.odo-via.com;
+
+    location / {
+        # Angular route configuration - handle deep link
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /rest {
+        #Slim Framework configuration
+        try_files $uri $uri/ /rest/index.php?$args;
+    }
+
+    error_page 404 /404.html;
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /usr/share/nginx/html;
+    }
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass unix:/run/php/php7.2-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}

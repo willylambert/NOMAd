@@ -1,0 +1,188 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<!-- Modal for setting parameters before launching an optim -->
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">
+    Optimisation 
+  </h4>
+  <span class='pull-right'>
+    <button type="button" class="btn btn-default" (click)="activeModal.close()">Annuler</button>
+    <button type="button" class="btn btn-success" (click)="validate()" [disabled]="!optimForm.form.valid">Démarrer</button>
+  </span>
+</div>
+<div class="modal-body">
+
+  <h5>Données d'entrée</h5>
+  <form #optimDataForm="ngForm" novalidate="true" autocomplete="off" >
+    <div class="form-group row">
+      <label for="timeslot" class="col-md-6  col-form-label" >Période</label>
+      <div class="col-md-6">
+        <input type="text" class="form-control-plaintext" name="timeslot"
+              [(ngModel)]="timeslot"
+              [readonly]="true"/>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="nbInstitutions" class="col-md-6  col-form-label" >Etablissements</label>
+      <div class="col-md-6">
+        <input type="text" class="form-control-plaintext" name="nbInstitutions"
+              [(ngModel)]="iInstitutionsCount"
+              [readonly]="true"/>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="nbHRs" class="col-md-6  col-form-label" >Usagers</label>
+      <div class="col-md-6">
+        <input type="text" class="form-control-plaintext" name="nbHRs"
+              [(ngModel)]="iHRsCount"
+              [readonly]="true"/>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="nbVehicleTypes" class="col-md-6  col-form-label" >Types de véhicules</label>
+      <div class="col-md-6">
+        <input type="text" class="form-control-plaintext" name="nbVehicleTypes"
+              [(ngModel)]="iVehicleTypesCount"
+              [readonly]="true"/>
+      </div>
+    </div>
+  </form>
+
+  <br/>
+  <h5>Paramètres</h5>
+
+
+  <form #optimForm="ngForm" novalidate="true" autocomplete="off" >
+
+    <div class="form-group row" *ngIf="routers">
+      <label for="router" class="col-md-5  col-form-label" >Optimisation</label>
+      <div class="col-md-7">
+        <div class="btn-group btn-group-toggle" ngbRadioGroup data-toggle="buttons" [(ngModel)]="options.optimMode" name="optimMode" >
+          <label ngbButtonLabel [ngClass]="{active:options.optimMode=='cost','btn-secondary':options.optimMode=='cost','btn-light':options.optimMode!='cost'}">
+            <input ngbButton type="radio" [value]="'cost'"> coût
+          </label>
+          <label ngbButtonLabel [ngClass]="{active:options.optimMode=='regularity','btn-secondary':options.optimMode=='regularity','btn-light':options.optimMode!='regularity'}">
+            <input ngbButton type="radio" [value]="'regularity'"> régularité
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Initial Solution Date -->
+    <div class="form-group row">
+      <label for="initialSolution" class="col-md-5  col-form-label" >Solution initiale</label>
+      <div class="col-md-7">
+        <div class="input-group">
+          <input class="form-control"
+                  placeholder="yyyy-mm-dd" name="initialsolution" [(ngModel)]="initialSolutionDt"
+                  ngbDatepicker #initialSolution="ngbDatepicker" readonly="true" [required]="options.optimMode=='regularity'"
+                  (dateSelect)="onDateSelect()">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary calendar" (click)="initialSolution.toggle()" type="button">
+              &nbsp;<fa-icon [icon]="faCalendar"></fa-icon>&nbsp;
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="initialSolution" class="col-md-5  col-form-label" > </label>
+      </div>
+      
+      <div class="col-md-5"></div>
+      <div class="col-md-7">
+        <span class='badge badge-danger' *ngIf="initialSolutionDt!=undefined && options!=undefined && options.initialSolutionRoutes.length==0">
+          Aucune tournées pour ce jour.
+        </span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="card" *ngIf="options.initialSolutionRoutes && options.initialSolutionRoutes.length>0">
+          <div class="card-header">           
+            <div class="row">
+              <div class="col text-center">
+                <h6>Solution initiale sélectionnée</h6>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row" *ngFor="let route of options.initialSolutionRoutes">
+              <div class="col">
+                {{route.label}}
+              </div>
+            </div>    
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group row" *ngIf="routers">
+      <label for="router" class="col-md-5  col-form-label" >Calcultateur d'itinéraires</label>
+      <div class="col-md-7">
+        <div class="btn-group btn-group-toggle" data-toggle="buttons" >
+          <label *ngFor="let router of routers"
+                  class="btn"
+                  [ngClass]="{active:options.router==router,'btn-secondary':options.router==router,'btn-light':options.router!=router}"
+                  (click)="toggleRouter(router)">
+            <input type="radio" name="options" id="option1" autocomplete="off"> {{router}}
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group row" *ngIf="options.optimMode=='regularity'">
+      <label for="timeLimit" class="col-md-5  col-form-label" >Tolérance de régularité</label>
+      <div class="col-md-7">
+        <div class="input-group">
+          <input type="text" class="form-control" name="regularityRange"
+            [(ngModel)]="options.regularityRange"
+            [required]="true"
+            pattern="([1-9]+[0-9]*)" />
+          <div class="input-group-append">
+            <span class="input-group-text">minutes</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="timeLimit" class="col-md-5  col-form-label" >Limite de temps</label>
+      <div class="col-md-7">
+        <div class="input-group">
+          <input type="text" class="form-control" name="timeLimit"
+            [(ngModel)]="options.timeLimit"
+            [required]="true"
+            pattern="([1-9]+[0-9]*)" />
+          <div class="input-group-append">
+            <span class="input-group-text">secondes</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+
+
+</div>

@@ -1,0 +1,14 @@
+{
+    "require": {
+        "graylog2/gelf-php": "~1.2",
+        "phpmailer/phpmailer" : "~5.2",
+        "maxh/php-nominatim" :  "~1.2",
+        "aws/aws-sdk-php": "3.*",
+        "slim/slim": "~3",
+        "twig/twig":"^3.0"
+    },
+    "config":{
+      "disable-tls" : true
+    }
+
+}

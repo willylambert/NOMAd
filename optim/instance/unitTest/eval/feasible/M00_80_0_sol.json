@@ -1,0 +1,223 @@
+{
+  "activeUsers": [
+    0,
+    9,
+    15,
+    22,
+    26,
+    72,
+    75,
+    76,
+    77
+  ],
+  "cost": 118.089,
+  "execTime": 0,
+  "feasible": true,
+  "irregularity": 0,
+  "multiplier": 1,
+  "name": "M00_80",
+  "nbIteration": 0,
+  "nbUsers": "9",
+  "nonInsertedUsers": [],
+  "objectiveValue": 118.089,
+  "routes": [
+    {
+      "cost": 118.089,
+      "distance": 75777,
+      "duration": 8347,
+      "feasible": true,
+      "feasibleVehicles": [
+        10,
+        11,
+        13
+      ],
+      "id": 0,
+      "idVehicle": 10,
+      "irregularity": 0,
+      "nbReconfigurations": 0,
+      "nodes": [
+        {
+          "debug": "id:160, user:0, itin:0, point:79",
+          "idItinerary": 0,
+          "idPoint": 79,
+          "idUser": 12345,
+          "irregularity": 0,
+          "time": 31111,
+          "type": "depotOut"
+        },
+        {
+          "debug": "id:15, user:15, itin:0, point:15",
+          "idItinerary": 0,
+          "idPoint": 15,
+          "idUser": 15,
+          "irregularity": 0,
+          "time": 31549,
+          "type": "pickup"
+        },
+        {
+          "debug": "id:0, user:0, itin:0, point:0",
+          "idItinerary": 0,
+          "idPoint": 0,
+          "idUser": 100000,
+          "irregularity": 0,
+          "time": 32464,
+          "type": "pickup"
+        },
+        {
+          "debug": "id:26, user:26, itin:0, point:26",
+          "idItinerary": 0,
+          "idPoint": 26,
+          "idUser": 26,
+          "irregularity": 0,
+          "time": 32859,
+          "type": "pickup"
+        },
+        {
+          "debug": "id:9, user:9, itin:0, point:9",
+          "idItinerary": 0,
+          "idPoint": 9,
+          "idUser": 9,
+          "irregularity": 0,
+          "time": 33299,
+          "type": "pickup"
+        },
+        {
+          "debug": "id:22, user:22, itin:0, point:22",
+          "idItinerary": 0,
+          "idPoint": 22,
+          "idUser": 22,
+          "irregularity": 0,
+          "time": 34200,
+          "type": "pickup"
+        },
+        {
+          "debug": "id:102, user:22, itin:0, point:71",
+          "idItinerary": 0,
+          "idPoint": 71,
+          "idUser": 22,
+          "irregularity": 0,
+          "time": 35111,
+          "type": "delivery"
+        },
+        {
+          "debug": "id:95, user:15, itin:0, point:71",
+          "idItinerary": 0,
+          "idPoint": 71,
+          "idUser": 15,
+          "irregularity": 0,
+          "time": 35171,
+          "type": "delivery"
+        },
+        {
+          "debug": "id:80, user:0, itin:0, point:71",
+          "idItinerary": 0,
+          "idPoint": 71,
+          "idUser": 100000,
+          "irregularity": 0,
+          "time": 35291,
+          "type": "delivery"
+        },
+        {
+          "debug": "id:89, user:9, itin:0, point:71",
+          "idItinerary": 0,
+          "idPoint": 71,
+          "idUser": 9,
+          "irregularity": 0,
+          "time": 35411,
+          "type": "delivery"
+        },
+        {
+          "debug": "id:106, user:26, itin:0, point:71",
+          "idItinerary": 0,
+          "idPoint": 71,
+          "idUser": 26,
+          "irregularity": 0,
+          "time": 35531,
+          "type": "delivery"
+        },
+        {
+          "debug": "id:76, user:76, itin:0, point:68",
+          "idItinerary": 0,
+          "idPoint": 68,
+          "idUser": 76,
+          "irregularity": 0,
+          "time": 36336,
+          "type": "pickup"
+        },
+        {
+          "debug": "id:72, user:72, itin:0, point:68",
+          "idItinerary": 0,
+          "idPoint": 68,
+          "idUser": 72,
+          "irregularity": 0,
+          "time": 36456,
+          "type": "pickup"
+        },
+        {
+          "debug": "id:75, user:75, itin:0, point:68",
+          "idItinerary": 0,
+          "idPoint": 68,
+          "idUser": 75,
+          "irregularity": 0,
+          "time": 36756,
+          "type": "pickup"
+        },
+        {
+          "debug": "id:77, user:77, itin:0, point:68",
+          "idItinerary": 0,
+          "idPoint": 68,
+          "idUser": 77,
+          "irregularity": 0,
+          "time": 36876,
+          "type": "pickup"
+        },
+        {
+          "debug": "id:156, user:76, itin:0, point:78",
+          "idItinerary": 0,
+          "idPoint": 78,
+          "idUser": 76,
+          "irregularity": 0,
+          "time": 37800,
+          "type": "delivery"
+        },
+        {
+          "debug": "id:157, user:77, itin:0, point:78",
+          "idItinerary": 0,
+          "idPoint": 78,
+          "idUser": 77,
+          "irregularity": 0,
+          "time": 37860,
+          "type": "delivery"
+        },
+        {
+          "debug": "id:152, user:72, itin:0, point:78",
+          "idItinerary": 0,
+          "idPoint": 78,
+          "idUser": 72,
+          "irregularity": 0,
+          "time": 37980,
+          "type": "delivery"
+        },
+        {
+          "debug": "id:155, user:75, itin:0, point:78",
+          "idItinerary": 0,
+          "idPoint": 78,
+          "idUser": 75,
+          "irregularity": 0,
+          "time": 38100,
+          "type": "delivery"
+        },
+        {
+          "debug": "id:161, user:0, itin:0, point:79",
+          "idItinerary": 0,
+          "idPoint": 79,
+          "idUser": 12345,
+          "irregularity": 0,
+          "time": 39458,
+          "type": "depotIn"
+        }
+      ],
+      "objVal": 118.089
+    }
+  ]
+}

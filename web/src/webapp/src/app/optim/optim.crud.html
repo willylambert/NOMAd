@@ -1,0 +1,167 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="container-fluid">
+
+ <!-- Main formular -->
+  <form #optimForm="ngForm" novalidate="true" autocomplete="off">
+
+    <!-- NavBar -->
+    <crud-navbar  [editMode]="editMode"
+                  [valid]="optimForm.form.valid"
+                  (editModeChange)="optimEditModeChange($event)"
+                  (saveEvent)="save()"
+                  (markAsRemovedEvent)="markAsRemoved()"
+                  (deleteEvent)="delete()"        
+                  [aclObject]="'optim'"
+                  [recordId]="currentRecord.id" ></crud-navbar>
+    
+    <div class="alert alert-info" *ngIf="bLoading">
+      <em>
+        <fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Chargement en cours...
+      </em>
+    </div>  
+
+    <ng-container>
+
+      <!-- Code -->
+      <div class="form-group row">
+        <label for="optimCode" class="col-md-2 col-form-label" >Référence</label>
+        <div class="col-md-4">
+          <input type="text" class="form-control" name="optimCode"
+                [(ngModel)]="currentRecord.code" pattern="[A-Za-z0-9_\.-]{1,30}"
+                [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+                [readonly]="editMode=='view'" [required]="editMode!='view'" />
+        </div>
+      </div>
+
+      <!-- Description of the optim -->
+      <div class="form-group row">
+        <label for="optimLabel" class="col-md-2 col-form-label">Description </label>
+        <div class="col-md-10">
+          <input type="text" class="form-control" name="optimLabel"
+                [(ngModel)]="currentRecord.label"
+                [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+                [readonly]="editMode=='view'" [required]="editMode!='view'"/>
+        </div>
+      </div>
+
+      <!-- Status of the optim -->
+      <div class="form-group row">
+        <label for="optimStatus" class="col-md-2 col-form-label">Statut </label>
+        <div class="col-md-3" *ngIf="currentRecord.status_th">
+          <ng-select name="optimStatus" [items]="th('OPTIM_MAIN_STATUS') | async" bindLabel="label" bindValue="id"
+            [(ngModel)]="currentRecord.status_th"
+            [disabled]="editMode=='view'"
+            [required]="editMode!='view'">
+          </ng-select>
+        </div>
+        <div class="col-md-3" *ngIf="!currentRecord.status_th">
+          <span *ngIf="editMode=='view' && !bLoading">Calcul de matrice en cours...</span>
+        </div>
+        <div class="col-md-7" [hidden]="editMode!='view'">
+          <!-- A small instance player (to pause, unpause and stop) -->
+          <span *ngIf="currentRecord && currentRecord.id"
+                [hidden]="currentRecord.status_code=='FINISHED' || currentRecord.status_code=='LOST'">
+            <span [aclShow]="'/optim/check'"  class='pull-right'>
+              <button class="btn btn-secondary" (click)="checkOptim()"
+                      [disabled]="currentRecord.status_code=='PAUSED'">
+                <fa-icon [icon]="faRedo"></fa-icon>&nbsp;
+                Vérifier la progression
+              </button>
+            </span>
+            <span [aclShow]="'/optim/stop'"
+                  *ngIf="currentRecord.status_code!=undefined && currentRecord.status_code!=null && currentRecord.status_code!=''">
+              <button class="btn btn-secondary" (click)="stopOptim()"
+                      [disabled]="currentRecord.status_code!='RUNNING' && currentRecord.status_code!='PAUSED'">
+                <fa-icon [icon]="faStop"></fa-icon>&nbsp;
+                Arrêter
+              </button>
+            </span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Instance -->
+      <div class="form-group row">
+        <label for="instance" class="col-md-2 col-form-label" >Instance</label>
+        <div class="col-md-4">
+          <div class="input-group" >
+            <json-editor [options]="editorInstanceOptions" [data]="currentRecord.instance" #editorInstance></json-editor>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parameters -->
+      <div class="form-group row">
+        <label for="parameters" class="col-md-2 col-form-label" >Paramètres</label>
+        <div class="col-md-4">
+          <div class="input-group" >
+            <json-editor [options]="editorParametersOptions" [data]="currentRecord.parameters" #editorParameters></json-editor>
+          </div>
+        </div>
+      </div>
+
+      <!-- Solutions -->
+      <div class="form-group row">
+        <label for="parameters" class="col-md-2 col-form-label" >Solution</label>
+        <div class="col-md-4">
+          <div class="input-group" *ngIf="currentRecord.solution != null && currentRecord.solution != undefined">
+            <json-editor [hidden]="!currentRecord.solution" [options]="editorSolutionOptions" [data]="currentRecord.solution" #editorSolution></json-editor>
+          </div>
+          <em *ngIf="currentRecord.solution == null || currentRecord.solution == undefined || !currentRecord.solution">
+            <span *ngIf="currentRecord.status_code=='FINISHED' || currentRecord.status_code=='LOST'">Aucune solution trouvée</span>
+            <span *ngIf="currentRecord.status_code!='FINISHED' && currentRecord.status_code!='LOST'">Aucune solution trouvée pour l'instant</span>
+          </em>
+        </div>
+      </div>
+
+      <!-- Logs -->
+      <div class="form-group row">
+        <label for="parameters" class="col-md-2 col-form-label" >Logs</label>
+        <div class="col-md-4">
+          <textarea readonly="true" class="logs-area" [innerHTML]="currentRecord.logs"
+                    *ngIf="currentRecord.logs!=undefined && currentRecord.logs!=null && currentRecord.logs!=''">
+          </textarea>
+          <em *ngIf="currentRecord.logs==undefined || currentRecord.logs==null || currentRecord.logs==''">
+            Aucun log
+          </em>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="parameters" class="col-md-2 col-form-label" >Logs d'erreur</label>
+        <div class="col-md-4">
+          <textarea readonly="true" class="logs-area" [innerHTML]="currentRecord.errors"
+                    *ngIf="currentRecord.errors!=undefined && currentRecord.errors!=null && currentRecord.errors!=''">
+          </textarea>
+          <em *ngIf="currentRecord.errors==undefined || currentRecord.errors==null || currentRecord.errors==''">
+            Aucun log d'erreur
+          </em>
+        </div>
+      </div>
+
+  </ng-container>
+
+  </form>
+</div>

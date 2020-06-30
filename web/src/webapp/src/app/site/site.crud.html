@@ -1,0 +1,186 @@
+<!--
+ Copyright (c) 2020 INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and ODO Smart Systems
+
+This program has been developed in the context of the NOMAd project and is GPL v3 Licensed.
+We would like to thank the European Union through the European regional development fund (ERDF) and the French region Auvergne-Rhône-Alpes for their financial support.
+The following entities have been involved in the NOMAd project: INSA Lyon (DISP LAB EA 4570), IMT Atlantique (LS2N LAB UMR CNRS), Ressourcial, SYNERGIHP and Odo Smart System.
+ 
+ This file is part of NOMAd.
+
+ NOMAd is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ NOMAd is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with NOMAd.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<div class="container-fluid">
+  <div class="row" fillHeight>
+    <div class="col-sm">
+      <!-- Main formular -->
+      <form #siteForm="ngForm" novalidate="true" autocomplete="off" *ngIf="currentRecord">
+
+        <!-- Has to be included within the formular so that crud-navbar component is aware of siteForm variable -->
+        <crud-navbar
+          [editMode]="editMode"
+          [valid]="siteForm.form.valid && (entity.id==undefined || entity.id!=currentRecord.id)"
+          [pristine]="siteForm.form.pristine && !bChanges"
+          (editModeChange)="editModeChange($event)"
+          (saveEvent)="save()"
+          (markAsRemovedEvent)="markAsRemoved()"
+          (deleteEvent)="delete()"
+          [title]="(currentRecord.id ? 'Site ' + currentRecord.code : 'Nouveau site')"
+          [aclObject]="'site'"
+          [recordId]="currentRecord.id">
+        </crud-navbar>
+
+        <!-- Code -->
+        <div class="form-group row">
+          <label for="siteCode" class="col-md-2 col-form-label">Référence</label>
+          <div class="col-md-4">
+            <input type="text" name="siteCode" [(ngModel)]="currentRecord.code"
+              [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+              [readonly]="editMode=='view'" [required]="editMode!='view'"
+              pattern="[A-Za-z0-9_\.-]{1,20}"/>
+          </div>
+        </div>
+
+        <!-- Description of the site -->
+        <div class="form-group row">
+          <label for="siteLabel" class="col-md-2 col-form-label">Description</label>
+          <div class="col-md-10">
+            <input type="text" name="siteLabel" [(ngModel)]="currentRecord.label"
+              [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+              [readonly]="editMode=='view'"
+              [required]="editMode!='view'"/>
+          </div>
+        </div>
+
+        <!-- Site type -->
+        <div class='form-group row'>
+          <label for="siteType" class='col-md-2 col-form-label'>Type</label>
+          <div class='col-md-4'>
+            <ng-select name="siteType" [(ngModel)]="currentRecord.type_th"
+              [items]="th('SITE_MAIN_TYPE') | async" bindLabel="label" bindValue="id"
+              [disabled]="editMode=='view'" required="true">
+          </ng-select>
+          </div>
+        </div>
+
+        <!-- Site status -->
+        <div class='form-group row'>
+          <label for="siteStatus" class='col-md-2 col-form-label'>Statut</label>
+          <div class='col-md-4'>
+            <ng-select name="siteStatus" [items]="th('SITE_MAIN_STATUS') | async" bindLabel="label" bindValue="id"
+              [(ngModel)]="currentRecord.status_th"
+              [disabled]="editMode=='view'" required="true">
+            </ng-select>
+          </div>
+        </div>
+
+        <!-- Template for the following typeahead -->
+        <ng-template #rt let-r="result" let-t="term">
+          <ngb-highlight [result]="r.code" [term]="t"></ngb-highlight>
+          <ngb-highlight [result]="r.label" [term]="t"></ngb-highlight>
+        </ng-template>
+
+        <!-- Site entity -->
+        <div class="form-group row">
+          <label for="siteOwner" class="col-md-2 col-form-label" >Entité</label>
+          <div class="col-md-4">
+            <input type="text" name="siteOwner"
+              [ngClass]="{'form-control-plaintext':editMode=='view','form-control':editMode!='view'}"
+              [(ngModel)]="entity" [ngbTypeahead]="search" [resultTemplate]="rt"
+              [inputFormatter]="formatter" [disabled]="editMode=='view'"/>
+          </div>
+          <div class="col-md-6" *ngIf="entity">
+            <!-- Be careful with circular dependencies to an existing site-->
+            <span class="badge badge-success" *ngIf="entity.id!=currentRecord.id">{{entity.label}}</span>
+            <span class="badge badge-danger" *ngIf="entity.id!=undefined && entity.id==currentRecord.id">
+              L'entité ne peut pas être le site lui-même. Veuillez choisir une autre entité.
+            </span>
+          </div>
+        </div>
+
+        <!-- List of POIs -->
+        <h5>Points rattachés au site</h5>
+        <div *ngIf="!currentRecord.POIs || currentRecord.POIs.length==0">
+          <em>Aucun point rattaché au site</em>
+        </div>
+        <div *ngIf="currentRecord.POIs && currentRecord.POIs.length>0">
+          <table id="POIs-table" class="table table-sm table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Libellé</th>
+                <th>Adresse</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let POI of currentRecord.POIs ; let i = index" [attr.data-index]="i">
+                <td>
+                  <button class="btn btn-link" (click)="launchPOIModal(POI,i)">{{POI.label}}</button>
+                </td>
+                <td>
+                  {{POI.addr1}}
+                  <span *ngIf="POI.addr1 && POI.addr2"> - </span>
+                  {{POI.addr2}}
+                  <span *ngIf="POI.addr2 && POI.postcode"> </span>
+                  {{POI.postcode}}
+                  <span *ngIf="POI.postcode && POI.city"> </span>
+                  {{POI.city}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- List of AOIs -->
+        <h5>Zones rattachés au site</h5>
+        <div *ngIf="!currentRecord.AOIs || currentRecord.AOIs.length==0">
+          <em>Aucune zone rattachée au site</em>
+        </div>
+        <div *ngIf="currentRecord.AOIs && currentRecord.AOIs.length>0">
+          <table id="AOIs-table" class="table table-sm table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Libellé</th>
+                <th *ngIf="editMode!='view'"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let AOI of currentRecord.AOIs ; let i = index" [attr.data-index]="i">
+                <td>
+                  <span *ngIf="editMode=='view'">{{AOI.label}}</span>
+                  <span *ngIf="editMode!='view'">
+                    <input type="text" class="form-control" name="AOILabel{{i}}" placeholder="Libellé..."
+                      [(ngModel)]="AOI.label" required="true"/>
+                  </span>
+                  <span class="badge badge-success" *ngIf="i==0">Zone principale</span>
+                </td>
+                <td *ngIf="editMode!='view'">
+                  <button type="button" id="btn-AOI-delete" class="btn btn-link" (click)="deleteAOI(i)">Supprimer</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </form>
+    </div>
+
+    <!-- Open a Leaflet map and provided it with the list of POIs and a list of AOIs -->
+    <div class="col-sm p-0">
+      <map-leaflet
+        [editMode]="editMode"
+        [POIs]="currentRecord.POIs" [changeInPOIs]="changeInPOIs"
+        [AOIs]="currentRecord.AOIs" [changeInAOIs]="changeInAOIs"
+        (newPOI)="newPOI($event)" (newAOI)="newAOI($event)"></map-leaflet>
+    </div>
+  </div>
+</div>
