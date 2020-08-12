@@ -57,10 +57,3 @@ services:
       - "5434:5434"
     expose:
       - "5434"
-
-  # Build Tool - use it from host command line : docker-compose up docs
-  docs:
-    build: containers/asciidoctor
-    command: /opt/builddocs.sh
-    volumes:
-      - ./docs:/var/docs
